@@ -9,13 +9,16 @@ times.
 
 ## What this is (and isn't)
 
-- **In scope (prototype):** the planner experience — cities, map, city/transit
-  bubbles, itinerary, wishlist, a *visual-only* booking mock, the disclosed
-  merchant model, curated content for 10–12 cities with live-API fallback.
-- **Out of scope — do NOT build:** real accounts, server-side trip persistence,
-  shareable trip URLs, OG/meta cards, analytics + booking instrumentation, SEO
-  pages, real affiliate booking, Hebrew/RTL UI, and the entire native app +
-  social / forums / ping / tools surfaces. Trips live in **localStorage** only.
+- **In scope:** the planner experience — cities, map, city/transit bubbles,
+  itinerary, wishlist, a *visual-only* booking mock, the disclosed merchant
+  model, curated content with live-API fallback. **Deployed on Netlify.**
+- **Storage:** trips persist to **Supabase under an anonymous auth user** (table
+  `web_trips`, RLS-scoped to `auth.uid()`), with **localStorage** as the instant
+  offline cache. Full **accounts / login remain deferred** (anonymous only).
+- **Out of scope — do NOT build:** account login/signup, shareable trip URLs,
+  OG/meta cards, analytics + booking instrumentation, SEO pages, real affiliate
+  booking, Hebrew/RTL UI, and the entire native app + social / forums / ping /
+  tools surfaces.
 - **Booking is a visual mock** — no event tracking, no real deeplinks.
 
 ## Stack
