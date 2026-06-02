@@ -37,7 +37,7 @@ export function WebRemoveStopConfirm({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ width: '380px' }}
+        style={{ width: 'min(380px, 100%)' }}
         className="bg-cream border border-charcoal-15 rounded-3xl shadow-panel p-md flex flex-col gap-md relative"
       >
         <button

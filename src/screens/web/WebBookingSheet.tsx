@@ -83,7 +83,7 @@ export function WebBookingSheet() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ width: '400px', maxHeight: '100%' }}
+        style={{ width: 'min(400px, 100%)', maxHeight: '100%' }}
         className="bg-cream border border-charcoal-15 rounded-3xl shadow-panel flex flex-col overflow-hidden relative"
       >
         <button

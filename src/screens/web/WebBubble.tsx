@@ -45,7 +45,7 @@ export function WebBubble({
       <div
         role="dialog"
         aria-modal="false"
-        style={{ width: '440px', maxHeight: '100%' }}
+        style={{ width: 'min(440px, 100%)', maxHeight: '100%' }}
         className={clsx(
           'bg-cream border border-charcoal-15 rounded-3xl shadow-panel flex flex-col pointer-events-auto relative overflow-hidden',
           'transition-[opacity,transform] duration-considered ease-out-quart motion-reduce:transition-none',

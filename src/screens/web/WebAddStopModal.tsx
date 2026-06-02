@@ -59,7 +59,7 @@ export function WebAddStopModal({ open, onClose, onAdd, existingStopIds }: Props
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ width: '480px' }}
+        style={{ width: 'min(480px, 100%)' }}
         className="bg-cream border border-charcoal-15 rounded-3xl shadow-panel p-md flex flex-col gap-md relative max-h-[80dvh]"
       >
         <button

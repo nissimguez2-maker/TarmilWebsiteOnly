@@ -51,7 +51,7 @@ export function WebHomeEditor({ open, onClose, onPick, currentName }: Props) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ width: '440px' }}
+        style={{ width: 'min(440px, 100%)' }}
         className="bg-cream border border-charcoal-15 rounded-3xl shadow-panel p-md flex flex-col gap-md relative max-h-[80dvh]"
       >
         <button

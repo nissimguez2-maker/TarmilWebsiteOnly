@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useSupabaseData } from '../../lib/SupabaseDataProvider';
 import { ErrorPanel } from '../../components/DataState';
 import type { PlannedStop } from '../../data/plannedStops';
@@ -93,9 +92,10 @@ export function WebPlannerScreen() {
 
   return (
     <>
-      <div className="hidden lg:flex h-dvh flex-col bg-cream">
+      <div className="flex h-dvh flex-col bg-cream">
         <WebHeader stops={stops} />
-        <div className="flex-1 flex min-h-0">
+        {/* Phone: stacked itinerary + map (view+book floor). md+ : 3-column desktop. */}
+        <div className="flex-1 flex min-h-0 flex-col md:flex-row">
           <WebStopList
             stops={stops}
             home={home}
@@ -107,7 +107,7 @@ export function WebPlannerScreen() {
             onEditDates={handleEditDates}
             onEditHome={() => setHomeEditorOpen(true)}
           />
-          <div className="flex-1 relative">
+          <div className="flex-1 relative min-h-0">
             <WebMapCanvas
               stops={stops}
               home={home}
@@ -123,17 +123,6 @@ export function WebPlannerScreen() {
             />
           </div>
         </div>
-      </div>
-      <div className="flex lg:hidden h-dvh flex-col items-center justify-center p-xl text-center gap-md bg-cream">
-        <p className="font-serif text-sub text-charcoal-70">
-          Open on desktop (≥ 1024 px) to use the planner.
-        </p>
-        <Link
-          to="/trip"
-          className="text-small text-umber hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-sm"
-        >
-          Go to the mobile app →
-        </Link>
       </div>
       <WebAddStopModal
         open={addStopOpen}

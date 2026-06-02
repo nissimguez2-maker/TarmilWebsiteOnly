@@ -187,7 +187,7 @@ export function WebStopList({
     selection.toStopId === 'home';
 
   return (
-    <aside className="w-96 shrink-0 border-e border-charcoal-15 bg-cream overflow-y-auto min-h-0 py-md flex flex-col gap-md">
+    <aside className="w-full md:w-96 md:shrink-0 max-h-[45dvh] md:max-h-none border-b md:border-b-0 md:border-e border-charcoal-15 bg-cream overflow-y-auto min-h-0 py-md flex flex-col gap-md">
       <TripOverviewCard stops={stops} home={home} />
       <div>
         <div className="flex items-center justify-between px-md mb-md">
