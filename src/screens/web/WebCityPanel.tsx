@@ -16,6 +16,7 @@ import { Button } from '../../components/Button';
 import { PlacementBadge } from '../../components/PlacementBadge';
 import { PlacementExplainer } from '../../components/PlacementExplainer';
 import { SourceCredit } from '../../components/SourceCredit';
+import { AiDisclosure } from '../../components/AiDisclosure';
 import type { PlannedStop } from '../../data/plannedStops';
 import type { Place, PlaceCategory } from '../../data/places';
 import { aggregateSourceLabel, placeRankScore } from '../../data/places';
@@ -358,6 +359,8 @@ function OverviewTab({ stop }: { stop: PlannedStop }) {
   // the AI rewrite is still a CC BY-SA derivative, so it is credited too.
   const textFromWiki = !hasHardcoded && (polished != null || wiki?.extract != null);
   const photosFromWiki = photos.length > 0 && !(stop.id in CITY_PHOTOS);
+  // The intro is AI-generated only when the Wikipedia extract was rewritten.
+  const aiRewritten = polished != null;
   const wikiHref = wiki?.title
     ? `https://en.wikipedia.org/wiki/${encodeURIComponent(wiki.title.replace(/ /g, '_'))}`
     : undefined;
@@ -378,7 +381,10 @@ function OverviewTab({ stop }: { stop: PlannedStop }) {
         </div>
       )}
       {(textFromWiki || photosFromWiki) && (
-        <SourceCredit href={wikiHref}>From Wikipedia · CC BY-SA</SourceCredit>
+        <div className="flex flex-wrap items-center gap-x-sm gap-y-xs">
+          {aiRewritten && <AiDisclosure />}
+          <SourceCredit href={wikiHref}>From Wikipedia · CC BY-SA</SourceCredit>
+        </div>
       )}
       <WeatherStrip stop={stop} />
     </div>
