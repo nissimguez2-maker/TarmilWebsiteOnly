@@ -109,18 +109,33 @@ Both live in Netlify env vars at build time (`VITE_TRAVELPAYOUTS_TOKEN`,
 
 <sub>*Stated/directional — confirm in the dashboard.*</sub>
 
-**Founder prioritization (overrides the §2 EV-ranking, by intent + ticket size):**
-- **Tier 1 — Accommodation + Flights.** The two certain, top-of-mind needs and the
-  biggest single tickets. Build + prime-placement first.
-- **Tier 2 — Tours + activities** (incl. attraction tickets).
-- **Tier 3 — eSIM + visa (iVisa, §4.1) + insurance + the long tail** (transfers,
-  rail/bus, car).
+**Founder prioritization — FINAL (2026-06):** **T1 = Accommodation + Flights · T2 =
+Tours + activities · T3 = eSIM + visa (iVisa, §4.1) + insurance + the long tail.**
 
-This consciously weights **user intent + absolute $ per sale** over pure expected
-value (where §2 edges Tours above Flights on *attach-driven* EV — Tours stays a strong
-T2, not forgotten). **Build implication:** leading with Flights only pays if we beat
-their one weak spot — **attach-leakage** to Google Flights/Skyscanner — so the flight
-handoff must be **pre-filled, price-hinted (the validated Data API), and one-tap.**
+### The tier is ONE of three axes — the "3D" model
+
+A single linear tier collapsed three independent things, which is what made the
+Flights-vs-Tours debate look like a conflict. It isn't:
+
+| Domain | **Tier** (build priority) | **Stage** (where it surfaces) | **EV** (optimization intensity) |
+|---|---|---|---|
+| Accommodation | **T1** | dated stop | high |
+| Flights | **T1** | transport leg | mid (leaky) |
+| Tours / activities | T2 | city "dream" page | **high** |
+| Attraction tickets | T2 | city page | mid |
+| Insurance | T3 | finalize | mid |
+| eSIM / visa | T3 | finalize | low |
+| Transfers / rail / car | T3 | arrival leg | low |
+
+- **Tier** decides what we wire **first + front-and-center** (the founder's call, final).
+- **Stage** decides *where* each lives — and **Flights (transport leg) and Tours
+  (city page) sit on different screens, so they never compete for the same slot.**
+  This dissolves the audit's Flights-vs-Tours tension entirely.
+- **EV** decides *how hard we tune conversion* — so **Tours is optimized aggressively
+  even at T2** (it earns), and **Flights stays T1 but is instrumented** for its one
+  weak spot, attach-leakage to Google Flights/Skyscanner: the handoff must be
+  pre-filled, price-hinted (the validated Data API), one-tap, with a book-through
+  kill-criterion.
 
 ### 4.1 Category gaps beyond Travelpayouts (we're open to other APIs)
 
