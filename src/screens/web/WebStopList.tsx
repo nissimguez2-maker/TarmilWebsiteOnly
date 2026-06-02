@@ -64,6 +64,8 @@ import {
 import { showToast } from './WebToast';
 import { WebRemoveStopConfirm } from './WebRemoveStopConfirm';
 import { WebItineraryOverlay } from './WebItineraryOverlay';
+import { WebBeforeYouFly } from './WebBeforeYouFly';
+import { PlanDraftBox } from './PlanDraftBox';
 import type { Selection } from './types';
 import {
   STARTER_ROUTES,
@@ -108,6 +110,17 @@ function QuickStartEmpty({
           </li>
         ))}
       </ul>
+      <PlanDraftBox
+        onDraft={(cityIds) =>
+          onAddRoute({
+            id: 'ai-draft',
+            title: 'Your AI draft',
+            reason: 'A starting point. Edit it freely.',
+            heroCityId: cityIds[0],
+            cityIds,
+          })
+        }
+      />
       <button
         type="button"
         onClick={onSearch}
@@ -179,6 +192,7 @@ export function WebStopList({
 }: Props) {
   useWishlist();
   const [detailOpen, setDetailOpen] = useState(false);
+  const [beforeOpen, setBeforeOpen] = useState(false);
 
   const sensors = useSensors(
     // Mouse: tiny drag threshold. Touch: press-and-hold so a vertical swipe
@@ -284,6 +298,19 @@ export function WebStopList({
   return (
     <aside className="w-full md:w-96 md:shrink-0 max-h-[45dvh] md:max-h-none border-b md:border-b-0 md:border-e border-charcoal-15 bg-cream overflow-y-auto min-h-0 py-md flex flex-col gap-md">
       <TripOverviewCard stops={stops} home={home} />
+      {stops.length > 0 && (
+        <div className="px-md">
+          <Button
+            variant="olive"
+            size="sm"
+            fullWidth
+            onClick={() => setBeforeOpen(true)}
+          >
+            <Plane size={14} strokeWidth={2} aria-hidden />
+            Before you fly
+          </Button>
+        </div>
+      )}
       <div>
         <div className="flex items-center justify-between px-md mb-md">
           <p className="meta-caps text-charcoal-70">Itinerary</p>
@@ -425,6 +452,9 @@ export function WebStopList({
         stops={stops}
         home={home}
       />
+      {beforeOpen && (
+        <WebBeforeYouFly stops={stops} onClose={() => setBeforeOpen(false)} />
+      )}
     </aside>
   );
 }
