@@ -28,6 +28,49 @@ Mapbox GL (with a graceful no-token fallback). Live free APIs stay wired:
 Open-Meteo, Wikipedia, Nominatim, REST Countries, Overpass, OSRM, optional Groq.
 Deploy target: Netlify. English only.
 
+## Infrastructure, deploy & storage
+
+- **Live:** https://tarmil-planner.netlify.app
+- **Netlify** site `tarmil-planner`, siteId `2559d342-613c-4d19-bd9a-aff63feeb413`,
+  team `nissimguez2`. **Direct deploy** (not GitHub-linked) — it does NOT auto-deploy
+  on push. Redeploy = Netlify MCP `deploy-site(siteId)` → run the returned `npx … @netlify/mcp …`
+  command from the repo root. Env vars (`VITE_MAPBOX_TOKEN`, `VITE_SUPABASE_URL`,
+  `VITE_SUPABASE_ANON_KEY`) live on the Netlify site; Vite inlines them at build.
+- **Supabase** project `tarmil-mockup`, id `ltlholyrdtzegyeosqqz` (eu-central-1),
+  URL `https://ltlholyrdtzegyeosqqz.supabase.co`. **Anonymous sign-ins: ENABLED +
+  verified.** The website touches ONLY `public.web_trips` (`user_id` uuid PK →
+  auth.users, `stops`/`home` jsonb, RLS `auth.uid() = user_id` for select/insert/
+  update/delete). The project also holds the original native app's tables
+  (`places`, `forums`, …) — **do not touch them** (and note they carry pre-existing
+  permissive `USING(true)` RLS; that's a native-side concern, out of scope here).
+- **Storage round-trip is verified end-to-end:** anon auth → `web_trips` upsert →
+  resume-from-server after wiping the local cache; RLS isolates users and blocks
+  cross-user writes (`42501`). `.env.local` is gitignored — recreate for local
+  builds from the Netlify/Supabase values.
+
+## Ops / verification notes
+
+- The sandbox **MITMs TLS** for external HTTPS: use `curl -sk`, Node
+  `NODE_TLS_REJECT_UNAUTHORIZED=0`, and Playwright `ignoreHTTPSErrors: true`.
+  Run helper `.mjs` scripts from the repo root (so node resolves `node_modules`),
+  then delete them. Foreground `sleep` is blocked.
+- **`jsonb` does not preserve object key order** — compare trip data semantically,
+  not via raw `JSON.stringify`.
+- Source app repo (reference/schema) is public: `github.com/nissimguez2-maker/Tarmil`.
+- The 7 build/design/QA agents in `.claude/agents/` are invokable — delegate
+  implementation, design, and verification to them.
+
+## Roadmap (remaining, prototype phase)
+
+W10 verify live APIs on the deploy · W11 curate the 10–12 launch cities + expand
+themed routes (only ~8 South-America cities have data today) · W12 kosher /
+Jewish-friendly (quiet, equal tab) · W15 seeded Sponsored / Tarmil Selection +
+one-tap "What's this?" · W13 remove fake "friends" social proof → curated stars ·
+W9 booking-mock polish (no tracking) · W4 mobile drag-reorder + inline dates ·
+W18 warmer voice + header cleanup (kill dead "Switch to App" / "Share" / "Yotam"
+chips in `WebHeader.tsx`) · W19 hygiene/QA sweep (logical-CSS / focus / no-100vh,
+strip stale comments, code-split the >500 kB bundle).
+
 ## Brand: warm-minimal-premium
 
 Identity is "warm words in a minimal, premium frame." Keep the structural
