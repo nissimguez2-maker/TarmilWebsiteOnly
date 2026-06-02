@@ -6,7 +6,7 @@ import {
   slugifyId,
   type AddableCity,
 } from './addableCities';
-import { cityPhotos } from './cityPhotos';
+import { useCityPhotos } from './cityPhotos';
 import { searchNominatim, type NominatimResult } from './nominatimApi';
 
 type Props = {
@@ -160,7 +160,7 @@ function SuggestedRow({
   disabled: boolean;
   onPick: () => void;
 }) {
-  const thumb = cityPhotos(city.id)[0];
+  const thumb = useCityPhotos(city.id, city.nameEn)[0];
   return (
     <button
       type="button"

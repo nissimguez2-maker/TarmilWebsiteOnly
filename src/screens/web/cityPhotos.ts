@@ -62,10 +62,28 @@ const wikiPhotoCache = new Map<string, string[]>();
 const wikiPhotoInflight = new Map<string, Promise<string[]>>();
 
 /**
- * Resolve a city's Wikipedia lead image (prefer the full original, fall back to
- * the thumbnail). Resilient: a null summary or a network failure resolves to an
- * empty array — never throws — and the empty result is intentionally NOT cached
- * so a transient failure can retry on a later mount.
+ * Resolve whether an image URL actually loads in the browser. Mirrors exactly
+ * what an `<img>` does, so a URL that passes here is guaranteed renderable.
+ * Wikimedia serves rescaled `/thumb/…` derivatives reliably but rate-limits
+ * (HTTP 429) direct hits to original-resolution files — this lets us keep the
+ * crisp original when it works and gracefully fall back when it doesn't.
+ */
+function loadable(url: string): Promise<boolean> {
+  if (typeof Image === 'undefined') return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img.naturalWidth > 0);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
+/**
+ * Resolve a city's Wikipedia lead image. Prefers the full original; falls back
+ * to the thumbnail when the original won't load (e.g. a Wikimedia 429 on the
+ * original-resolution file). Resilient: a null summary, no image, or a network
+ * failure resolves to an empty array — never throws — and the empty result is
+ * intentionally NOT cached so a transient failure can retry on a later mount.
  */
 function resolveWikiPhotos(stopId: string, cityName: string): Promise<string[]> {
   const cached = wikiPhotoCache.get(stopId);
@@ -75,8 +93,13 @@ function resolveWikiPhotos(stopId: string, cityName: string): Promise<string[]> 
 
   const title = wikiTitleFor(stopId, cityName);
   const request = fetchWikiSummary(title)
-    .then((summary) => {
-      const image = summary?.originalImage ?? summary?.thumbnail;
+    .then(async (summary) => {
+      const original = summary?.originalImage;
+      const thumbnail = summary?.thumbnail;
+      let image: string | undefined;
+      if (original && (await loadable(original))) image = original;
+      else if (thumbnail && (await loadable(thumbnail))) image = thumbnail;
+      else image = original ?? thumbnail; // last resort: let the <img> try
       const photos = image ? [image] : [];
       if (photos.length > 0) wikiPhotoCache.set(stopId, photos);
       return photos;

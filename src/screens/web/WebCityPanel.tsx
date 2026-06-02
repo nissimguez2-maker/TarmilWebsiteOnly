@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import {
   BedDouble,
@@ -19,7 +19,7 @@ import type { PlannedStop } from '../../data/plannedStops';
 import type { FriendVisit, Place, PlaceCategory } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
 import { rewriteAsTravelIntro } from './groqApi';
-import { cityPhotos } from './cityPhotos';
+import { useCityPhotos } from './cityPhotos';
 import type { WeatherCondition, WeatherDay } from './cityWeather';
 import { fetchWeather, type WeatherSource } from './weatherApi';
 import { formatStopRange } from './dateUtils';
@@ -342,12 +342,7 @@ function OverviewTab({ stop }: { stop: PlannedStop }) {
     };
   }, [hasHardcoded, wikiTitle, stop.nameEn]);
 
-  const curatedPhotos = cityPhotos(stop.id);
-  const heroPhoto = wiki?.originalImage ?? wiki?.thumbnail;
-  const photos = useMemo(() => {
-    if (curatedPhotos.length > 0) return curatedPhotos;
-    return heroPhoto ? [heroPhoto] : [];
-  }, [curatedPhotos, heroPhoto]);
+  const photos = useCityPhotos(stop.id, stop.nameEn);
 
   const description = hasHardcoded
     ? hardcodedText
