@@ -15,12 +15,13 @@ import {
 import { Button } from '../../components/Button';
 import { PlacementBadge } from '../../components/PlacementBadge';
 import { PlacementExplainer } from '../../components/PlacementExplainer';
+import { SourceCredit } from '../../components/SourceCredit';
 import type { PlannedStop } from '../../data/plannedStops';
 import type { Place, PlaceCategory } from '../../data/places';
 import { aggregateSourceLabel, placeRankScore } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
 import { rewriteAsTravelIntro } from './groqApi';
-import { useCityPhotos } from './cityPhotos';
+import { CITY_PHOTOS, useCityPhotos } from './cityPhotos';
 import type { WeatherCondition, WeatherDay } from './cityWeather';
 import { fetchWeather, type WeatherSource } from './weatherApi';
 import { formatStopRange } from './dateUtils';
@@ -352,6 +353,15 @@ function OverviewTab({ stop }: { stop: PlannedStop }) {
     ? hardcodedText
     : (polished ?? wiki?.extract ?? stop.note ?? '');
 
+  // Attribution (CC BY-SA): credit Wikipedia whenever the intro text or the hero
+  // photo came from it. Curated cities use Tarmil copy + Unsplash, so no credit;
+  // the AI rewrite is still a CC BY-SA derivative, so it is credited too.
+  const textFromWiki = !hasHardcoded && (polished != null || wiki?.extract != null);
+  const photosFromWiki = photos.length > 0 && !(stop.id in CITY_PHOTOS);
+  const wikiHref = wiki?.title
+    ? `https://en.wikipedia.org/wiki/${encodeURIComponent(wiki.title.replace(/ /g, '_'))}`
+    : undefined;
+
   return (
     <div className="flex flex-col gap-md">
       {photos.length > 0 && (
@@ -366,6 +376,9 @@ function OverviewTab({ stop }: { stop: PlannedStop }) {
             {description}
           </p>
         </div>
+      )}
+      {(textFromWiki || photosFromWiki) && (
+        <SourceCredit href={wikiHref}>From Wikipedia · CC BY-SA</SourceCredit>
       )}
       <WeatherStrip stop={stop} />
     </div>
@@ -482,6 +495,19 @@ function WeatherStrip({ stop }: { stop: PlannedStop }) {
       </div>
       <p className="text-meta italic text-charcoal-70 text-center">
         {sourceLabel(source)}
+        {source != null && source !== 'fallback' && (
+          <>
+            {' · '}
+            <a
+              href="https://open-meteo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="not-italic underline underline-offset-2 hover:text-charcoal rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+            >
+              Open-Meteo
+            </a>
+          </>
+        )}
       </p>
     </div>
   );
@@ -647,6 +673,9 @@ function NearbyOsmList({
       {items.map((item) => (
         <NearbyOsmRow key={item.id} item={item} />
       ))}
+      <SourceCredit href="https://www.openstreetmap.org/copyright">
+        © OpenStreetMap contributors
+      </SourceCredit>
     </div>
   );
 }

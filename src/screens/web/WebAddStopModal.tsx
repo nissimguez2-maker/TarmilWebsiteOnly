@@ -8,6 +8,7 @@ import {
 } from './addableCities';
 import { useCityPhotos } from './cityPhotos';
 import { searchNominatim, type NominatimResult } from './nominatimApi';
+import { SourceCredit } from '../../components/SourceCredit';
 
 type Props = {
   open: boolean;
@@ -143,6 +144,9 @@ export function WebAddStopModal({ open, onClose, onAdd, existingStopIds }: Props
                   />
                 );
               })}
+              <SourceCredit href="https://www.openstreetmap.org/copyright">
+                © OpenStreetMap contributors
+              </SourceCredit>
             </>
           )}
         </div>
