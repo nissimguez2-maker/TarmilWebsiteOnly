@@ -78,6 +78,17 @@ export function addStop(
   return [...stops, newStop];
 }
 
+/** Append every city in a route, chaining dates via addStop. Skips duplicates. */
+export function addRoute(
+  stops: PlannedStop[],
+  cities: AddableCity[],
+): PlannedStop[] {
+  return cities.reduce((acc, city) => {
+    if (acc.some((s) => s.id === city.id)) return acc;
+    return addStop(acc, city);
+  }, stops);
+}
+
 export function removeStop(stops: PlannedStop[], id: string): PlannedStop[] {
   const filtered = stops.filter((s) => s.id !== id);
   if (filtered.length === stops.length || filtered.length === 0) return filtered;

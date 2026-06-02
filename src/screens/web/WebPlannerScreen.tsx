@@ -14,9 +14,10 @@ import { WebPhotoLightbox } from './WebPhotoLightbox';
 import { WebBookingSheet } from './WebBookingSheet';
 import { DEFAULT_HOME, loadHome, saveHome, type HomeCity } from './homeCity';
 import { loadStops, saveStops } from './tripStorage';
-import type { AddableCity } from './addableCities';
+import { routeCities, type StarterRoute } from './starterRoutes';
 import {
   addStop as addStopMut,
+  addRoute as addRouteMut,
   editStopDates as editStopDatesMut,
   removeStop as removeStopMut,
   reorderStops as reorderStopsMut,
@@ -68,8 +69,8 @@ export function WebPlannerScreen() {
   const stops = localStops;
   const places = data.places;
 
-  const handleAddStopDirect = (city: AddableCity) => {
-    setLocalStops((prev) => addStopMut(prev, city));
+  const handleAddRoute = (route: StarterRoute) => {
+    setLocalStops((prev) => addRouteMut(prev, routeCities(route)));
   };
 
   const handleReorder = (fromIdx: number, toIdx: number) => {
@@ -115,7 +116,7 @@ export function WebPlannerScreen() {
             onRemoveStop={handleRemove}
             onEditDates={handleEditDates}
             onEditHome={() => setHomeEditorOpen(true)}
-            onAddStopDirect={handleAddStopDirect}
+            onAddRoute={handleAddRoute}
           />
           <div className="flex-1 relative min-h-0">
             <WebMapCanvas

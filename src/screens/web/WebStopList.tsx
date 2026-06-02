@@ -63,7 +63,12 @@ import { showToast } from './WebToast';
 import { WebRemoveStopConfirm } from './WebRemoveStopConfirm';
 import { WebItineraryOverlay } from './WebItineraryOverlay';
 import type { Selection } from './types';
-import { ADDABLE_CITIES, type AddableCity } from './addableCities';
+import {
+  STARTER_ROUTES,
+  routeCities,
+  routeNights,
+  type StarterRoute,
+} from './starterRoutes';
 
 type Props = {
   stops: PlannedStop[];
@@ -75,48 +80,72 @@ type Props = {
   onRemoveStop: (id: string) => void;
   onEditDates: (id: string, arrivalIso: string, departureIso: string) => void;
   onEditHome: () => void;
-  onAddStopDirect: (city: AddableCity) => void;
+  onAddRoute: (route: StarterRoute) => void;
 };
 
-/** First-run quick-start: a prompt + the suggested starter cities (one tap to add). */
+/** First-run quick-start: curated starter routes (one tap drops the whole route in). */
 function QuickStartEmpty({
-  onAddCity,
+  onAddRoute,
+  onSearch,
 }: {
-  onAddCity: (city: AddableCity) => void;
+  onAddRoute: (route: StarterRoute) => void;
+  onSearch: () => void;
 }) {
   return (
-    <div className="mx-md my-md rounded-2xl border border-charcoal-15 bg-sand p-md flex flex-col gap-md">
+    <div className="mx-md my-md flex flex-col gap-md">
       <div className="flex flex-col gap-xs">
-        <p className="font-serif text-lede text-charcoal">Add your first city</p>
+        <p className="font-serif text-lede text-charcoal">Start with a route</p>
         <p className="text-small text-charcoal-70">
-          Pick a starter below, or search for anywhere you like.
+          Pick a curated trip to drop in, or search for any city.
         </p>
       </div>
       <ul className="flex flex-col gap-sm">
-        {ADDABLE_CITIES.map((city) => (
-          <li key={city.id}>
-            <button
-              type="button"
-              onClick={() => onAddCity(city)}
-              className="w-full text-start rounded-xl border border-charcoal-15 bg-cream p-sm flex items-center gap-sm hover:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
-            >
-              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-charcoal text-cream">
-                <Plus size={14} strokeWidth={2} />
-              </span>
-              <span className="flex min-w-0 flex-col">
-                <span className="text-small font-medium text-charcoal truncate">
-                  {city.nameEn}
-                </span>
-                {city.blurb && (
-                  <span className="text-small text-charcoal-70 truncate">
-                    {city.blurb}
+        {STARTER_ROUTES.map((route) => {
+          const cities = routeCities(route);
+          const photo = cityPhotos(route.heroCityId)[0];
+          return (
+            <li key={route.id}>
+              <button
+                type="button"
+                onClick={() => onAddRoute(route)}
+                className="w-full overflow-hidden rounded-2xl border border-charcoal-15 bg-sand text-start hover:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+              >
+                {photo && (
+                  <span className="block h-24 w-full overflow-hidden bg-charcoal-08">
+                    <img
+                      src={photo}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
                   </span>
                 )}
-              </span>
-            </button>
-          </li>
-        ))}
+                <span className="flex flex-col gap-xs p-sm">
+                  <span className="flex items-baseline justify-between gap-sm">
+                    <span className="text-small font-medium text-charcoal">
+                      {route.title}
+                    </span>
+                    <span className="shrink-0 text-meta uppercase text-charcoal-55">
+                      {routeNights(route)} nights
+                    </span>
+                  </span>
+                  <span className="text-small text-charcoal-70">{route.reason}</span>
+                  <span className="truncate text-meta uppercase text-charcoal-55">
+                    {cities.map((c) => c.nameEn).join(' · ')}
+                  </span>
+                </span>
+              </button>
+            </li>
+          );
+        })}
       </ul>
+      <button
+        type="button"
+        onClick={onSearch}
+        className="self-start rounded text-meta uppercase text-umber hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+      >
+        Or search for a city
+      </button>
     </div>
   );
 }
@@ -131,7 +160,7 @@ export function WebStopList({
   onRemoveStop,
   onEditDates,
   onEditHome,
-  onAddStopDirect,
+  onAddRoute,
 }: Props) {
   useWishlist();
   const [detailOpen, setDetailOpen] = useState(false);
@@ -328,7 +357,7 @@ export function WebStopList({
           </SortableContext>
         </DndContext>
           {stops.length === 0 && (
-            <QuickStartEmpty onAddCity={onAddStopDirect} />
+            <QuickStartEmpty onAddRoute={onAddRoute} onSearch={onAddStop} />
           )}
           {lastStop && (
             <LegRow
