@@ -184,6 +184,30 @@ length**, **iVisa/Omio/Welcome-Pickups** TP availability, GYG 8%(TP)-vs-7%(Awin)
 route. Note: **"Bookinggeddon" (2025) cut Booking's *direct* affiliates but
 Travelpayouts is unaffected** — the marker route is the safe path.
 
+### 4.3 Catalog-verified rates + new opportunities (live dashboard, 2026-06)
+
+**Read the "reward rate" correctly — it mixes two things:**
+- **% of the purchase** (real % of traveler spend): Booking ~4%, Viator/Tiqets 8%,
+  Airalo 12%, **EKTA 25%**, GetYourGuide 8%.
+- **% of the partner's *own commission* (rev-share):** **Aviasales 40%, WayAway 50%.**
+  Aviasales' "40%" is **~$6–12 per flight, not 40% of the fare** — flights have ~1–2%
+  margins. Confirms flights are a *trust-play*, not a % goldmine.
+
+**Verified updates to §4.2:** EKTA insurance **25%** (↑ from 20%). eSIM is richer than
+Airalo alone — **Yesim 18% / 90-day cookie**, GigSky 20%, Saily 15% (NordVPN) all
+out-pay Airalo's 12%; keep **Airalo for the brand**, consider Yesim for max realized $.
+Transfers: **Welcome Pickups (8–9%, 45-day) is on TP** — a premium alt to Kiwitaxi.
+
+**New opportunities:**
+- **Flight-delay compensation — AirHelp (15–16.6%) / Compensair (€5–12).** New T3 line:
+  claim EU261 comp for delayed/cancelled flights. High relevance + genuine value-add
+  ("get money back") at the "something went wrong" moment. **Recommend adding.**
+- **KKday** (1–5%) covers Asia **experiences + dining** — partially fills the restaurant gap.
+- **Situational:** Radical Storage (luggage), SEARADAR (ferries), NordVPN/Saily (travel VPN).
+
+DiscoverCars (the car pick) wasn't on these pages but is in the catalog; alternatives
+seen (GetRentacar 10%/90d, Localrent 7.5–12%, AutoEurope, QEEQ) are backups.
+
 ---
 
 ## 5. Placement map (journey stage → offers)
