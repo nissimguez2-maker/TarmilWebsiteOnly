@@ -5,6 +5,11 @@ session built and deployed the Tarmil website; this captures everything needed
 to pick up seamlessly. **Read `CLAUDE.md` (guardrails) and this file before
 writing code.**
 
+> **One-shot handoff — DELETE this file once consumed.** When the immediate
+> priorities (§5) are done or this brief no longer matches reality, remove
+> `HANDOFF.md` and commit the deletion, so future sessions don't anchor on a
+> stale snapshot. Anything durable belongs in `CLAUDE.md`, not here.
+
 ---
 
 ## 0. What Tarmil is
