@@ -95,3 +95,27 @@ export async function rewriteAsTravelIntro(
     `City: ${cityName}\n\nSource paragraph (rewrite this):\n${rawText}`,
   );
 }
+
+const BLURB_SYSTEM =
+  'You are a travel editor for a curated trip-planning app. Write one warm, concrete sentence (two at most) on why a traveler would go to this place. Lead with the experience and the texture of being there. Active voice. 24 words maximum. Use only what you are given — invent no specifics. Never mention or imply ratings, review counts, prices, or superlatives like "best" or "top". Do not use em dashes. Do not start with the place name.';
+
+/**
+ * Warm one-line blurb for a place that lacks good curated copy (a non-curated
+ * global / OSM place, or one with no description). Curated places keep their
+ * own editorial voice, so callers should NOT request a blurb for them. Prose
+ * only: the prompt forbids ratings/superlatives, so the honesty firewall holds
+ * at the generation layer too. Returns `null` when the proxy is unavailable.
+ */
+export async function rewritePlaceBlurb(
+  cacheId: string,
+  name: string,
+  category: string,
+  context?: string,
+): Promise<string | null> {
+  return aiText(
+    `blurb:${cacheId}`,
+    BLURB_SYSTEM,
+    `Place: ${name}\nCategory: ${category}${context ? `\nWhat we know: ${context}` : ''}`,
+    120,
+  );
+}

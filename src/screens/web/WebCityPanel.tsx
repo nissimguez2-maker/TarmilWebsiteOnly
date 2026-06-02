@@ -21,7 +21,7 @@ import type { PlannedStop } from '../../data/plannedStops';
 import type { Place, PlaceCategory } from '../../data/places';
 import { aggregateSourceLabel, placeRankScore } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
-import { rewriteAsTravelIntro } from './groqApi';
+import { rewriteAsTravelIntro, rewritePlaceBlurb } from './groqApi';
 import { CITY_PHOTOS, useCityPhotos } from './cityPhotos';
 import type { WeatherCondition, WeatherDay } from './cityWeather';
 import { fetchWeather, type WeatherSource } from './weatherApi';
@@ -726,6 +726,32 @@ function PlaceCard({
   const status = existing?.status ?? null;
   const reservable = isReservable(place.category);
 
+  // Per-place blurb: generate warm copy ONLY for thin / non-curated places
+  // (global / OSM). Curated places keep their own editorial voice. Prose-only,
+  // cached forever via the ai-proxy; falls back to the base description, and the
+  // AiDisclosure label shows only when an AI blurb is actually used.
+  const baseDescription = place.englishDescription ?? '';
+  const wantBlurb =
+    (place.source != null && place.source !== 'curated') ||
+    baseDescription.length === 0;
+  const [blurb, setBlurb] = useState<string | null>(null);
+  useEffect(() => {
+    if (!wantBlurb) return;
+    let cancelled = false;
+    rewritePlaceBlurb(
+      place.id,
+      place.englishName,
+      place.category,
+      baseDescription || undefined,
+    ).then((b) => {
+      if (!cancelled && b) setBlurb(b);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [wantBlurb, place.id, place.englishName, place.category, baseDescription]);
+  const description = blurb ?? baseDescription;
+
   const onSave = () => {
     if (status === 'saved') {
       removePlace(stop.id, place.id);
@@ -809,7 +835,8 @@ function PlaceCard({
           </div>
         </div>
       </div>
-      <DescriptionWithMore text={place.englishDescription} />
+      {description && <DescriptionWithMore text={description} />}
+      {blurb && <AiDisclosure />}
       <div className="flex justify-end gap-sm">
         <Button variant="ghost" size="sm" onClick={onSave}>
           {status === 'saved' ? (
