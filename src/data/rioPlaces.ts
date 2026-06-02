@@ -25,12 +25,7 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Huge beach with stalls, football games and nonstop life on the promenade.',
     rating: 4.7,
-    friendsKnow: 12,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'M', friendName: 'Maya Levi', season: 'summer', year: 2024, durationLabel: 'a week' },
-      { friendInitial: 'Y', friendName: 'Yael Abraham', season: 'winter', year: 2025, durationLabel: 'two weeks' },
-    ],
   },
   {
     id: 'ipanema-beach',
@@ -45,13 +40,7 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Slightly calmer, cleaner beach with crazy sunsets and a slightly wilder sea.',
     rating: 4.8,
-    friendsKnow: 11,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'R', friendName: 'Roi Ben Ami', season: 'autumn', year: 2025, durationLabel: 'a weekend' },
-      { friendInitial: 'S', friendName: 'Shir Cohen', season: 'summer', year: 2024, durationLabel: 'a week' },
-      { friendInitial: 'D', friendName: 'Daniel Shemesh', season: 'spring', year: 2025, durationLabel: 'a week' },
-    ],
   },
   {
     id: 'leblon-beach',
@@ -66,7 +55,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'More upscale and quiet, feels like a north Tel Aviv neighborhood on the sea.',
     rating: 4.5,
-    friendsKnow: 6,
   },
   {
     id: 'barra-beach',
@@ -81,7 +69,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Endless stretch of sand with good surf waves, feels less touristy.',
     rating: 4.4,
-    friendsKnow: 4,
   },
   {
     id: 'praia-vermelha',
@@ -96,7 +83,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Small beach under Sugarloaf with calm water, perfect chill escape from the crowds.',
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'arpoador-beach',
@@ -111,7 +97,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       "Strongest sunset spot, everyone claps when the sun disappears.",
     rating: 4.8,
-    friendsKnow: 9,
     tarmilPick: true,
   },
   {
@@ -127,7 +112,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Not for swimming but insane bay and Sugarloaf views for Instagram shots.',
     rating: 4.3,
-    friendsKnow: 5,
   },
   {
     id: 'flamengo-beach',
@@ -142,7 +126,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Huge park by the beach with locals barbecuing, great for a morning run.',
     rating: 4.4,
-    friendsKnow: 4,
   },
   {
     id: 'grumari-beach',
@@ -157,7 +140,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Nature reserve with wild beach, feels like Brazil before Instagram.',
     rating: 4.7,
-    friendsKnow: 2,
     tarmilPick: true,
   },
   {
@@ -173,7 +155,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Hidden between cliffs, small beach that feels secret even though everyone knows it.',
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'niteroi-icarai',
@@ -188,7 +169,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'City beach in Niterói with great views of Rio from across the bay.',
     rating: 4.2,
-    friendsKnow: 2,
   },
   {
     id: 'buzios-geriba-beach',
@@ -203,7 +183,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Youthful Búzios beach with waves, music and all-day party vibes.',
     rating: 4.7,
-    friendsKnow: 5,
     tarmilPick: true,
   },
 
@@ -221,12 +200,7 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Homey hostel in Glória packed with Israelis on a budget and WhatsApp trip groups.',
     rating: 4.6,
-    friendsKnow: 14,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'D', friendName: 'Daniel Shemesh', season: 'autumn', year: 2024, durationLabel: 'two weeks' },
-      { friendInitial: 'M', friendName: 'Maya Levi', season: 'summer', year: 2024, durationLabel: 'a week' },
-    ],
   },
   {
     id: 'lemix-hostel',
@@ -241,7 +215,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Small Ipanema hostel a minute from the beach, lobby full of army stories.',
     rating: 4.5,
-    friendsKnow: 8,
   },
   {
     id: 'cabana-copa',
@@ -256,7 +229,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Classic Copacabana hostel with big kitchen and someone always knows another good trek.',
     rating: 4.5,
-    friendsKnow: 11,
     tarmilPick: true,
   },
   {
@@ -272,7 +244,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'More pampered area, feels safe, perfect for a soft landing in Rio.',
     rating: 4.4,
-    friendsKnow: 4,
   },
   {
     id: 'mojo-hostel',
@@ -287,7 +258,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Social Ipanema hostel with downstairs bar where Israelis team up for nights out.',
     rating: 4.4,
-    friendsKnow: 7,
   },
   {
     id: 'walk-on-beach',
@@ -302,7 +272,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Simple but lively hostel near the sea, solid base before longer trips.',
     rating: 4.3,
-    friendsKnow: 6,
   },
 
   // ─── Cafés ────────────────────────────────────────────────────────────
@@ -319,7 +288,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Old-school downtown cafe, feels like time travel while you smash cake.',
     rating: 4.7,
-    friendsKnow: 7,
     tarmilPick: true,
   },
   {
@@ -335,7 +303,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Tiny Santa Teresa cafe with green views, perfect for journaling backpack drama.',
     rating: 4.6,
-    friendsKnow: 4,
   },
   {
     id: 'curto-cafe',
@@ -350,7 +317,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Cool pay-what-you-want spot where you decide how much your espresso costs.',
     rating: 4.5,
-    friendsKnow: 3,
     tarmilPick: true,
   },
   {
@@ -366,7 +332,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Pre or post party coffee stop in Lapa full of backpackers from everywhere.',
     rating: 4.3,
-    friendsKnow: 5,
   },
   {
     id: 'brooklyn-cafe',
@@ -381,7 +346,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Neighborhood Ipanema cafe with New York vibe and solid wifi for planning routes.',
     rating: 4.5,
-    friendsKnow: 4,
   },
   {
     id: 'bibi-sucos',
@@ -396,7 +360,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Natural juices, açaí and sandwiches, quick fix after the beach hunger hits.',
     rating: 4.5,
-    friendsKnow: 9,
   },
 
   // ─── Restaurants ──────────────────────────────────────────────────────
@@ -413,7 +376,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Classic Brazilian joint where Israelis try feijoada and end up debating politics.',
     rating: 4.5,
-    friendsKnow: 4,
   },
   {
     id: 'boteco-belmonte',
@@ -428,7 +390,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Brazilian bar restaurant with cold beers and pastéis where Israelis linger for hours.',
     rating: 4.4,
-    friendsKnow: 6,
   },
 
   // ─── Bars ─────────────────────────────────────────────────────────────
@@ -445,7 +406,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       "Classic draft beer bar with occasional live music, good place to kick off the night.",
     rating: 4.3,
-    friendsKnow: 5,
   },
   {
     id: 'bar-astor-ipanema',
@@ -460,7 +420,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Beachfront bar with sunset views, cocktails pricey but the vibe pays for it.',
     rating: 4.4,
-    friendsKnow: 6,
   },
   {
     id: 'lapa-steps-bar',
@@ -475,7 +434,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Classic warmup spot before the street parties with music, beers and random foreigners.',
     rating: 4.3,
-    friendsKnow: 7,
   },
   {
     id: 'leviano-bar',
@@ -490,7 +448,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Lapa bar with live bands and samba, easy place to meet people and dancers.',
     rating: 4.5,
-    friendsKnow: 8,
   },
   {
     id: 'mureta-urca',
@@ -505,7 +462,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Sit on the wall with kiosk beer and perfect bay sunset views.',
     rating: 4.7,
-    friendsKnow: 6,
     tarmilPick: true,
   },
   {
@@ -521,7 +477,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Ipanema wine bar, Tuesdays packed with Israelis and locals fresh from the beach.',
     rating: 4.6,
-    friendsKnow: 9,
     tarmilPick: true,
   },
 
@@ -539,7 +494,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       "Huge three-floor samba club mixing tourists and locals dancing until stupid o'clock.",
     rating: 4.6,
-    friendsKnow: 8,
     tarmilPick: true,
   },
   {
@@ -555,7 +509,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Open-air concert venue with rock, reggae and electronic nights, super young crowd.',
     rating: 4.5,
-    friendsKnow: 7,
   },
   {
     id: 'fundicao-progresso',
@@ -570,7 +523,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Massive warehouse for parties and shows, explodes every Carnival and most weekends.',
     rating: 4.4,
-    friendsKnow: 6,
   },
   {
     id: 'fosfobox',
@@ -585,7 +537,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Underground Copacabana club with techno and indie, feels a bit like south Tel Aviv.',
     rating: 4.4,
-    friendsKnow: 5,
   },
 
   // ─── Chabad ───────────────────────────────────────────────────────────
@@ -602,7 +553,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Main Chabad house, Shabbat meals packed with Israelis and students from everywhere.',
     rating: 4.7,
-    friendsKnow: 9,
     tarmilPick: true,
   },
   {
@@ -618,7 +568,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Chabad near the beach, good spot to breathe some Judaism after a week of parties.',
     rating: 4.6,
-    friendsKnow: 6,
   },
 
   // ─── Kosher ───────────────────────────────────────────────────────────
@@ -635,7 +584,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Kosher Copacabana spot with Israeli style home food for when you miss mom.',
     rating: 4.5,
-    friendsKnow: 7,
     tarmilPick: true,
   },
   {
@@ -651,7 +599,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Kosher bistro inside the Jewish club, easy place to meet Israelis and local families.',
     rating: 4.4,
-    friendsKnow: 5,
   },
 
   // ─── Landmarks ────────────────────────────────────────────────────────
@@ -668,11 +615,7 @@ export const rioPlaces: Place[] = [
     englishDescription:
       "Rio's main icon, mandatory photo with arms stretched like the statue.",
     rating: 4.7,
-    friendsKnow: 13,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'T', friendName: 'Tom Friedman', season: 'autumn', year: 2025, durationLabel: 'a weekend' },
-    ],
   },
   {
     id: 'sugarloaf',
@@ -687,7 +630,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'A 360-degree view mountain with a cable car ride and sunsets that look CGI fake.',
     rating: 4.7,
-    friendsKnow: 9,
   },
   {
     id: 'lapa-arches',
@@ -702,7 +644,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'White aqueduct in Lapa that doubles as the meeting point for parties and blocos.',
     rating: 4.5,
-    friendsKnow: 8,
   },
   {
     id: 'selaron-steps',
@@ -717,7 +658,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Colorful tiled steps where everyone hunts for the Israel tile photo.',
     rating: 4.6,
-    friendsKnow: 10,
     tarmilPick: true,
   },
   {
@@ -733,7 +673,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Old mansion with a pool facing the forest, Instagram shots on full music-video level.',
     rating: 4.6,
-    friendsKnow: 5,
   },
   {
     id: 'pedra-gavea',
@@ -748,7 +687,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Hard hike with insane views of the city, Israelis always power up too fast.',
     rating: 4.7,
-    friendsKnow: 4,
   },
   {
     id: 'dois-irmaos',
@@ -763,7 +701,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Relatively short hike above Vidigal with crazy views over Ipanema and Leblon.',
     rating: 4.7,
-    friendsKnow: 6,
   },
   {
     id: 'santa-teresa',
@@ -778,7 +715,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Bohemian hill neighborhood with bars, graffiti and a cute yellow tram.',
     rating: 4.5,
-    friendsKnow: 7,
   },
   {
     id: 'museu-amanha',
@@ -793,7 +729,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Futuristic building on the water, chill sunset walk area by the port.',
     rating: 4.4,
-    friendsKnow: 3,
   },
   {
     id: 'mac-niteroi',
@@ -808,7 +743,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       "UFO-looking museum with ridiculous views back toward Rio's skyline.",
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'mirante-dona-marta',
@@ -823,7 +757,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Cheaper Cristo-style viewpoint with fewer lines and arguably better views.',
     rating: 4.6,
-    friendsKnow: 5,
   },
   {
     id: 'pedra-telegrafo',
@@ -838,7 +771,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Famous rock for fake cliff-hanging photos, queue of hardcore Instagram warriors.',
     rating: 4.4,
-    friendsKnow: 4,
   },
 
   // ─── Kosher & Jewish-friendly (merchant tiers) ──────────────────────────
@@ -855,7 +787,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Glatt grill two blocks off Copacabana. Badatz-certified, books up on Thursdays.',
     rating: 4.6,
-    friendsKnow: 7,
     paidPlacement: true,
     reservationUrl: 'https://wa.me/5521999990000',
   },
@@ -872,7 +803,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Tiny Ipanema bakery. Fresh challah on Fridays, queue starts before noon.',
     rating: 4.9,
-    friendsKnow: 9,
     tarmilPick: true,
   },
   {
@@ -888,7 +818,6 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Welcoming Copacabana shul. Shabbat services posted at the door, visitors fine.',
     rating: 4.7,
-    friendsKnow: 3,
   },
   {
     id: 'rio-mikveh-copacabana',
@@ -903,6 +832,5 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Clean, well-kept mikveh by appointment. Call ahead for evening hours.',
     rating: 4.5,
-    friendsKnow: 2,
   },
 ];

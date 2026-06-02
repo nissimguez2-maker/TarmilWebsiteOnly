@@ -34,21 +34,6 @@ export type PlaceCategory =
  */
 export type PlacementTier = 'sponsored' | 'selection';
 
-export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
-
-/**
- * One friend's past visit to this place, displayed at season+year+duration
- * resolution per the privacy posture (never specific dates).
- */
-export type FriendVisit = {
-  friendInitial: string;
-  friendName: string;
-  season: Season;
-  year: number;
-  /** Duration label, e.g. "two weeks", "a weekend". Rendered verbatim. */
-  durationLabel: string;
-};
-
 export type Place = {
   id: string;
   destinationId: string;
@@ -59,10 +44,8 @@ export type Place = {
   lng: number;
   hebrewDescription: string;
   englishDescription: string;
-  /** Tarmil community rating, 1–5. */
+  /** Curated editorial star rating, 1–5 — Tarmil's honest curation score. */
   rating: number;
-  /** Friends of the user who've been here. */
-  friendsKnow: number;
   /** Earned "Tarmil Selection" status (seed/DB: `tarmil_pick`). */
   tarmilPick?: boolean;
   /**
@@ -70,8 +53,6 @@ export type Place = {
    * read time. The sanctioned field for UI badges and ranking.
    */
   placementTier?: PlacementTier;
-  /** Friends' past visits, season+year+duration only. Default empty. */
-  friendVisits?: FriendVisit[];
   /** Public phone number for direct contact. Optional. */
   phone?: string;
   /** Reservation / contact URL — `tel:`, `https://wa.me/...`, or external link. */

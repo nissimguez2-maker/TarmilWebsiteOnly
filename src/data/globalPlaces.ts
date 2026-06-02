@@ -27,11 +27,7 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Sheltered horseshoe beach, calm water, a respite from party-Búzios.',
     rating: 4.7,
-    friendsKnow: 2,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'R', friendName: 'Roi Ben Ami', season: 'summer', year: 2025, durationLabel: 'a week' },
-    ],
   },
   {
     id: 'buzios-geriba-hostel',
@@ -46,7 +42,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Hostel near the surf beach, classic Brazil vibe.',
     rating: 4.3,
-    friendsKnow: 1,
   },
 
   // ─── São Paulo ───────────────────────────────────────────────────────
@@ -63,7 +58,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Classic Vila Madalena backpacker hostel, loaded with Israelis pre-north trip.',
     rating: 4.5,
-    friendsKnow: 7,
     tarmilPick: true,
   },
   {
@@ -79,7 +73,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Close to Paulista and metro, cheap comfortable base for errands in the city.',
     rating: 4.2,
-    friendsKnow: 3,
   },
   {
     id: 'brazilodge-hostel',
@@ -94,7 +87,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Organized Vila Mariana hostel, less party, more rest and supermarkets.',
     rating: 4.3,
-    friendsKnow: 2,
   },
   {
     id: 'casa-azul-hostel',
@@ -109,7 +101,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Quieter option with comfy rooms after a heavy Paulista night.',
     rating: 4.4,
-    friendsKnow: 1,
   },
   {
     id: 'sova-rest',
@@ -124,7 +115,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Jewish-Israeli food spot and bakery, gives strong Dizengoff pedestrian vibes.',
     rating: 4.5,
-    friendsKnow: 5,
     tarmilPick: true,
   },
   {
@@ -140,7 +130,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Cafe restaurant with Israel style food, Hebrew everywhere in Bom Retiro.',
     rating: 4.4,
-    friendsKnow: 4,
   },
   {
     id: 'emporium-brasil-israel',
@@ -155,7 +144,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Kosher style deli with schnitzel, challahs and Israeli snacks for the backpack.',
     rating: 4.3,
-    friendsKnow: 3,
   },
   {
     id: 'bubbeleh-delishop',
@@ -170,7 +158,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Israeli spot in Pinheiros serving hummus, falafel and sabich with Tel Aviv vibe.',
     rating: 4.6,
-    friendsKnow: 6,
   },
   {
     id: 'armazem-muszkat',
@@ -185,7 +172,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: "Family style Jewish kitchen, feels like dropping into a Friday dinner at your aunt's.",
     rating: 4.5,
-    friendsKnow: 2,
   },
   {
     id: 'jardins-cafe',
@@ -200,7 +186,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Chill cafe near Paulista with good wifi to sort flights and bus chaos.',
     rating: 4.2,
-    friendsKnow: 2,
   },
   {
     id: 'vila-madalena-cafe',
@@ -215,7 +200,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Hipster cafe where locals and backpackers share the bar and absurdly good coffee.',
     rating: 4.7,
-    friendsKnow: 4,
     tarmilPick: true,
   },
   {
@@ -231,7 +215,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Typical Brazilian boteco with cold beers and pastéis after wandering Pinheiros.',
     rating: 4.3,
-    friendsKnow: 3,
   },
   {
     id: 'bar-samba',
@@ -246,7 +229,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Lively Vila Madalena samba bar where Israelis try to keep up with the steps.',
     rating: 4.6,
-    friendsKnow: 5,
     tarmilPick: true,
   },
   {
@@ -262,7 +244,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Huge samba venue with tables and shows, Carnival feeling without leaving São Paulo.',
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'batman-alley',
@@ -277,7 +258,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Colorful graffiti alley where backpackers grind endless Instagram shoots.',
     rating: 4.5,
-    friendsKnow: 8,
     tarmilPick: true,
   },
   {
@@ -293,7 +273,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Main avenue with museums, street shows and whole evenings of just wandering.',
     rating: 4.4,
-    friendsKnow: 9,
   },
   {
     id: 'masp-museum',
@@ -308,7 +287,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Museum with the floating building and weekend antique market underneath.',
     rating: 4.6,
-    friendsKnow: 5,
     tarmilPick: true,
   },
   {
@@ -324,7 +302,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: "City's main park for runs, hammocks, picnics and just collapsing on the grass.",
     rating: 4.7,
-    friendsKnow: 6,
   },
   {
     id: 'se-cathedral',
@@ -339,7 +316,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: "Central square stop to feel the city's rougher side for a bit.",
     rating: 4.0,
-    friendsKnow: 2,
   },
   {
     id: 'municipal-market',
@@ -354,7 +330,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Huge market with fruit juices and the iconic mortadella sandwich sample stop.',
     rating: 4.4,
-    friendsKnow: 3,
   },
   {
     id: 'pinacoteca',
@@ -369,7 +344,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Chill art museum near Luz station, decent break from the street noise.',
     rating: 4.5,
-    friendsKnow: 1,
   },
   {
     id: 'copan-building',
@@ -384,7 +358,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Iconic wavy building where Israelis hit the rooftop for downtown sunsets.',
     rating: 4.6,
-    friendsKnow: 4,
     tarmilPick: true,
   },
   {
@@ -400,7 +373,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Urban viewpoint just off Paulista with graffiti, coffee and occasional events.',
     rating: 4.4,
-    friendsKnow: 2,
   },
   {
     id: 'altino-arantes',
@@ -415,7 +387,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'High floor viewpoint with 360 downtown views, perfect on a cloudy morning.',
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'liberdade-gates',
@@ -430,7 +401,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Gate into the Japanese neighborhood with street stalls and cheap Asian fast food.',
     rating: 4.3,
-    friendsKnow: 4,
   },
   {
     id: 'chabad-israelis-sp',
@@ -445,7 +415,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: "Chabad for Israelis with Hebrew talks and classic 'what after the trip' debates.",
     rating: 4.5,
-    friendsKnow: 4,
   },
   {
     id: 'beit-chabad-brasil',
@@ -460,7 +429,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Central Chabad house with huge Friday kiddush and endless Shabbat meal invites.',
     rating: 4.6,
-    friendsKnow: 6,
     tarmilPick: true,
   },
   {
@@ -476,7 +444,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'More chilled religious community, good if you want a minyan and family vibe.',
     rating: 4.4,
-    friendsKnow: 1,
   },
   {
     id: 'kosher-bom-retiro',
@@ -491,7 +458,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Classic Jewish area joint, homestyle kosher food priced fine for hungry backpackers.',
     rating: 4.3,
-    friendsKnow: 2,
   },
   {
     id: 'sova-kosher',
@@ -506,7 +472,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Kosher Sová version, ideal for schnitzel and mash after Carnival or red eye.',
     rating: 4.5,
-    friendsKnow: 4,
   },
   {
     id: 'emporium-kosher',
@@ -521,7 +486,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Kosher deli with takeaway dishes, everyone fills boxes before long night buses.',
     rating: 4.4,
-    friendsKnow: 3,
   },
 
   // ─── Jericoacoara ────────────────────────────────────────────────────
@@ -538,7 +502,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Central Jeri hostel with hammocks and Israelis swapping army stories.',
     rating: 4.4,
-    friendsKnow: 5,
     tarmilPick: true,
   },
   {
@@ -554,7 +517,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Social hostel with a small yard bar, base for dune and sandbuggy missions.',
     rating: 4.5,
-    friendsKnow: 4,
   },
   {
     id: 'raiz-hostel-jeri',
@@ -569,7 +531,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'More party oriented hostel, music late, perfect if you came to move.',
     rating: 4.3,
-    friendsKnow: 3,
   },
   {
     id: 'latapera-jeri',
@@ -584,7 +545,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Chilled hostel, slightly calmer, good for a few nights recovering from the wind.',
     rating: 4.4,
-    friendsKnow: 2,
   },
   {
     id: 'jeri-main-beach',
@@ -599,11 +559,7 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Main beach with kitesurf, chairs, caipirinhas and Israelis with mandolins.',
     rating: 4.8,
-    friendsKnow: 9,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'I', friendName: 'Itay Lotem', season: 'winter', year: 2024, durationLabel: 'a week' },
-    ],
   },
   {
     id: 'duna-por-do-sol',
@@ -618,12 +574,7 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Climb barefoot to the dune, everyone claps when the sun disappears.',
     rating: 4.8,
-    friendsKnow: 8,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'H', friendName: 'Yotam Harari', season: 'autumn', year: 2024, durationLabel: 'a week' },
-      { friendInitial: 'N', friendName: 'Noa Green', season: 'summer', year: 2023, durationLabel: 'two weeks' },
-    ],
   },
   {
     id: 'pedra-furada',
@@ -638,7 +589,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Famous rock arch with a queue for cheesy couple sunset photos.',
     rating: 4.6,
-    friendsKnow: 5,
   },
   {
     id: 'lagoon-paradise',
@@ -653,7 +603,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Turquoise lagoon with hammocks in the water, full day of chilling and photos.',
     rating: 4.7,
-    friendsKnow: 6,
     tarmilPick: true,
   },
   {
@@ -669,7 +618,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Sandy square of bars and stalls everyone crosses like five times a night.',
     rating: 4.4,
-    friendsKnow: 3,
   },
   {
     id: 'minha-moca-cafe',
@@ -684,7 +632,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Comfort brunch spot with toasts, good coffee and decent wifi for booking next flights.',
     rating: 4.5,
-    friendsKnow: 2,
   },
   {
     id: 'jeri-ju-cafe',
@@ -699,7 +646,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Small main street cafe with smoothies, açaí and Israelis glued to laptops.',
     rating: 4.3,
-    friendsKnow: 1,
   },
   {
     id: 'cocoanuts-jeri',
@@ -714,7 +660,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Over the top açaí bowls, perfect reward after a windy sand-in-eyes day.',
     rating: 4.4,
-    friendsKnow: 2,
   },
   {
     id: 'naturalmente-creperia',
@@ -729,7 +674,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Huge crepes right on the sand, sea view and mellow tunes into the night.',
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'do-bem-jeri',
@@ -744,7 +688,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Slightly healthier spot with bowls and fish for when you miss real veggies.',
     rating: 4.4,
-    friendsKnow: 2,
   },
   {
     id: 'nomads-jeri',
@@ -759,7 +702,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Restobar with music and crowd, classic base before heading to the parties.',
     rating: 4.3,
-    friendsKnow: 3,
   },
   {
     id: 'maui-restobar',
@@ -774,7 +716,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Beachfront bar with jar cocktails and barefoot dancing in the sand.',
     rating: 4.4,
-    friendsKnow: 2,
   },
   {
     id: 'forro-de-jangada',
@@ -789,7 +730,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Forró party with live band, everyone learning steps from smiling locals.',
     rating: 4.6,
-    friendsKnow: 4,
     tarmilPick: true,
   },
   {
@@ -805,7 +745,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Line of street bars, cheap drinks, loud volume and hard sell to random Serbians.',
     rating: 4.2,
-    friendsKnow: 5,
   },
   {
     id: 'jeri-kite-point',
@@ -820,7 +759,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Beach stretch full of kites in the sky, perfect sunset watching session.',
     rating: 4.7,
-    friendsKnow: 4,
   },
   {
     id: 'jeri-main-drag',
@@ -835,7 +773,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Sandy street lined with bars and restaurants, everything five minutes from your bed.',
     rating: 4.4,
-    friendsKnow: 6,
   },
   {
     id: 'jeri-lighthouse',
@@ -850,7 +787,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Easy climb with 360 views over dunes, sea and the tiny village.',
     rating: 4.5,
-    friendsKnow: 2,
   },
 
   // ─── Buenos Aires ───────────────────────────────────────────────────
@@ -867,7 +803,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Israeli house in Palermo, everything in Hebrew, feels like a Tel Aviv flatshare.',
     rating: 4.6,
-    friendsKnow: 5,
     tarmilPick: true,
   },
   {
@@ -883,7 +818,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Big San Telmo hostel full of backpackers, classic starting point for city exploring.',
     rating: 4.5,
-    friendsKnow: 7,
   },
   {
     id: 'milhouse-avenida',
@@ -898,11 +832,7 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Downtown party hostel with tours and bar, Israelis instantly fall for Buenos Aires.',
     rating: 4.4,
-    friendsKnow: 8,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'T', friendName: 'Tom Friedman', season: 'autumn', year: 2025, durationLabel: 'a weekend' },
-    ],
   },
   {
     id: 'rayuela-hostel',
@@ -917,7 +847,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Smaller homely hostel, more intimate, kitchen chats run until 3am.',
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'obelisco-ba',
@@ -932,7 +861,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Central meeting point where everyone meets up before heading to Florida Street.',
     rating: 4.5,
-    friendsKnow: 9,
   },
   {
     id: 'plaza-de-mayo',
@@ -947,7 +875,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Square by Casa Rosada with protests, politics and history in every corner.',
     rating: 4.4,
-    friendsKnow: 6,
   },
   {
     id: 'puerto-madero',
@@ -962,7 +889,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Modern riverfront for runs, photos and Puente de la Mujer cliché shots.',
     rating: 4.5,
-    friendsKnow: 5,
   },
   {
     id: 'san-telmo-market',
@@ -977,12 +903,7 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Sunday antique market with street music and endless stickers for your backpack.',
     rating: 4.7,
-    friendsKnow: 7,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'T', friendName: 'Tom Friedman', season: 'autumn', year: 2025, durationLabel: 'a weekend' },
-      { friendInitial: 'D', friendName: 'Daniel Shemesh', season: 'winter', year: 2025, durationLabel: 'a weekend' },
-    ],
   },
   {
     id: 'la-boca',
@@ -997,7 +918,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Colorful street with tango shows, super touristy but great photos for army WhatsApp.',
     rating: 4.3,
-    friendsKnow: 8,
   },
   {
     id: 'recoleta-cemetery',
@@ -1012,7 +932,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Cemetery like a mini city, packed with wild stories, best done with a guide.',
     rating: 4.6,
-    friendsKnow: 5,
   },
   {
     id: 'palermo-parks',
@@ -1027,7 +946,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Lakes and lawns for runs and mate, feels like Park Hayarkon with extra tango.',
     rating: 4.7,
-    friendsKnow: 4,
     tarmilPick: true,
   },
   {
@@ -1043,7 +961,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Central Palermo square ringed by bars and vintage shops, everyone starts nights here.',
     rating: 4.4,
-    friendsKnow: 6,
   },
   {
     id: 'avenida-corrientes',
@@ -1058,7 +975,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Theater and pizza avenue, classic night walk after a show or football match.',
     rating: 4.3,
-    friendsKnow: 3,
   },
   {
     id: 'floralis-generica',
@@ -1073,7 +989,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Giant metal flower that opens by day, nice picnic plus quick museum hop.',
     rating: 4.5,
-    friendsKnow: 3,
   },
   {
     id: 'palacio-barolo',
@@ -1088,7 +1003,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Old building with night viewpoint where the guide ties everything to Dante.',
     rating: 4.6,
-    friendsKnow: 2,
   },
   {
     id: 'palermo-soho-streets',
@@ -1103,7 +1017,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Graffiti, designer shops and cocktail bars, basically Florentin on steroids.',
     rating: 4.6,
-    friendsKnow: 7,
   },
   {
     id: 'avenida-9dejulio',
@@ -1118,7 +1031,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Super wide avenue with the Obelisk, feels like the city never ends in depth.',
     rating: 4.4,
-    friendsKnow: 4,
   },
   {
     id: 'chabad-recoleta',
@@ -1133,7 +1045,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Chabad by Recoleta with Shabbat meals full of Israelis and Spanish speaking students.',
     rating: 4.6,
-    friendsKnow: 5,
   },
   {
     id: 'chabad-palermo',
@@ -1148,11 +1059,7 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Neighborhood Chabad with minyanim, homely meals and endless invites for chagim.',
     rating: 4.5,
-    friendsKnow: 6,
     tarmilPick: true,
-    friendVisits: [
-      { friendInitial: 'I', friendName: 'Itay Lotem', season: 'autumn', year: 2024, durationLabel: 'two weeks' },
-    ],
   },
   {
     id: 'chabad-downtown',
@@ -1167,7 +1074,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Central Chabad spot, easy to pop in before or after walking the city.',
     rating: 4.4,
-    friendsKnow: 3,
   },
   {
     id: 'eretz-cantina',
@@ -1182,7 +1088,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Israeli Palermo restaurant with hummus, shawarma and Mizrahi music in the background.',
     rating: 4.5,
-    friendsKnow: 4,
   },
   {
     id: 'hola-jacoba',
@@ -1197,7 +1102,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Modern Jewish bistro with pastrami, cocktails and locals curious about Israel.',
     rating: 4.4,
-    friendsKnow: 2,
   },
   {
     id: 'murcielaga-kosher',
@@ -1212,7 +1116,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Argentinian style kosher steak, finally proper asado without guilt.',
     rating: 4.6,
-    friendsKnow: 4,
     tarmilPick: true,
   },
   {
@@ -1228,7 +1131,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Central kosher pizza, perfect cheap dinner solution after a museum marathon.',
     rating: 4.3,
-    friendsKnow: 3,
   },
   {
     id: 'sucath-david',
@@ -1243,7 +1145,6 @@ export const globalPlaces: Place[] = [
 
     englishDescription: 'Kosher bakery with burekas, challahs and cakes to haul back to the hostel.',
     rating: 4.5,
-    friendsKnow: 2,
   },
 
   // ─── Buenos Aires · kosher & Jewish-friendly (merchant tiers) ───────────
@@ -1260,7 +1161,6 @@ export const globalPlaces: Place[] = [
     englishDescription:
       'Proper kosher asado in Once. Order the bife de chorizo, thank me later.',
     rating: 4.8,
-    friendsKnow: 11,
     tarmilPick: true,
   },
   {
@@ -1276,6 +1176,5 @@ export const globalPlaces: Place[] = [
     englishDescription:
       'Historic Once synagogue. Worth a visit; bring ID for the security desk.',
     rating: 4.7,
-    friendsKnow: 4,
   },
 ];

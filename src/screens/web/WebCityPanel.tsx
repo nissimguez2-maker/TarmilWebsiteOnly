@@ -11,12 +11,11 @@ import {
   ExternalLink,
   Star,
   Sun,
-  Users,
 } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { PlacementBadge } from '../../components/PlacementBadge';
 import type { PlannedStop } from '../../data/plannedStops';
-import type { FriendVisit, Place, PlaceCategory } from '../../data/places';
+import type { Place, PlaceCategory } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
 import { rewriteAsTravelIntro } from './groqApi';
 import { useCityPhotos } from './cityPhotos';
@@ -304,11 +303,8 @@ function filterAndSortPlaces(
   const inTab = places.filter((p) => tabCategories.includes(p.category));
   const filtered =
     subFilter === 'all' ? inTab : inTab.filter((p) => p.category === subFilter);
-  return [...filtered].sort((a, b) => {
-    const friendsDiff = b.friendsKnow - a.friendsKnow;
-    if (friendsDiff !== 0) return friendsDiff;
-    return b.rating - a.rating;
-  });
+  // Curated editorial rating drives order — no fabricated social signal.
+  return [...filtered].sort((a, b) => b.rating - a.rating);
 }
 
 function OverviewTab({ stop }: { stop: PlannedStop }) {
@@ -752,12 +748,6 @@ function PlaceCard({
               <Star size={12} strokeWidth={2} fill="currentColor" />
               {place.rating.toFixed(1)}
             </span>
-            {place.friendsKnow > 0 && (
-              <FriendCluster
-                count={place.friendsKnow}
-                visits={place.friendVisits}
-              />
-            )}
             <span className="text-meta uppercase text-charcoal-70">
               {place.category}
             </span>
@@ -794,37 +784,6 @@ function PlaceCard({
         )}
       </div>
     </article>
-  );
-}
-
-function FriendCluster({
-  count,
-  visits,
-}: {
-  count: number;
-  visits?: FriendVisit[];
-}) {
-  const initials = (visits ?? []).slice(0, 3);
-  return (
-    <span className="inline-flex items-center gap-xs text-small text-charcoal-70">
-      {initials.length > 0 ? (
-        <span className="flex items-center -space-x-2">
-          {initials.map((v, i) => (
-            <span
-              key={`${v.friendInitial}-${i}`}
-              aria-hidden="true"
-              className="h-5 w-5 rounded-full bg-charcoal text-cream text-meta font-medium flex items-center justify-center border border-cream"
-              title={v.friendName}
-            >
-              {v.friendInitial}
-            </span>
-          ))}
-        </span>
-      ) : (
-        <Users size={12} strokeWidth={2} />
-      )}
-      {count}
-    </span>
   );
 }
 
