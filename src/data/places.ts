@@ -1,11 +1,14 @@
 /**
- * Place — a curated venue (beach, hostel, café, bar, etc.) anchored to one
- * destination (city or region). Mirrors the `places` table in Supabase.
+ * Place — a venue (beach, hostel, café, bar, landmark…) anchored to one
+ * destination (city). The curated seed (`source: 'curated'`, the default) lives
+ * in `rioPlaces.ts` + `globalPlaces.ts` and is loaded at runtime by
+ * SupabaseDataProvider as `[...rioPlaces, ...globalPlaces]`.
  *
- * Every place belongs to exactly one destination. Today's destinations are
- * `rio-de-janeiro`, `sao-paulo`, `buenos-aires`, `jericoacoara`, `buzios`.
- * `destination_id` matches `planned_stops.id` for cities the user plans to
- * visit; for the user's *current* city (Rio) it's a free-standing string.
+ * `destinationId` matches an addable-city / planned-stop id. As the platform
+ * scales worldwide, places also arrive from non-curated sources (OSM, Wikidata,
+ * Google, Foursquare, Travelpayouts), normalized up into this same shape with
+ * curated always winning the merge. The provenance + enrichment fields below all
+ * default to "curated-shaped", so existing seed data is unchanged.
  */
 
 export type PlaceCategory =
@@ -45,17 +48,57 @@ export function derivePlacementTier(p: {
   return undefined;
 }
 
+/**
+ * Origin of a place record. Absent ⇒ 'curated' (back-compat: all seed data).
+ */
+export type PlaceSource =
+  | 'curated'
+  | 'osm'
+  | 'wikidata'
+  | 'google'
+  | 'foursquare'
+  | 'travelpayouts';
+
+/** Cross-source external IDs — join keys for de-dup, enrichment, and ToS retention. */
+export type PlaceRefs = {
+  /** OSM element, e.g. "node/123" (ODbL — free to store). */
+  osmId?: string;
+  /** Wikidata QID, e.g. "Q243" (CC0). */
+  wikidataId?: string;
+  /** Google place_id — the ONLY Google field we may persist long-term. */
+  googlePlaceId?: string;
+  /** Foursquare fsq_id. */
+  fsqId?: string;
+};
+
+/**
+ * A third-party AGGREGATE rating, kept in its own slot so it can NEVER be
+ * rendered as Tarmil's editorial gold star (`rating`). The honesty firewall by
+ * construction: editorial = `rating`; third-party = here, shown quiet + attributed.
+ */
+export type AggregateRating = {
+  value: number;
+  source: 'google' | 'foursquare' | 'tripadvisor';
+  count?: number;
+};
+
 export type Place = {
   id: string;
   destinationId: string;
-  hebrewName: string;
+  /** Hebrew name + description are optional — non-curated global sources are
+   *  English-only, and the UI is English-only this phase (i18n-ready). */
+  hebrewName?: string;
   englishName: string;
   category: PlaceCategory;
   lat: number;
   lng: number;
-  hebrewDescription: string;
+  hebrewDescription?: string;
   englishDescription: string;
-  /** Curated editorial star rating, 1–5 — Tarmil's honest curation score. */
+  /**
+   * Tarmil's editorial star rating, 1–5 — the honest curation score, and the
+   * ONLY rating that renders as the gold star. Third-party aggregate scores go
+   * in `aggregateRating`, never here (the honesty firewall, by construction).
+   */
   rating: number;
   /** Earned "Tarmil Selection" status (seed/DB: `tarmil_pick`). */
   tarmilPick?: boolean;
@@ -76,4 +119,30 @@ export type Place = {
    * directory entries opt in.
    */
   paidPlacement?: boolean;
+
+  // ── Provenance & enrichment (the global-content layer) ──────────────────────
+  // All optional; absent ⇒ a curated, editorial-rated place (the seed default),
+  // so existing data is unchanged and TypeScript-strict stays clean.
+  /** Record origin. Absent ⇒ 'curated' (originated in the in-repo seed). */
+  source?: PlaceSource;
+  /** Cross-source external IDs (de-dup + enrichment + the stable-id contract). */
+  refs?: PlaceRefs;
+  /** Third-party aggregate rating — rendered quiet + attributed, never the gold star. */
+  aggregateRating?: AggregateRating;
+  /** Required source attribution to display (e.g. "© OpenStreetMap contributors"). */
+  attribution?: string;
+  /** Opening hours, normalized weekday → string. */
+  hours?: Partial<
+    Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', string>
+  >;
+  /** Price level 1–4 (Google/Foursquare convention). */
+  priceLevel?: 1 | 2 | 3 | 4;
+  /** Extra gallery images beyond the hero `imageUrl`. */
+  gallery?: string[];
+  /** True once premium (Google/Foursquare) enrichment has been merged in. */
+  enriched?: boolean;
+  /** ISO timestamp of last premium enrichment — drives cache TTL / refresh. */
+  enrichedAt?: string;
+  /** ISO timestamp this place was last seen in a source — freshness vs. closures. */
+  verifiedAt?: string;
 };
