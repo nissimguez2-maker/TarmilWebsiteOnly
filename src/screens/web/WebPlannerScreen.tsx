@@ -13,6 +13,8 @@ import { WebToastLayer } from './WebToast';
 import { WebPhotoLightbox } from './WebPhotoLightbox';
 import { WebBookingSheet } from './WebBookingSheet';
 import { DEFAULT_HOME, loadHome, saveHome, type HomeCity } from './homeCity';
+import { loadStops, saveStops } from './tripStorage';
+import type { AddableCity } from './addableCities';
 import {
   addStop as addStopMut,
   editStopDates as editStopDatesMut,
@@ -23,7 +25,10 @@ import type { Selection } from './types';
 
 export function WebPlannerScreen() {
   const { data, loading, error } = useSupabaseData();
-  const [localStops, setLocalStops] = useState<PlannedStop[] | null>(null);
+  const [localStops, setLocalStops] = useState<PlannedStop[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return loadStops([]);
+  });
   const [home, setHome] = useState<HomeCity>(() => {
     if (typeof window === 'undefined') return DEFAULT_HOME;
     return loadHome();
@@ -32,11 +37,11 @@ export function WebPlannerScreen() {
   const [addStopOpen, setAddStopOpen] = useState(false);
   const [homeEditorOpen, setHomeEditorOpen] = useState(false);
 
+  // Persist the trip to localStorage so a returning visitor resumes it
+  // (no backend this phase).
   useEffect(() => {
-    if (data && localStops === null) {
-      setLocalStops(data.plannedStops);
-    }
-  }, [data, localStops]);
+    saveStops(localStops);
+  }, [localStops]);
 
   useEffect(() => {
     saveHome(home);
@@ -60,8 +65,12 @@ export function WebPlannerScreen() {
   if (loading) return <WebPlannerSkeleton />;
   if (error || !data) return <ErrorPanel error={error} />;
 
-  const stops = localStops ?? data.plannedStops;
+  const stops = localStops;
   const places = data.places;
+
+  const handleAddStopDirect = (city: AddableCity) => {
+    setLocalStops((prev) => addStopMut(prev, city));
+  };
 
   const handleReorder = (fromIdx: number, toIdx: number) => {
     setLocalStops((prev) =>
@@ -106,6 +115,7 @@ export function WebPlannerScreen() {
             onRemoveStop={handleRemove}
             onEditDates={handleEditDates}
             onEditHome={() => setHomeEditorOpen(true)}
+            onAddStopDirect={handleAddStopDirect}
           />
           <div className="flex-1 relative min-h-0">
             <WebMapCanvas

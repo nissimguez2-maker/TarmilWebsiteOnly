@@ -63,6 +63,7 @@ import { showToast } from './WebToast';
 import { WebRemoveStopConfirm } from './WebRemoveStopConfirm';
 import { WebItineraryOverlay } from './WebItineraryOverlay';
 import type { Selection } from './types';
+import { ADDABLE_CITIES, type AddableCity } from './addableCities';
 
 type Props = {
   stops: PlannedStop[];
@@ -74,7 +75,51 @@ type Props = {
   onRemoveStop: (id: string) => void;
   onEditDates: (id: string, arrivalIso: string, departureIso: string) => void;
   onEditHome: () => void;
+  onAddStopDirect: (city: AddableCity) => void;
 };
+
+/** First-run quick-start: a prompt + the suggested starter cities (one tap to add). */
+function QuickStartEmpty({
+  onAddCity,
+}: {
+  onAddCity: (city: AddableCity) => void;
+}) {
+  return (
+    <div className="mx-md my-md rounded-2xl border border-charcoal-15 bg-sand p-md flex flex-col gap-md">
+      <div className="flex flex-col gap-xs">
+        <p className="font-serif text-lede text-charcoal">Add your first city</p>
+        <p className="text-small text-charcoal-70">
+          Pick a starter below, or search for anywhere you like.
+        </p>
+      </div>
+      <ul className="flex flex-col gap-sm">
+        {ADDABLE_CITIES.map((city) => (
+          <li key={city.id}>
+            <button
+              type="button"
+              onClick={() => onAddCity(city)}
+              className="w-full text-start rounded-xl border border-charcoal-15 bg-cream p-sm flex items-center gap-sm hover:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+            >
+              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-charcoal text-cream">
+                <Plus size={14} strokeWidth={2} />
+              </span>
+              <span className="flex min-w-0 flex-col">
+                <span className="text-small font-medium text-charcoal truncate">
+                  {city.nameEn}
+                </span>
+                {city.blurb && (
+                  <span className="text-small text-charcoal-70 truncate">
+                    {city.blurb}
+                  </span>
+                )}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function WebStopList({
   stops,
@@ -86,6 +131,7 @@ export function WebStopList({
   onRemoveStop,
   onEditDates,
   onEditHome,
+  onAddStopDirect,
 }: Props) {
   useWishlist();
   const [detailOpen, setDetailOpen] = useState(false);
@@ -281,6 +327,9 @@ export function WebStopList({
             </ol>
           </SortableContext>
         </DndContext>
+          {stops.length === 0 && (
+            <QuickStartEmpty onAddCity={onAddStopDirect} />
+          )}
           {lastStop && (
             <LegRow
               from={lastStop}
