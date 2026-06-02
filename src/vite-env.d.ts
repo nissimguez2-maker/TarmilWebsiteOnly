@@ -11,6 +11,10 @@ interface ImportMetaEnv {
    * warmer copy. Without it, intros fall back to raw Wikipedia text.
    */
   readonly VITE_GROQ_API_KEY?: string;
+  /** Supabase project URL — enables anonymous server-side trip storage. */
+  readonly VITE_SUPABASE_URL?: string;
+  /** Supabase anon / publishable key (public, RLS-protected). */
+  readonly VITE_SUPABASE_ANON_KEY?: string;
 }
 
 interface ImportMeta {

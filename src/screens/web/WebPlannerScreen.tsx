@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSupabaseData } from '../../lib/SupabaseDataProvider';
 import { ErrorPanel } from '../../components/DataState';
 import type { PlannedStop } from '../../data/plannedStops';
@@ -14,6 +14,7 @@ import { WebPhotoLightbox } from './WebPhotoLightbox';
 import { WebBookingSheet } from './WebBookingSheet';
 import { DEFAULT_HOME, loadHome, saveHome, type HomeCity } from './homeCity';
 import { loadStops, saveStops } from './tripStorage';
+import { ensureAnonUser, fetchServerTrip, pushServerTrip } from './tripSync';
 import { routeCities, type StarterRoute } from './starterRoutes';
 import {
   addStop as addStopMut,
@@ -38,8 +39,18 @@ export function WebPlannerScreen() {
   const [addStopOpen, setAddStopOpen] = useState(false);
   const [homeEditorOpen, setHomeEditorOpen] = useState(false);
 
-  // Persist the trip to localStorage so a returning visitor resumes it
-  // (no backend this phase).
+  // Latest values for the async server sync (avoids stale closures).
+  const localStopsRef = useRef(localStops);
+  const homeRef = useRef(home);
+  const serverReadyRef = useRef(false);
+  useEffect(() => {
+    localStopsRef.current = localStops;
+  }, [localStops]);
+  useEffect(() => {
+    homeRef.current = home;
+  }, [home]);
+
+  // localStorage is the instant, offline-safe cache.
   useEffect(() => {
     saveStops(localStops);
   }, [localStops]);
@@ -47,6 +58,38 @@ export function WebPlannerScreen() {
   useEffect(() => {
     saveHome(home);
   }, [home]);
+
+  // Supabase is the durable, server-side copy under an anonymous user (table
+  // web_trips). On first load: if the server has a trip, it wins; otherwise we
+  // seed it from local. Degrades silently to localStorage-only when Supabase is
+  // unconfigured or anonymous sign-ins are disabled.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const uid = await ensureAnonUser();
+      if (!uid || cancelled) return;
+      const server = await fetchServerTrip();
+      if (cancelled) return;
+      if (server && server.stops.length > 0) {
+        setLocalStops(server.stops);
+        if (server.home) setHome(server.home);
+      } else {
+        await pushServerTrip(localStopsRef.current, homeRef.current);
+      }
+      serverReadyRef.current = true;
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!serverReadyRef.current) return;
+    const t = setTimeout(() => {
+      void pushServerTrip(localStops, home);
+    }, 800);
+    return () => clearTimeout(t);
+  }, [localStops, home]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
