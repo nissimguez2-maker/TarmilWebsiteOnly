@@ -18,23 +18,33 @@ export function PlacementExplainer({ className }: { className?: string }) {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        // Consume Escape so the planner's global handler doesn't also close the
+        // whole city panel — just dismiss the popover and restore focus.
+        e.stopPropagation();
         setOpen(false);
         triggerRef.current?.focus();
       }
     };
-    const onClick = (e: MouseEvent) => {
+    const onPointer = (e: PointerEvent) => {
       if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onClick);
+    document.addEventListener('pointerdown', onPointer);
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('pointerdown', onPointer);
     };
   }, [open]);
 
   return (
-    <div ref={wrapRef} className={clsx('relative', className)}>
+    <div
+      ref={wrapRef}
+      className={clsx('relative', className)}
+      onBlur={(e) => {
+        // Keyboard tab-away closes the disclosure (its content isn't focusable).
+        if (!wrapRef.current?.contains(e.relatedTarget as Node)) setOpen(false);
+      }}
+    >
       <button
         ref={triggerRef}
         type="button"
@@ -50,10 +60,6 @@ export function PlacementExplainer({ className }: { className?: string }) {
       {open && (
         <div
           id={panelId}
-          role="dialog"
-          aria-modal="false"
-          aria-labelledby={`${panelId}-title`}
-          tabIndex={-1}
           style={{ width: 'min(20rem, calc(100vw - 2rem))' }}
           className={clsx(
             'absolute end-0 top-full mt-xs z-20 text-start',
@@ -61,10 +67,7 @@ export function PlacementExplainer({ className }: { className?: string }) {
             'flex flex-col gap-sm',
           )}
         >
-          <h4
-            id={`${panelId}-title`}
-            className="text-small font-medium text-charcoal"
-          >
+          <h4 className="text-small font-medium text-charcoal">
             How we label places
           </h4>
           <p className="text-small text-charcoal-70 leading-snug">
