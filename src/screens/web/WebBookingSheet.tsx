@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Check, ChevronRight, X } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { OperatorMark } from '../../components/OperatorMark';
@@ -66,11 +66,54 @@ export function WebBookingSheet() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeBookingSheet();
+      // Consume Escape so the planner's global handler doesn't also close the
+      // city panel underneath — just dismiss the sheet. Document phase fires
+      // before the window-level handler, so stopPropagation reaches it.
+      if (e.key === 'Escape' && current) {
+        e.stopPropagation();
+        closeBookingSheet();
+      }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, []);
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const isOpen = current !== null;
+
+  // Modal focus management: focus into the sheet on open, trap Tab within it,
+  // and restore focus to whatever opened it on close.
+  useEffect(() => {
+    if (!isOpen) return;
+    openerRef.current = document.activeElement as HTMLElement | null;
+    const focusables = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+    focusables()[0]?.focus();
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const f = focusables();
+      if (f.length === 0) return;
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onTab);
+    return () => {
+      document.removeEventListener('keydown', onTab);
+      openerRef.current?.focus?.();
+    };
+  }, [isOpen]);
 
   if (!current) return null;
 
@@ -78,11 +121,13 @@ export function WebBookingSheet() {
     <div
       className="fixed inset-0 z-[2000] bg-charcoal/40 flex items-center justify-center p-md"
       onClick={closeBookingSheet}
-      role="dialog"
-      aria-modal="true"
     >
       <div
+        ref={panelRef}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-sheet-title"
         style={{ width: 'min(400px, 100%)', maxHeight: '100%' }}
         className="bg-cream border border-charcoal-15 rounded-3xl shadow-panel flex flex-col overflow-hidden relative"
       >
@@ -112,7 +157,9 @@ function StayBody({ stop }: { stop: PlannedStop }) {
   return (
     <div className="flex flex-col min-h-0">
       <header className="shrink-0 px-md pt-md pb-sm flex flex-col gap-xs pe-12">
-        <p className="meta-caps text-charcoal-70">Where you're staying</p>
+        <p id="booking-sheet-title" className="meta-caps text-charcoal-70">
+          Where you're staying
+        </p>
         <h2 className="font-serif text-sub text-charcoal leading-tight">
           {stop.nameEn}
         </h2>
@@ -160,7 +207,9 @@ function TransportBody({
   return (
     <div className="flex flex-col min-h-0">
       <header className="shrink-0 px-md pt-md pb-sm flex flex-col gap-sm pe-12">
-        <p className="meta-caps text-charcoal-70">Getting there</p>
+        <p id="booking-sheet-title" className="meta-caps text-charcoal-70">
+          Getting there
+        </p>
         <div className="flex items-center gap-xs font-serif text-sub text-charcoal leading-tight">
           <span>{fromStop.nameEn}</span>
           <ArrowRight size={16} strokeWidth={2} className="text-charcoal-70" />

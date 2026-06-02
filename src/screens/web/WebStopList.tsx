@@ -1049,7 +1049,7 @@ function TransitBookingRow({ item }: { item: TransitItem }) {
         type="button"
         onClick={onRemove}
         aria-label={`Remove ${offer.provider} booking`}
-        className="shrink-0 h-5 w-5 rounded-full flex items-center justify-center text-charcoal-70 hover:text-amber hover:bg-cream opacity-0 group-hover/booking:opacity-100 focus-visible:opacity-100 transition-opacity duration-instant ease-out-quart focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+        className="shrink-0 h-5 w-5 rounded-full flex items-center justify-center text-charcoal-70 hover:text-amber hover:bg-cream opacity-0 group-hover/booking:opacity-100 [@media(hover:none)]:opacity-100 focus-visible:opacity-100 transition-opacity duration-instant ease-out-quart focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
       >
         <X size={10} strokeWidth={2} />
       </button>
