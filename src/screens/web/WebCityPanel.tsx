@@ -71,7 +71,7 @@ const TABS: { id: TabId; label: string; categories: PlaceCategory[] }[] = [
   { id: 'see', label: 'See', categories: ['landmark', 'beach'] },
   {
     id: 'religious',
-    label: 'Religious',
+    label: 'Jewish',
     categories: ['chabad', 'synagogue', 'mikveh', 'kosher'],
   },
 ];
