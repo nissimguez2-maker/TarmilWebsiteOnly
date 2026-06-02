@@ -7,6 +7,26 @@ re-skinned** into a standalone web product. This repo is the **prototype** phase
 the *experience* only. Keep the app building and TypeScript-strict clean at all
 times.
 
+## Direction update (2026-06) — prototype → platform pivot
+
+The prototype roadmap is **complete and live** (W4 / W9 / W10–W13 / W15 / W18 / W19
++ Supabase + CI all shipped). The project is now pivoting to a real **monetization +
+global-content platform**. Two committed strategy docs are the source of truth for
+this phase:
+- `docs/monetization-map.md` — disclosed affiliate revenue (Travelpayouts: hotels,
+  flights, tours, transfers, eSIM, insurance…); the franchise is accommodation + tours.
+- `docs/global-content-strategy.md` — serve **every city/place worldwide** via a
+  tiered, *cacheable* content stack (Foursquare-OS + OSM + Wikidata base; Google as
+  intent-gated garnish); content stays ~1–3% of revenue.
+
+As these build out, the prototype guardrails below that say **"visual-mock booking /
+no real affiliates / no analytics / curated-cities-only"** are **superseded by those
+plans** — real disclosed affiliate links, light affiliate attribution, and global
+content are now **in scope**. Everything else stays non-negotiable: **honesty &
+disclosure** (Sponsored / Tarmil Selection, no fabricated social proof, third-party
+aggregate ratings never shown as Tarmil's editorial star), logical-CSS, focus rings,
+no-`100vh`, the warm-minimal brand, English-only this phase.
+
 ## What this is (and isn't)
 
 - **In scope:** the planner experience — cities, map, city/transit bubbles,
