@@ -1,0 +1,197 @@
+# Tarmil — Monetization Map (v1)
+
+**Status:** PLAN. No app code changed. Every commission/cookie figure below is
+program-stated, **directional, and must be re-confirmed in the live Travelpayouts
+dashboard before wiring.** Synthesized from three specialist analyses (program
+landscape · revenue model · placement/behavioral). Date: 2026-06-02.
+
+> This supersedes, for the monetization surface, the prototype guardrail in
+> `CLAUDE.md` that scoped booking as a visual-only mock with no affiliates/analytics.
+> We are deliberately pivoting to real, disclosed affiliate monetization.
+
+---
+
+## 1. Thesis & governing rule
+
+Tarmil earns when the traveler's journey is good enough that they **trust** it enough
+to book through its links. **Revenue = trust × intent × timing — not surface count
+or commission %.** The highest-converting asset already exists: the **dated
+itinerary**. Once stops have dates and legs, Tarmil knows the exact city, dates,
+route, and trip span a traveler will buy against — the richest affiliate context
+there is.
+
+**Governing rule:** *surface an offer only at the moment the traveler already feels
+the need.* Never turn the planner into a storefront. Litmus test for any placement:
+*"would a Tarmil curator recommend this to a friend, at this exact moment, for this
+trip?"* If it only makes sense because it pays, it doesn't ship.
+
+---
+
+## 2. The economics — what actually earns
+
+Modeled **per planned trip** (a user who builds a real itinerary), anchored to the
+real seed data (5 cities / 19 nights). **EV = AOV × commission % × attach rate ×
+units.** The two terms intuition underweights — **attach rate** and **units per
+trip** — decide the ranking.
+
+| Rank | Domain | Expected $/trip | Share | Why it lands here |
+|---|---|---|---|---|
+| 1 | **Accommodation** | $6.30 | 31% | Highest attach (everyone needs a bed) × real routed value. Volume beats rate. |
+| 2 | **Tours & activities** | $5.46 | 27% | ~7% × **repeat impulse bookings across all 5 cities**. Units carry it. |
+| 3 | Travel insurance | $2.34 | 12% | High take per policy; attach capped by Israeli insurer habit. |
+| 4 | **Flights** | $2.16 | 11% | Huge AOV, but ~1.5% × low book-through (price-comparison leakage). |
+| 5 | Attraction tickets | $2.02 | 10% | Same engine as tours, smaller AOV/units. |
+| 6 | eSIM | $1.03 | 5% | High % on a tiny (~$18) base. |
+| 7 | Transfers / car | $0.98 | 5% | Low attach for bus-hopping backpackers. |
+| | **TOTAL / planned trip** | **~$20** | | conservative ~$6 · optimistic ~$57 · ≈ **$200K/yr at 10K planned trips** |
+
+**eSIM vs flights, resolved:** flights win absolute dollars in every scenario
+(~2× per trip, **~5× per sale**: ~$18 vs ~$3.60). eSIM's 20% headline sits on an
+~$18 base — a mirage. **% × $ base, never % alone** — your instinct, quantified.
+But *neither leads.*
+
+**The franchise = Accommodation + Tours ≈ 58%.** Key correction to the intuitive
+intent-ordering: **Tours is the hidden #2** — mid-commission compounding over many
+bookings across many cities. They deserve **Tier-1 placement**, which "tours =
+discretionary" thinking under-weights.
+
+**The real ceiling = funnel completion × attach rate**, not domain mix. Attach is
+the dominant lever and currently a *modeled guess* (see §8).
+
+---
+
+## 3. Integration vehicle — Travelpayouts (White Label / API path)
+
+One **account → one `marker` (affiliate ID) + API token.** The marker rides every
+deeplink/widget/API call for attribution; an optional **`sub_id`** tags
+placement-level stats (e.g. `city=bangkok&slot=stay-strip`) — our clean per-slot
+attribution hook.
+
+**Approach: `marker` + deeplinks + selectively-styled widgets — NOT a full
+White-Label takeover.** Keep the planner ours; place brand widgets/deeplinks at the
+**decision moment** (booking sheet), because **"last cookie wins"** — our link must
+be the last touch before purchase.
+
+**Two hard constraints — do not trip on these:**
+- ⚠️ **Hotellook is DEAD** (search ceased 2024; tracking ends Oct 2025). Do **not**
+  build on its hotel API or White-Label hotel search. Route hotels through
+  **Booking.com / Agoda / Trip.com / Hostelworld** widgets + deeplinks.
+- ⚠️ **Aviasales real-time Flight Search API is GATED** (≥50K MAU + conversion
+  thresholds + review). For now use the **open Flight *Data* API** (price-for-dates,
+  calendars, cheapest routes) to *enrich* city/leg cards, and **deeplink the booking**
+  to Aviasales / WayAway. Revisit the search API past 50K MAU.
+
+---
+
+## 4. The domain plan (program × economics × placement)
+
+| Tier | Domain | Program (geo-fit) | Commission* | Integration | Surfaces at |
+|---|---|---|---|---|---|
+| **1** | **Accommodation** | Booking.com · **Hostelworld** (backpacker) · Agoda/Trip.com (Asia) | ~4% (verify net-of-cancel) | Widget + deeplink, **pre-filled with stop dates** | Itinerary stop (`StayStrip`, primary) + Stay tab (soft) |
+| **1** | **Tours & activities** | GetYourGuide · Viator · **Klook (Asia)** · WeGoTrip (API) | ~7–10% | Deeplink/widgets; WeGoTrip API for native cards | City panel **See/Do** as curated cards |
+| 2 | **Flights** | **WayAway (50% rev-share ≈ $6/flight)** > Aviasales (~1.1–1.5%) | low % / flat-ish | Data API price hints + **deeplink** | Transport legs (esp. home→first intl leg), `TransportBody` |
+| 2 | Travel insurance | **EKTA** (20% of premium, ~$0.99/day) | ~20% | Deeplink/widget | "Before you fly" finalize checklist |
+| 2 | Attraction tickets | Tiqets (8%) · Go City (3.4–6%) | 3–8% | Deeplink/widgets | Folded into See/Do with tours |
+| 3 | eSIM | **Airalo** (~12%) | ~12% | Deeplink | "Before you fly" + cross-border moments |
+| 3 | Transfers | **Kiwitaxi (50% of TP comm, up to ~$80/booking)** | rev-share | WL/widget/deeplink | Arrival seam (post-flight, in `TransportBody`) |
+| 3 | Rail / bus | **12Go (SE Asia, 50% rev-share)** · Omio (Europe) | rev-share / ~6% | Widget + deeplink | Ground-transport legs |
+| 3 | Car rental | DiscoverCars (up to 70%, **365-day cookie**) | high | Widget + deeplink | Where road trips apply (Georgia, parts of SA) |
+| **DROP v1** | Events/concerts | TicketNetwork | 6–12.5% | — | US-centric, low backpacker fit; revisit later |
+
+<sub>*Stated/directional — confirm in the dashboard. If accommodation's
+net-of-cancellation rate is ≤2.5%, Tours becomes #1.*</sub>
+
+---
+
+## 5. Placement map (journey stage → offers)
+
+| Stage | Surface (existing/new) | Offers | Intent | Timing logic |
+|---|---|---|---|---|
+| 0 · Route pick | `QuickStartEmpty` (existing) | **none** | — | protect the dream |
+| 1 · City browsing | `PlaceCard`/tabs + `StayStrip` (existing) + **tours card (new variant)** | tours, tickets (**Tier-1**); soft accommodation | impulse/experiential | sell while dreaming |
+| 2 · Itinerary build | `StayStrip`, `WishlistRow` reserved (existing) | **accommodation (primary)** | high/certain | dates unlock the bed |
+| 3 · Per-leg transport | `LegRow`, `TransportBody` (existing); **transfer block (new)** | flights (primary); transfers (contextual) | high/certain | route creates the need |
+| 4 · Trip finalize | **"Before you fly" (new)** in `TripOverviewCard`/overlay | eSIM, insurance + free passport/visa/holiday reminders | second-tier | peace-of-mind at trip-lock |
+
+---
+
+## 6. Free enrichment (keep 5 — curate, don't bloat)
+
+Already wired: Open-Meteo, Wikipedia, Nominatim, REST Countries, Overpass, OSRM.
+
+| API | Adds | Call |
+|---|---|---|
+| **ExchangeRate-API** (no key) | FX → show prices in ILS for the audience | **KEEP** — cache 24h |
+| **Nager.Date** (no key) | Public holidays → closure warnings on dated stops | **KEEP** |
+| **US State Dept advisories** | Neutral official safety signal | **KEEP** — frame as "official (US State Dept)", not Tarmil's opinion |
+| **REST Countries** | Currency/language/region (pairs with FX) | **KEEP** (already in) |
+| **Visa rules** (Passport-Index dataset, MIT) | Israeli-passport entry rules | **KEEP** — self-host; "verify with embassy" disclaimer |
+| Paid visa/vaccine/risk APIs | — | **DROP** — link out instead |
+
+---
+
+## 7. Guardrails (the flywheel depends on these)
+
+- Disclose every paid placement at the decision point — reuse `PlacementBadge`
+  (Sponsored / Tarmil Selection) + the `PlacementExplainer` "What's this?".
+- **Never suppress organic;** always show non-paying options alongside paid ones.
+- **No fake urgency / scarcity / social proof** (consistent with the W13 honesty pass).
+- Keep the **two-step pattern**: browse card shows the option → partner handoff lives
+  in the detail sheet, after the user taps in (intent).
+- **Pre-fill from real trip data** (dates/city/route) so offers are shortcuts, not pitches.
+- Every offer **dismissible**; respect the "no" (don't re-surface a skipped eSIM).
+- No interstitials, no confirm-shaming, no disguising an ad as neutral curation.
+
+---
+
+## 8. Attribution (a deliberate, scoped change)
+
+Attach rate is the dominant revenue lever and currently **unmeasured**. To tune
+revenue we need **light attribution**: `sub_id` per placement (Travelpayouts gives
+per-slot stats) + minimal client events (link-shown, link-clicked). This
+intentionally revisits the prototype's "no analytics / no booking instrumentation"
+guardrail — now **in scope, scoped tightly to affiliate performance, not
+surveillance.** Owned by the `conversion-tracking-specialist` agent at build time.
+
+---
+
+## 9. Architecture (build-ready; no account needed yet)
+
+A thin **affiliate-link layer** — one module that builds marked links per brand
+(`marker` + `sub_id`) from trip context (city, dates, span) — so adding/swapping
+partners is **config, not code.** The current surfaces are already the right shape:
+`WebBookingSheet` (stay+transport), `StayStrip`, `LegRow`/`TransportBody`,
+`PlaceCard`. We flip cosmetic links → marked deeplinks, add the **tours card
+variant** (Stage 1) and the **"Before you fly"** surface (Stage 4).
+
+---
+
+## 10. Roadmap
+
+- **Phase 0 (now):** this map + the affiliate-link-layer design. *(No account needed.)*
+- **Phase 1 (needs your marker):** **the 58% franchise** — accommodation deeplinks
+  pre-filled from itinerary dates + tours cards at city level, under the marker, with
+  `sub_id` + disclosure.
+- **Phase 2:** flights (Data API hints + WayAway deeplink) + transfers + the
+  "Before you fly" checklist (insurance + eSIM).
+- **Phase 3:** free enrichment (FX, holidays, advisories, visa) + the attach-rate
+  optimization loop (growth-hacker + conversion-tracking + financial-analyst).
+
+---
+
+## 11. Verify before / while building
+
+1. **Real commission rates** in your Travelpayouts dashboard — especially
+   accommodation **net-of-cancellation** (if ≤2.5%, Tours becomes #1).
+2. Your **Travelpayouts `marker` + token** (from the "White Label / API" onboarding path).
+3. **Audience mix** (solo/pairs vs groups) — shifts flights/accommodation AOV and ranking.
+
+---
+
+## 12. Sources
+
+Travelpayouts API reference (travelpayouts.github.io/slate) · White Label & widgets
+docs · Aviasales Flight Search API requirements · Hotellook closure FAQ · TP blogs
+for tours/Kiwitaxi/DiscoverCars/Airalo/insurance(EKTA)/12Go · impact.com travel
+programs · Free APIs: ExchangeRate-API, Nager.Date, US State Dept advisories,
+Passport-Index dataset (MIT). Full link list in the research transcript.
