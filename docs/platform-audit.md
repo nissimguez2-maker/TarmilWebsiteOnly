@@ -97,6 +97,7 @@ Lawyer needed for: the two policy docs, the ODbL conveyance boundary, the AI dis
 - **Step 2 — Finalize surface + T3** (eSIM/insurance/visa) + **grounded AI concierge**; **blurbs** shipped here too.
 - **Step 3 — Premium enrichment** (Google/Foursquare-live) **only after** the funnel/attach + cache-cost meter prove it pays; server-side keys + hard spend cap. Defer the literal whole-world ingest.
 - **Flights:** wired in Step 1/2 as a price-hinted, one-tap, *falsifiable* handoff — not the hero.
+- **AI + free-content layer:** sequenced in **`docs/ai-and-content-features.md`** — blurbs first (Step 1), NL search + the "Before you fly" finalize surface (Step 2), the one-shot planner + grounded concierge (Step 3); all behind the capped `ai-chat` Edge Function, with the "AI — verify" label + source attribution as Step-0 gates.
 
 ---
 
