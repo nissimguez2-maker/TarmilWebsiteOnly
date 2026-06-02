@@ -37,7 +37,7 @@
   --charcoal-rgb: 31 31 28;
   --charcoal-70: #4B4A45; /* secondary text */
   --charcoal-55: #5F5B53; /* secondary text 2 */
-  --charcoal-30: #8C857A; /* muted tertiary text/border */
+  --charcoal-30: #8C857A; /* decorative borders/dividers only — fails text contrast, never use for text/icons */
   --charcoal-15: #C8C1B5; /* dividers / borders / subtle UI */
   --charcoal-08: #DAD4C9; /* hairline / very subtle fill */
 
@@ -45,11 +45,13 @@
   --umber: #8A3F08;
   --umber-rgb: 138 63 8;
 
-  /* Amber — honey warm accent: focus rings, selected. Sparing. */
-  --amber: #B86613;
-  --amber-rgb: 184 102 19;
-  --amber-85: #B86613D9; /* honey @ ~85% */
-  --amber-70: #B86613B3; /* honey @ ~70% */
+  /* Amber — honey warm accent: focus rings, selected, accent text. Sparing.
+   * Darkened from the #B86613 working value so it clears WCAG ~4.5:1 as small
+   * text and >3:1 as the focus ring on both cream and sand (designer locks E2). */
+  --amber: #905010;
+  --amber-rgb: 144 80 16;
+  --amber-85: #905010D9; /* honey @ ~85% */
+  --amber-70: #905010B3; /* honey @ ~70% */
 
   /* Olive — olive-green functional pop on the warm palette */
   --olive: #566B2F;

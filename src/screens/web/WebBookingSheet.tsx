@@ -275,7 +275,7 @@ function PartnerRow({
       <ChevronRight
         size={16}
         strokeWidth={2}
-        className="shrink-0 text-charcoal-30 group-hover:text-charcoal-70"
+        className="shrink-0 text-charcoal-55 group-hover:text-charcoal-70"
       />
     </button>
   );

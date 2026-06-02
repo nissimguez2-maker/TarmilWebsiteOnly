@@ -56,7 +56,7 @@ export function WebToastLayer() {
                 t.undo?.();
                 dismiss(t.id);
               }}
-              className="text-meta uppercase font-medium text-amber hover:text-cream transition-colors duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:underline"
+              className="text-meta uppercase font-medium text-cream/80 hover:text-cream rounded-full transition-colors duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
             >
               Undo
             </button>
@@ -65,7 +65,7 @@ export function WebToastLayer() {
             type="button"
             aria-label="Dismiss"
             onClick={() => dismiss(t.id)}
-            className="text-charcoal-30 hover:text-cream text-small"
+            className="text-charcoal-15 hover:text-cream text-small rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal"
           >
             ✕
           </button>

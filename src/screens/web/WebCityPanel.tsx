@@ -864,7 +864,7 @@ function DescriptionWithMore({ text }: { text: string }) {
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="text-meta uppercase text-umber mt-xs hover:underline focus-visible:outline-none focus-visible:underline"
+          className="text-meta uppercase text-umber mt-xs rounded hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
         >
           {expanded ? 'Less' : 'More'}
         </button>

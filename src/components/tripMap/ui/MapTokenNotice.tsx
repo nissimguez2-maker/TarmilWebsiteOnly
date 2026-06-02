@@ -10,7 +10,7 @@ export function MapTokenNotice() {
     <div className="tarmil-map flex h-full w-full items-center justify-center bg-cream">
       <div className="mx-lg flex max-w-xs flex-col items-center gap-sm text-center">
         <MapPin
-          className="h-8 w-8 text-charcoal-30"
+          className="h-8 w-8 text-charcoal-55"
           strokeWidth={1.5}
           aria-hidden
         />

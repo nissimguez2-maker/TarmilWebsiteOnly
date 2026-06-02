@@ -126,7 +126,7 @@ export function WebPhotoLightbox() {
         />
         <figcaption className="text-center text-cream text-small">
           <span className="font-serif">{cityName}</span>
-          <span className="text-charcoal-30 ms-sm">
+          <span className="text-charcoal-55 ms-sm">
             {index + 1} / {photos.length}
           </span>
         </figcaption>

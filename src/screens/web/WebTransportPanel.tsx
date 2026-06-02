@@ -263,7 +263,7 @@ function OfferCard({
             <CircleDollarSign
               size={14}
               strokeWidth={2}
-              className="text-charcoal-30"
+              className="text-charcoal-55"
             />
           )}
           {offer.currency} {offer.price}

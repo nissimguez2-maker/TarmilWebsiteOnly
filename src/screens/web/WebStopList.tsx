@@ -586,7 +586,7 @@ function StopRow({
               <div className="flex items-center gap-sm mt-xs flex-wrap">
                 <p className="text-small text-charcoal-70 tnum">
                   {formatStopRange(stop.arrivalDate, stop.departureDate)}
-                  <span className="text-charcoal-30"> · </span>
+                  <span className="text-charcoal-55"> · </span>
                   {stop.nights} {stop.nights === 1 ? 'night' : 'nights'}
                 </p>
                 {savedCount > 0 && (
@@ -941,7 +941,7 @@ function TransitBookingRow({ item }: { item: TransitItem }) {
           {offer.mode !== 'drive' && (
             <>
               {offer.departureTime} → {offer.arrivalTime}
-              <span className="text-charcoal-30"> · </span>
+              <span className="text-charcoal-55"> · </span>
             </>
           )}
           {offer.currency} {offer.price}
