@@ -215,6 +215,8 @@ export const rioPlaces: Place[] = [
     englishDescription:
       'Small Ipanema hostel a minute from the beach, lobby full of army stories.',
     rating: 4.5,
+    // W15 — seeded demo Sponsored placement (no real money this phase).
+    paidPlacement: true,
   },
   {
     id: 'cabana-copa',

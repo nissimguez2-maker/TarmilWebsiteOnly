@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { Place } from '../data/places';
+import { type Place, derivePlacementTier } from '../data/places';
 import type { PlannedStop } from '../data/plannedStops';
 import { rioPlaces } from '../data/rioPlaces';
 import { globalPlaces } from '../data/globalPlaces';
@@ -45,7 +45,12 @@ export function SupabaseDataProvider({ children }: { children: ReactNode }) {
     // Curated seed places load instantly; the itinerary starts empty so the
     // planner opens on its first-run blank state (quick-start lands in W2).
     setData({
-      places: [...rioPlaces, ...globalPlaces],
+      // Disclose the merchant tier at read time (no schema change): earned
+      // "Tarmil Selection" and paid "Sponsored" both surface; organic stays.
+      places: [...rioPlaces, ...globalPlaces].map((p) => ({
+        ...p,
+        placementTier: p.placementTier ?? derivePlacementTier(p),
+      })),
       plannedStops: [],
     });
     setLoading(false);

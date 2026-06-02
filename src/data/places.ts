@@ -22,17 +22,28 @@ export type PlaceCategory =
   | 'landmark';
 
 /**
- * Merchant placement, disclosed to the traveler (Business & Legal Strategy §4).
- * Two paid tiers at one price point:
- *  - 'sponsored' — paid placement, labelled "Sponsored".
- *  - 'selection' — paid AND earned "Tarmil Selection" status through sustained
- *                  Tarmil-internal ratings. Outranks plain Sponsored.
- * Undefined = non-paying public coverage (shown, never suppressed).
+ * Merchant placement, disclosed to the traveler. Two honest badges:
+ *  - 'selection' — "Tarmil Selection": earned through Tarmil's own curation,
+ *                  never paid for. The warm editorial endorsement.
+ *  - 'sponsored' — "Sponsored": a business paid to appear. Always disclosed.
+ * Undefined = organic coverage — shown normally, never suppressed for not paying.
  *
- * Derived at read time from the existing `paid_placement` / `tarmil_pick`
- * columns (see SupabaseDataProvider) — no schema change.
+ * Derived at read time by `derivePlacementTier` (applied in SupabaseDataProvider)
+ * from the `tarmilPick` / `paidPlacement` flags — no schema change. Payment is
+ * disclosed first: a paid place reads "Sponsored" even if also a pick, so
+ * "Tarmil Selection" stays a purely earned signal.
  */
 export type PlacementTier = 'sponsored' | 'selection';
+
+/** Read-time tier: disclose payment first, then earned curation, else organic. */
+export function derivePlacementTier(p: {
+  tarmilPick?: boolean;
+  paidPlacement?: boolean;
+}): PlacementTier | undefined {
+  if (p.paidPlacement) return 'sponsored';
+  if (p.tarmilPick) return 'selection';
+  return undefined;
+}
 
 export type Place = {
   id: string;

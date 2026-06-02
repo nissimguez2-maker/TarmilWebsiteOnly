@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { PlacementBadge } from '../../components/PlacementBadge';
+import { PlacementExplainer } from '../../components/PlacementExplainer';
 import type { PlannedStop } from '../../data/plannedStops';
 import type { Place, PlaceCategory } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
@@ -192,16 +193,21 @@ export function WebCityPanel({ stop, places }: Props) {
         {activeTab === 'overview' ? (
           <OverviewTab stop={stop} />
         ) : (
-          <PlacesList
-            places={filterAndSortPlaces(
-              places,
-              activeTabDef.categories,
-              activeSub,
-            )}
-            emptyLabel={activeTabDef.label.toLowerCase()}
-            osmCategory={tabOsmCategory(activeTab, activeSub)}
-            stop={stop}
-          />
+          <div className="flex flex-col gap-sm">
+            <div className="flex justify-end">
+              <PlacementExplainer />
+            </div>
+            <PlacesList
+              places={filterAndSortPlaces(
+                places,
+                activeTabDef.categories,
+                activeSub,
+              )}
+              emptyLabel={activeTabDef.label.toLowerCase()}
+              osmCategory={tabOsmCategory(activeTab, activeSub)}
+              stop={stop}
+            />
+          </div>
         )}
       </div>
     </div>
