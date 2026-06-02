@@ -81,6 +81,15 @@ be the last touch before purchase.
   calendars, cheapest routes) to *enrich* city/leg cards, and **deeplink the booking**
   to Aviasales / WayAway. Revisit the search API past 50K MAU.
 
+**Verified (2026-06-02, live token):** the Flight **Data** API works — real
+TLV→Bangkok ($1,096+) / TLV→Kathmandu ($348, 2 stops) prices + popular directions
+from TLV — and static reference data (9,641 cities) is open. **Hotellook returns
+404 — confirmed dead.** Distinction that matters: the **API token** (data /
+enrichment) is *separate* from the affiliate **`marker`** (numeric ID that earns
+commissions on deeplinks/widgets). We have the token; we still need the marker.
+Both live in Netlify env vars at build time (`VITE_TRAVELPAYOUTS_TOKEN`,
+`VITE_TRAVELPAYOUTS_MARKER`) — never committed.
+
 ---
 
 ## 4. The domain plan (program × economics × placement)
@@ -100,6 +109,19 @@ be the last touch before purchase.
 
 <sub>*Stated/directional — confirm in the dashboard. If accommodation's
 net-of-cancellation rate is ≤2.5%, Tours becomes #1.*</sub>
+
+### 4.1 Category gaps beyond Travelpayouts (we're open to other APIs)
+
+| Gap | Reality | Recommended fill |
+|---|---|---|
+| **Restaurants / dining** | TP has no OpenTable-style program; restaurant *reservations* pay little **anywhere** | Keep dining as **curated content** (the Eat tab — honest value, not a revenue line). Monetize only where a real affiliate exists: **TheFork** (Tripadvisor-owned, strong in Europe, pays per seated diner) or the broad **Tripadvisor** affiliate. Do not over-invest. |
+| **Visa services** | TP doesn't sell visas — but our visa-rules *enrichment* creates the intent | **iVisa affiliate** — monetize visa/eVisa processing right beside the (free) visa-rule info. A genuine bonus line tied to real need (India e-visa, Nepal on-arrival). Verify commission. |
+| Luggage storage | moment-of-need on travel days | **Radical Storage** (direct affiliate) — low priority, only if it slots into a day view. |
+| Lounges / fast-track | minor | Priority Pass / LoungeBuddy affiliates — low priority. |
+| Ride-hailing (Uber/Bolt/Grab) | generally **no affiliate** | Not monetizable — link out only if useful. |
+
+**Takeaway:** the only gap worth real attention is **visa (iVisa)** — it's a new
+monetizable line, not just a fill. Restaurants stay a *trust/content* asset.
 
 ---
 
