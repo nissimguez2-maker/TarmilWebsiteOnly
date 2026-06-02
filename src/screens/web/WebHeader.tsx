@@ -1,56 +1,46 @@
-import { Link } from 'react-router-dom';
-import { Share2 } from 'lucide-react';
 import type { PlannedStop } from '../../data/plannedStops';
 import { formatTripMonthRange } from './dateUtils';
-
-const TRIP_TITLE_REGION = 'Brazil & Argentina';
 
 type Props = {
   stops: PlannedStop[];
 };
 
+/**
+ * Presentational header: the brand mark plus an honest, derived trip summary.
+ * No fabricated user, no mock Share, no dead app link — the planner is the
+ * whole site, and trips are anonymous this phase.
+ */
 export function WebHeader({ stops }: Props) {
-  const range = stops.length
+  const hasTrip = stops.length > 0;
+  const range = hasTrip
     ? formatTripMonthRange(
         stops[0].arrivalDate,
         stops[stops.length - 1].departureDate,
       )
     : '';
+  const route =
+    stops.length > 1
+      ? `${stops[0].nameEn} → ${stops[stops.length - 1].nameEn}`
+      : hasTrip
+        ? stops[0].nameEn
+        : '';
   return (
     <header className="h-14 shrink-0 bg-cream border-b border-charcoal-15 flex items-center px-md gap-md">
-      <span className="font-serif text-lede text-charcoal">Tarmil</span>
-      <div className="min-w-0 flex-1 flex flex-col items-center leading-tight">
-        <span className="meta-caps text-charcoal-70">Planned trip</span>
-        <span className="max-w-full truncate font-serif text-lede text-charcoal">
-          {TRIP_TITLE_REGION}
-          {range && <span className="text-charcoal-70"> · {range}</span>}
-        </span>
+      <span className="flex-1 font-serif text-lede text-charcoal">Tarmil</span>
+      <div className="min-w-0 flex flex-col items-center leading-tight">
+        {hasTrip ? (
+          <>
+            <span className="meta-caps text-charcoal-70">Planned trip</span>
+            <span className="max-w-full truncate font-serif text-lede text-charcoal">
+              {route}
+              {range && <span className="text-charcoal-70"> · {range}</span>}
+            </span>
+          </>
+        ) : (
+          <span className="meta-caps text-charcoal-70">Trip planner</span>
+        )}
       </div>
-      <div className="flex items-center gap-md">
-        <button
-          type="button"
-          onClick={() => window.alert('Share link copied (mock)')}
-          className="hidden sm:inline-flex items-center gap-xs text-small text-charcoal-70 hover:text-charcoal transition-colors duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-sm"
-        >
-          <Share2 size={14} strokeWidth={2} />
-          Share
-        </button>
-        <Link
-          to="/trip"
-          className="hidden sm:inline text-small text-umber hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-sm"
-        >
-          Switch to App
-        </Link>
-        <div className="flex items-center gap-xs">
-          <span className="hidden md:inline text-small text-charcoal-70">Yotam</span>
-          <span
-            aria-hidden="true"
-            className="h-8 w-8 rounded-full bg-charcoal text-cream font-serif text-small flex items-center justify-center"
-          >
-            Y
-          </span>
-        </div>
-      </div>
+      <span className="flex-1" aria-hidden="true" />
     </header>
   );
 }
