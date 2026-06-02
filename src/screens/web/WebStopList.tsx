@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import {
   DndContext,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   KeyboardSensor,
   closestCenter,
   useSensor,
@@ -180,7 +181,12 @@ export function WebStopList({
   const [detailOpen, setDetailOpen] = useState(false);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    // Mouse: tiny drag threshold. Touch: press-and-hold so a vertical swipe
+    // still scrolls the itinerary and only a deliberate hold starts a reorder.
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 8 },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -477,7 +483,7 @@ function HomeRow({
             onClick={onEdit}
             aria-label="Change home"
             title="Change home"
-            className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-instant ease-out-quart h-6 w-6 rounded-full flex items-center justify-center text-charcoal-70 hover:text-amber hover:bg-charcoal-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+            className="opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 focus:opacity-100 transition-opacity duration-instant ease-out-quart h-6 w-6 rounded-full flex items-center justify-center text-charcoal-70 hover:text-amber hover:bg-charcoal-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
           >
             <Pencil size={12} strokeWidth={2} />
           </button>
@@ -707,7 +713,7 @@ function StopRow({
                 <ChevronRightIcon size={12} strokeWidth={2} />
               )}
             </IconButton>
-            <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-instant ease-out-quart flex flex-col gap-xs">
+            <div className="opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 focus-within:opacity-100 transition-opacity duration-instant ease-out-quart flex flex-col gap-xs">
               <IconButton
                 onClick={() => setEditing((v) => !v)}
                 label={editing ? 'Cancel edit' : 'Edit dates'}
