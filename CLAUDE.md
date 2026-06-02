@@ -32,10 +32,13 @@ Deploy target: Netlify. English only.
 
 - **Live:** https://tarmil-planner.netlify.app
 - **Netlify** site `tarmil-planner`, siteId `2559d342-613c-4d19-bd9a-aff63feeb413`,
-  team `nissimguez2`. **Direct deploy** (not GitHub-linked) — it does NOT auto-deploy
-  on push. Redeploy = Netlify MCP `deploy-site(siteId)` → run the returned `npx … @netlify/mcp …`
-  command from the repo root. Env vars (`VITE_MAPBOX_TOKEN`, `VITE_SUPABASE_URL`,
-  `VITE_SUPABASE_ANON_KEY`) live on the Netlify site; Vite inlines them at build.
+  team `nissimguez2`. **Continuous deploy from `main`** (GitHub-linked): a push to
+  `main` makes Netlify build (`netlify.toml`: `npm run build` → `dist`) and publish
+  in ~1–2 min. Develop on `claude/stoic-pascal-oil4l`; **ship by fast-forwarding
+  `main` to the dev HEAD** (founder-approved). Verified working end-to-end. Env vars
+  (`VITE_MAPBOX_TOKEN`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) live on the
+  Netlify site; Vite inlines them at build. (Manual fallback: Netlify MCP
+  `deploy-site(siteId)` → run the returned `npx … @netlify/mcp …` in the repo root.)
 - **Supabase** project `tarmil-mockup`, id `ltlholyrdtzegyeosqqz` (eu-central-1),
   URL `https://ltlholyrdtzegyeosqqz.supabase.co`. **Anonymous sign-ins: ENABLED +
   verified.** The website touches ONLY `public.web_trips` (`user_id` uuid PK →
