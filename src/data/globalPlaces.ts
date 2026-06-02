@@ -1,13 +1,15 @@
 /**
  * Curated places outside the user's current city — for planned destinations.
  *
- * SEED ONLY. Runtime data is read from the `places` table in Supabase. This
- * array feeds `scripts/seed-supabase.ts`; nothing in `src/` imports it at
- * runtime.
+ * These curated seed places load directly at runtime: `SupabaseDataProvider`
+ * imports this array and serves `[...rioPlaces, ...globalPlaces]` as the
+ * planner's `places` set. (No `places` table read on the website phase.)
  *
- * Each entry's `destinationId` points to a `planned_stops.id`. Coordinates
- * verified against Google Maps. Kept as a separate file from rioPlaces.ts
- * for curator convenience — runtime treats them as one unified `places` set.
+ * Each entry's `destinationId` matches a city id (see `addableCities.ts` /
+ * `planned_stops`). Coordinates are geocoded via OpenStreetMap / Nominatim;
+ * where a venue isn't precisely mapped, the pin sits on the named
+ * neighborhood and is flagged in the curator notes. Kept separate from
+ * rioPlaces.ts for curator convenience — runtime treats them as one set.
  */
 
 import type { Place } from './places';
@@ -1176,5 +1178,228 @@ export const globalPlaces: Place[] = [
     englishDescription:
       'Historic Once synagogue. Worth a visit; bring ID for the security desk.',
     rating: 4.7,
+  },
+
+  // ─── W12 — Jewish-friendly anchors for the new launch cities ───────────
+  // Real, well-known Chabad houses and synagogues Israeli travelers rely on.
+  // Coordinates geocoded via OpenStreetMap / Nominatim; pins on a named
+  // neighborhood (rather than an exact door) are noted inline.
+
+  // Kathmandu — Thamel
+  {
+    id: 'chabad-kathmandu',
+    destinationId: 'kathmandu',
+    hebrewName: 'Chabad House Nepal',
+    englishName: 'Chabad House Nepal',
+    category: 'chabad',
+    // Pin on Thamel; the Chabad compound sits in this backpacker quarter.
+    lat: 27.7166578,
+    lng: 85.3127015,
+    hebrewDescription:
+      "The Himalaya's anchor for Israeli trekkers — warm meals, a soft landing off the trail, and the world's largest Passover seder.",
+    englishDescription:
+      "The Himalaya's anchor for Israeli trekkers — warm meals, a soft landing off the trail, and the world's largest Passover seder.",
+    rating: 4.8,
+    tarmilPick: true,
+  },
+
+  // Bangkok — Khao San (main) + Sukhumvit
+  {
+    id: 'chabad-bangkok-khaosan',
+    destinationId: 'bangkok',
+    hebrewName: 'Chabad House Khao San',
+    englishName: 'Chabad House Khao San',
+    category: 'chabad',
+    lat: 13.7617471,
+    lng: 100.4932958,
+    hebrewDescription:
+      'The backpacker landing pad off Khao San — kosher kitchen, a synagogue, and Friday meals packed with travelers fresh off the plane.',
+    englishDescription:
+      'The backpacker landing pad off Khao San — kosher kitchen, a synagogue, and Friday meals packed with travelers fresh off the plane.',
+    rating: 4.7,
+    tarmilPick: true,
+  },
+  {
+    id: 'chabad-bangkok-sukhumvit',
+    destinationId: 'bangkok',
+    hebrewName: 'Chabad of Bangkok – Sukhumvit',
+    englishName: 'Chabad of Bangkok – Sukhumvit',
+    category: 'chabad',
+    // Pin on the Sukhumvit Soi 20 / Asok cluster (Khlong Toei).
+    lat: 13.7366,
+    lng: 100.5568,
+    hebrewDescription:
+      "Bangkok's uptown Jewish hub near Asok — quieter than Khao San, with kosher food and a warm welcome between errands and flights.",
+    englishDescription:
+      "Bangkok's uptown Jewish hub near Asok — quieter than Khao San, with kosher food and a warm welcome between errands and flights.",
+    rating: 4.5,
+  },
+
+  // Kasol — Parvati Valley
+  {
+    id: 'chabad-kasol',
+    destinationId: 'kasol',
+    hebrewName: 'Chabad House Kasol',
+    englishName: 'Chabad House Kasol',
+    category: 'chabad',
+    // Pin on Kasol village; the Chabad sits at the end of the main market.
+    lat: 32.0104317,
+    lng: 77.3166036,
+    hebrewDescription:
+      "The heart of India's most Israeli valley — a quiet gathering point in the evenings, with a hot meal after long Parvati treks.",
+    englishDescription:
+      "The heart of India's most Israeli valley — a quiet gathering point in the evenings, with a hot meal after long Parvati treks.",
+    rating: 4.5,
+    tarmilPick: true,
+  },
+
+  // Goa — North Goa (Anjuna), seasonal
+  {
+    id: 'chabad-north-goa',
+    destinationId: 'goa',
+    hebrewName: 'Chabad of North Goa',
+    englishName: 'Chabad of North Goa',
+    category: 'chabad',
+    // Pin on Anjuna; the North Goa Chabad runs seasonally near the beach.
+    lat: 15.5760957,
+    lng: 73.7401836,
+    hebrewDescription:
+      'A seasonal home near Anjuna for the North Goa beach crowd — Shabbat meals and holiday gatherings when the winter season fills up.',
+    englishDescription:
+      'A seasonal home near Anjuna for the North Goa beach crowd — Shabbat meals and holiday gatherings when the winter season fills up.',
+    rating: 4.4,
+  },
+
+  // Hanoi
+  {
+    id: 'chabad-hanoi',
+    destinationId: 'hanoi',
+    hebrewName: 'Chabad Jewish Center of Hanoi',
+    englishName: 'Chabad Jewish Center of Hanoi',
+    category: 'chabad',
+    lat: 21.0670837,
+    lng: 105.8244285,
+    hebrewDescription:
+      'A warm stop in Tay Ho before Ha Long Bay — kosher meals, Shabbat by the lake, and travel tips from a family who knows Vietnam.',
+    englishDescription:
+      'A warm stop in Tay Ho before Ha Long Bay — kosher meals, Shabbat by the lake, and travel tips from a family who knows Vietnam.',
+    rating: 4.6,
+    tarmilPick: true,
+  },
+
+  // Koh Phangan — Haad Rin
+  {
+    id: 'chabad-ko-pha-ngan',
+    destinationId: 'ko-pha-ngan',
+    hebrewName: 'Chabad of Koh Phangan',
+    englishName: 'Chabad of Koh Phangan',
+    category: 'chabad',
+    // Pin on Haad Rin bay; the Chabad serves the Full Moon beach crowd here.
+    lat: 9.6762908,
+    lng: 100.0739367,
+    hebrewDescription:
+      'The island anchor by Haad Rin — a calm, kosher Friday night and a friendly face amid the Full Moon Party chaos.',
+    englishDescription:
+      'The island anchor by Haad Rin — a calm, kosher Friday night and a friendly face amid the Full Moon Party chaos.',
+    rating: 4.5,
+    tarmilPick: true,
+  },
+
+  // Tbilisi — Great Synagogue, Chabad, Mendi's (kosher)
+  {
+    id: 'great-synagogue-tbilisi',
+    destinationId: 'tbilisi',
+    hebrewName: 'Great Synagogue of Tbilisi',
+    englishName: 'Great Synagogue of Tbilisi',
+    category: 'synagogue',
+    lat: 41.6899931,
+    lng: 44.8072694,
+    hebrewDescription:
+      "The historic heart of Georgian-Jewish life in the Old Town — a century-old brick shul still humming with the local community.",
+    englishDescription:
+      "The historic heart of Georgian-Jewish life in the Old Town — a century-old brick shul still humming with the local community.",
+    rating: 4.7,
+  },
+  {
+    id: 'chabad-tbilisi',
+    destinationId: 'tbilisi',
+    hebrewName: 'Chabad of Georgia',
+    englishName: 'Chabad of Georgia',
+    category: 'chabad',
+    lat: 41.6930654,
+    lng: 44.8049418,
+    hebrewDescription:
+      'The traveler hub in the Old Town — open daily, with Shabbat meals for Israelis and a kosher kitchen a short walk from the baths.',
+    englishDescription:
+      'The traveler hub in the Old Town — open daily, with Shabbat meals for Israelis and a kosher kitchen a short walk from the baths.',
+    rating: 4.6,
+    tarmilPick: true,
+  },
+  {
+    id: 'mendis-kosher-tbilisi',
+    destinationId: 'tbilisi',
+    hebrewName: "Mendi's Kosher Restaurant",
+    englishName: "Mendi's Kosher Restaurant",
+    category: 'kosher',
+    // At the Chabad of Georgia on Kote Afkhazi St.
+    lat: 41.6930654,
+    lng: 44.8049418,
+    hebrewDescription:
+      "Tbilisi's kosher mehadrin kitchen at the Chabad house — open daily, an easy hot meal between Old Town wandering and wine.",
+    englishDescription:
+      "Tbilisi's kosher mehadrin kitchen at the Chabad house — open daily, an easy hot meal between Old Town wandering and wine.",
+    rating: 4.4,
+  },
+
+  // Medellín — El Poblado
+  {
+    id: 'chabad-medellin',
+    destinationId: 'medellin',
+    hebrewName: 'Chabad of Medellín',
+    englishName: 'Chabad of Medellín',
+    category: 'chabad',
+    lat: 6.2105932,
+    lng: -75.5689635,
+    hebrewDescription:
+      'In the heart of El Poblado, steps from Parque Lleras — Shabbat meals, a kosher kitchen, and a safe base in the city of eternal spring.',
+    englishDescription:
+      'In the heart of El Poblado, steps from Parque Lleras — Shabbat meals, a kosher kitchen, and a safe base in the city of eternal spring.',
+    rating: 4.6,
+    tarmilPick: true,
+  },
+
+  // Cusco
+  {
+    id: 'chabad-cusco',
+    destinationId: 'cusco',
+    hebrewName: 'Chabad of Cusco',
+    englishName: 'Chabad of Cusco',
+    category: 'chabad',
+    lat: -13.5190062,
+    lng: -71.9847218,
+    hebrewDescription:
+      'A short walk from the Plaza de Armas — the launchpad-city anchor with huge backpacker Shabbat dinners before and after Machu Picchu.',
+    englishDescription:
+      'A short walk from the Plaza de Armas — the launchpad-city anchor with huge backpacker Shabbat dinners before and after Machu Picchu.',
+    rating: 4.7,
+    tarmilPick: true,
+  },
+
+  // La Paz — backpacker quarter (Illampu / Sagárnaga)
+  {
+    id: 'chabad-la-paz',
+    destinationId: 'la-paz',
+    hebrewName: 'Chabad of Bolivia',
+    englishName: 'Chabad of Bolivia',
+    category: 'chabad',
+    // Pin on the Illampu / Sagárnaga backpacker quarter near the witches' market.
+    lat: -16.4975015,
+    lng: -68.1385394,
+    hebrewDescription:
+      "The world's-highest-capital anchor — a traveler lounge and famously packed Shabbat meals in the heart of the backpacker quarter.",
+    englishDescription:
+      "The world's-highest-capital anchor — a traveler lounge and famously packed Shabbat meals in the heart of the backpacker quarter.",
+    rating: 4.6,
+    tarmilPick: true,
   },
 ];
