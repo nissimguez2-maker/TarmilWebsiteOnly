@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useSupabaseData } from '../../lib/SupabaseDataProvider';
 import { ErrorPanel } from '../../components/DataState';
 import type { PlannedStop } from '../../data/plannedStops';
 import { WebHeader } from './WebHeader';
 import { WebStopList } from './WebStopList';
-import { WebMapCanvas } from './WebMapCanvas';
+// Mapbox GL is ~1.8 MB — lazy-load it so it doesn't block the planner's first
+// paint; the chunk loads on demand behind a calm placeholder.
+const WebMapCanvas = lazy(() =>
+  import('./WebMapCanvas').then((m) => ({ default: m.WebMapCanvas })),
+);
 import { WebBubble } from './WebBubble';
 import { WebAddStopModal } from './WebAddStopModal';
 import { WebHomeEditor } from './WebHomeEditor';
@@ -162,12 +166,14 @@ export function WebPlannerScreen() {
             onAddRoute={handleAddRoute}
           />
           <div className="flex-1 relative min-h-0">
-            <WebMapCanvas
-              stops={stops}
-              home={home}
-              selection={selection}
-              onSelect={setSelection}
-            />
+            <Suspense fallback={<div className="absolute inset-0 bg-sand" />}>
+              <WebMapCanvas
+                stops={stops}
+                home={home}
+                selection={selection}
+                onSelect={setSelection}
+              />
+            </Suspense>
             <WebBubble
               selection={selection}
               stops={stops}
