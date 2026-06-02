@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react';
+import { fetchWikiSummary } from './wikiApi';
+import { wikiTitleFor } from './cityWikiTitles';
+
 function unsplash(id: string, w: number): string {
   return `https://images.unsplash.com/photo-${id}?w=${w}&q=80&auto=format&fit=crop`;
 }
@@ -47,4 +51,76 @@ export const CITY_PHOTOS: Record<string, string[]> = {
 
 export function cityPhotos(stopId: string): string[] {
   return CITY_PHOTOS[stopId] ?? [];
+}
+
+/**
+ * Resolved Wikipedia-photo cache, keyed by stopId. Survives remounts so each
+ * launch city fetches its lead image exactly once across the whole app.
+ */
+const wikiPhotoCache = new Map<string, string[]>();
+/** In-flight requests, keyed by stopId, so concurrent consumers de-dupe. */
+const wikiPhotoInflight = new Map<string, Promise<string[]>>();
+
+/**
+ * Resolve a city's Wikipedia lead image (prefer the full original, fall back to
+ * the thumbnail). Resilient: a null summary or a network failure resolves to an
+ * empty array — never throws — and the empty result is intentionally NOT cached
+ * so a transient failure can retry on a later mount.
+ */
+function resolveWikiPhotos(stopId: string, cityName: string): Promise<string[]> {
+  const cached = wikiPhotoCache.get(stopId);
+  if (cached) return Promise.resolve(cached);
+  const inflight = wikiPhotoInflight.get(stopId);
+  if (inflight) return inflight;
+
+  const title = wikiTitleFor(stopId, cityName);
+  const request = fetchWikiSummary(title)
+    .then((summary) => {
+      const image = summary?.originalImage ?? summary?.thumbnail;
+      const photos = image ? [image] : [];
+      if (photos.length > 0) wikiPhotoCache.set(stopId, photos);
+      return photos;
+    })
+    .catch(() => [])
+    .finally(() => {
+      wikiPhotoInflight.delete(stopId);
+    });
+
+  wikiPhotoInflight.set(stopId, request);
+  return request;
+}
+
+/**
+ * City photos for a planned stop. Curated Unsplash sets (the 8 South-America
+ * cities) return immediately and unchanged — no fetch, no flicker. Every other
+ * city resolves its hero image from Wikipedia on mount, returning `[]` until the
+ * image is ready (consumers already render a placeholder for the empty case).
+ */
+export function useCityPhotos(stopId: string, cityName: string): string[] {
+  const curated = CITY_PHOTOS[stopId];
+  const [photos, setPhotos] = useState<string[]>(
+    () => curated ?? wikiPhotoCache.get(stopId) ?? [],
+  );
+
+  useEffect(() => {
+    if (CITY_PHOTOS[stopId]) {
+      setPhotos(CITY_PHOTOS[stopId]);
+      return;
+    }
+    const cached = wikiPhotoCache.get(stopId);
+    if (cached) {
+      setPhotos(cached);
+      return;
+    }
+    let active = true;
+    setPhotos([]);
+    resolveWikiPhotos(stopId, cityName).then((resolved) => {
+      if (active) setPhotos(resolved);
+    });
+    return () => {
+      active = false;
+    };
+  }, [stopId, cityName]);
+
+  return photos;
 }

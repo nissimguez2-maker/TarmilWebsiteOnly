@@ -4,7 +4,7 @@ import { X, Home, Plane, Train, Ship, Bus, Car } from 'lucide-react';
 import type { PlannedStop } from '../../data/plannedStops';
 import type { HomeCity } from './homeCity';
 import { generateLeg } from './transportGenerator';
-import { cityPhotos } from './cityPhotos';
+import { useCityPhotos } from './cityPhotos';
 import { placesForStop, useWishlist } from './wishlist';
 import { formatStopRange, formatShortDate } from './dateUtils';
 
@@ -162,7 +162,7 @@ function TransportLeg({ from, to }: { from: PlannedStop; to: PlannedStop }) {
 }
 
 function DetailStop({ stop, index }: { stop: PlannedStop; index: number }) {
-  const photo = cityPhotos(stop.id)[0];
+  const photo = useCityPhotos(stop.id, stop.nameEn)[0];
   const saved = placesForStop(stop.id);
   return (
     <article className="overflow-hidden rounded-2xl bg-sand ring-1 ring-charcoal-15">

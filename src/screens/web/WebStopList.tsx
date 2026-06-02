@@ -49,7 +49,8 @@ import type { HomeCity } from './homeCity';
 import { generateLeg } from './transportGenerator';
 import { fetchDrivingMinutes, formatDriveDuration } from './osrmApi';
 import { formatShortDate, formatStopRange } from './dateUtils';
-import { cityPhotos } from './cityPhotos';
+import { useCityPhotos } from './cityPhotos';
+import { ADDABLE_CITIES } from './addableCities';
 import {
   placesForStop,
   removePlace,
@@ -100,44 +101,11 @@ function QuickStartEmpty({
         </p>
       </div>
       <ul className="flex flex-col gap-sm">
-        {STARTER_ROUTES.map((route) => {
-          const cities = routeCities(route);
-          const photo = cityPhotos(route.heroCityId)[0];
-          return (
-            <li key={route.id}>
-              <button
-                type="button"
-                onClick={() => onAddRoute(route)}
-                className="w-full overflow-hidden rounded-2xl border border-charcoal-15 bg-sand text-start hover:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
-              >
-                {photo && (
-                  <span className="block h-24 w-full overflow-hidden bg-charcoal-08">
-                    <img
-                      src={photo}
-                      alt=""
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
-                  </span>
-                )}
-                <span className="flex flex-col gap-xs p-sm">
-                  <span className="flex items-baseline justify-between gap-sm">
-                    <span className="text-small font-medium text-charcoal">
-                      {route.title}
-                    </span>
-                    <span className="shrink-0 text-meta uppercase text-charcoal-55">
-                      {routeNights(route)} nights
-                    </span>
-                  </span>
-                  <span className="text-small text-charcoal-70">{route.reason}</span>
-                  <span className="truncate text-meta uppercase text-charcoal-55">
-                    {cities.map((c) => c.nameEn).join(' · ')}
-                  </span>
-                </span>
-              </button>
-            </li>
-          );
-        })}
+        {STARTER_ROUTES.map((route) => (
+          <li key={route.id}>
+            <RouteCard route={route} onAddRoute={onAddRoute} />
+          </li>
+        ))}
       </ul>
       <button
         type="button"
@@ -147,6 +115,52 @@ function QuickStartEmpty({
         Or search for a city
       </button>
     </div>
+  );
+}
+
+/** Single quick-start route card. Hero photo: curated set or Wikipedia fallback. */
+function RouteCard({
+  route,
+  onAddRoute,
+}: {
+  route: StarterRoute;
+  onAddRoute: (route: StarterRoute) => void;
+}) {
+  const cities = routeCities(route);
+  const heroCityName =
+    ADDABLE_CITIES.find((c) => c.id === route.heroCityId)?.nameEn ?? '';
+  const photo = useCityPhotos(route.heroCityId, heroCityName)[0];
+  return (
+    <button
+      type="button"
+      onClick={() => onAddRoute(route)}
+      className="w-full overflow-hidden rounded-2xl border border-charcoal-15 bg-sand text-start hover:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+    >
+      {photo && (
+        <span className="block h-24 w-full overflow-hidden bg-charcoal-08">
+          <img
+            src={photo}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+        </span>
+      )}
+      <span className="flex flex-col gap-xs p-sm">
+        <span className="flex items-baseline justify-between gap-sm">
+          <span className="text-small font-medium text-charcoal">
+            {route.title}
+          </span>
+          <span className="shrink-0 text-meta uppercase text-charcoal-55">
+            {routeNights(route)} nights
+          </span>
+        </span>
+        <span className="text-small text-charcoal-70">{route.reason}</span>
+        <span className="truncate text-meta uppercase text-charcoal-55">
+          {cities.map((c) => c.nameEn).join(' · ')}
+        </span>
+      </span>
+    </button>
   );
 }
 
@@ -571,9 +585,9 @@ function SortableStopRow(props: SortableStopRowProps) {
 
 /** City photo thumbnail for a timeline stop. Real photo in prod; warm
     gradient fallback when the image is unavailable. */
-function StopThumb({ stopId }: { stopId: string }) {
+function StopThumb({ stopId, cityName }: { stopId: string; cityName: string }) {
   const [ok, setOk] = useState(true);
-  const photo = cityPhotos(stopId)[0];
+  const photo = useCityPhotos(stopId, cityName)[0];
   return (
     <span className="shrink-0 h-11 w-11 overflow-hidden rounded-xl bg-gradient-to-br from-clay to-sand ring-1 ring-charcoal-08">
       {photo && ok && (
@@ -650,7 +664,7 @@ function StopRow({
         )}
       >
         <div className="flex items-start gap-sm">
-          <StopThumb stopId={stop.id} />
+          <StopThumb stopId={stop.id} cityName={stop.nameEn} />
           <button
             type="button"
             onClick={onClick}
