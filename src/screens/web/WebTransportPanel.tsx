@@ -269,7 +269,7 @@ function OfferCard({
           {offer.currency} {offer.price}
         </p>
         {booked ? (
-          <span className="inline-flex items-center gap-xs text-meta uppercase font-medium text-sea">
+          <span className="inline-flex items-center gap-xs text-meta uppercase font-medium text-olive">
             <Check size={12} strokeWidth={2} />
             In your trip
           </span>

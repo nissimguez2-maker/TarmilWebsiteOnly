@@ -81,12 +81,12 @@ function makeStopEl(index: number, selected: boolean, label?: string): HTMLDivEl
   const ring = selected
     ? '0 0 0 2px var(--cream), 0 0 0 5px var(--amber), 0 2px 6px rgba(0,0,0,0.18)'
     : '0 2px 6px rgba(0,0,0,0.18)';
-  el.style.cssText = `position:relative;width:32px;height:32px;border-radius:9999px;background-color:var(--amber);display:flex;align-items:center;justify-content:center;color:white;font-family:Fraunces,serif;font-weight:600;font-size:14px;cursor:pointer;box-shadow:${ring};`;
+  el.style.cssText = `position:relative;width:32px;height:32px;border-radius:9999px;background-color:var(--amber);display:flex;align-items:center;justify-content:center;color:white;font-family:'Inter Variable','Inter',system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;box-shadow:${ring};`;
   el.textContent = String(index + 1);
   if (label) {
     const l = document.createElement('div');
     l.style.cssText =
-      'position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background-color:var(--cream);color:var(--charcoal);font-family:Heebo,sans-serif;font-weight:600;font-size:11px;line-height:1;padding:3px 7px;border-radius:9999px;box-shadow:0 1px 3px rgba(0,0,0,0.18);white-space:nowrap;pointer-events:none;';
+      "position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);background-color:var(--cream);color:var(--charcoal);font-family:'Inter Variable','Inter',system-ui,sans-serif;font-weight:600;font-size:11px;line-height:1;padding:3px 7px;border-radius:9999px;box-shadow:0 1px 3px rgba(0,0,0,0.18);white-space:nowrap;pointer-events:none;";
     l.textContent = label;
     el.appendChild(l);
   }

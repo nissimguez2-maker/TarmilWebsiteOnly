@@ -775,7 +775,7 @@ function PlaceCard({
         <Button variant="ghost" size="sm" onClick={onSave}>
           {status === 'saved' ? (
             <>
-              <Check size={12} strokeWidth={2} className="text-sea" />
+              <Check size={12} strokeWidth={2} className="text-olive" />
               Saved
             </>
           ) : (
@@ -786,7 +786,7 @@ function PlaceCard({
           )}
         </Button>
         {reservable && (
-          <Button variant="sea" size="sm" onClick={onReserve}>
+          <Button variant="olive" size="sm" onClick={onReserve}>
             {status === 'reserved' ? (
               <>
                 <Check size={12} strokeWidth={2} />

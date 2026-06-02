@@ -215,7 +215,7 @@ function TransportBody({
               partner={{
                 id: 'direct',
                 name: `${offer.provider} direct`,
-                hex: '#2E2417',
+                hex: '#1F1F1C', // mirrors the --charcoal token (no Tailwind class available for this data field)
                 logoPath: null,
                 deeplinkTemplate: '',
               }}

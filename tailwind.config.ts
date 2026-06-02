@@ -29,14 +29,15 @@ export default {
         85: 'var(--amber-85)',
         70: 'var(--amber-70)',
       },
-      sea: 'rgb(var(--sea-rgb) / <alpha-value>)',
+      olive: 'rgb(var(--olive-rgb) / <alpha-value>)',
+      ink: 'rgb(var(--ink-rgb) / <alpha-value>)',
     },
     fontFamily: {
-      // Aesop-style clean grotesque (Suisse Int'l look-alike) for ALL text.
-      // The `serif` alias is kept so existing `font-serif` usages still resolve;
-      // headlines are now the same grotesque at larger sizes/weights.
-      serif: ['Hanken Grotesk', 'system-ui', 'sans-serif'],
-      sans: ['Hanken Grotesk', 'system-ui', 'sans-serif'],
+      // Self-hosted Inter for ALL text (regular/light, no heavy bold).
+      // The `serif` alias is kept so existing `font-serif` usages still
+      // resolve to Inter; headlines are the same family at larger sizes.
+      serif: ['Inter Variable', 'Inter', 'system-ui', 'sans-serif'],
+      sans: ['Inter Variable', 'Inter', 'system-ui', 'sans-serif'],
     },
     fontSize: {
       meta: ['8pt', { lineHeight: '1.5', letterSpacing: '0.18em' }],

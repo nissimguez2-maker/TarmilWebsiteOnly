@@ -33,7 +33,7 @@
   body {
     margin: 0;
     color: var(--charcoal);
-    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
     font-size: 11pt;
     line-height: 1.55;
     font-feature-settings: 'tnum' 0;
@@ -50,13 +50,13 @@
     touch-action: manipulation;
   }
 
-  /* serif headlines default to Fraunces with the SOFT axis maxed */
+  /* headlines: Inter, understated weight (no heavy bold) */
   h1,
   h2,
   h3,
   h4 {
-    font-family: 'Hanken Grotesk', system-ui, sans-serif;
-    font-weight: 700;
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
+    font-weight: 600;
     letter-spacing: -0.01em;
     color: var(--charcoal);
   }
@@ -70,17 +70,16 @@
     -webkit-touch-callout: default;
   }
 
-  /* mid-titles per DA: italic Fraunces 500 sentence case */
+  /* mid-titles: Inter 500, sentence case (no italic) */
   .mid-title {
-    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
     font-weight: 500;
-    font-style: italic;
     color: var(--charcoal);
   }
 
-  /* metadata caps per DA: Heebo 500 uppercase 0.18em tracking copper or cocoa */
+  /* metadata caps: Inter 500 uppercase 0.18em tracking */
   .meta-caps {
-    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
     font-weight: 500;
     font-size: 8pt;
     text-transform: uppercase;

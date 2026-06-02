@@ -143,7 +143,7 @@ function TransportLeg({ from, to }: { from: PlannedStop; to: PlannedStop }) {
   const Icon = modeIcon(offer.mode);
   return (
     <div className="ms-5 flex items-center gap-md border-s border-dashed border-charcoal-15 ps-md">
-      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sea/10 text-sea">
+      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-olive/10 text-olive">
         <Icon size={14} strokeWidth={2} />
       </span>
       <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-sm gap-y-px text-small text-charcoal-70">

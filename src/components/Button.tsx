@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import clsx from 'clsx';
 
-type Variant = 'primary' | 'accent' | 'ghost' | 'sea';
+type Variant = 'primary' | 'accent' | 'ghost' | 'olive';
 type Size = 'sm' | 'md';
 
 type Props = {
@@ -53,8 +53,8 @@ export function Button({
           'bg-charcoal text-cream shadow-card hover:bg-charcoal-70 active:bg-charcoal',
         variant === 'accent' &&
           'bg-umber text-cream shadow-fab hover:bg-umber/90 active:bg-umber',
-        variant === 'sea' &&
-          'bg-sea text-cream shadow-card hover:bg-sea/90 active:bg-sea',
+        variant === 'olive' &&
+          'bg-olive text-cream shadow-card hover:bg-olive/90 active:bg-olive',
         // tonal (soft-fill) secondary — modern, replaces the old hairline outline
         variant === 'ghost' &&
           'bg-charcoal-8 text-charcoal hover:bg-charcoal-15 active:bg-charcoal-15',

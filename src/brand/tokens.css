@@ -1,61 +1,66 @@
 /*
- * Tarmil — Direction Artistique v0.3 (May 2026)
- * Source of truth: Branding/TARMIL DA.md (Drive) — "quiet confidence".
- * Warm cream + dark ink. Amber is a sparing premium/selected accent, never a CTA.
+ * Tarmil — warm-minimal-premium system (2026)
+ * "Warm words in a minimal, premium frame." Warm cream canvas + dark ink,
+ * burnt-orange/honey warm accents, olive-green functional pop. Type is
+ * self-hosted Inter (regular/light, no heavy bold).
  * Tailwind theme references these variables — never hex literals in source.
  */
 
 :root {
   /* ───────────────────────────────────────────────────────────────
-   * DA v0.3 palette — 8 named tokens.
+   * Warm-minimal palette — named tokens.
    * Each surface/text token ships a full hex (for direct `var(--x)` use
    * in CSS / Leaflet strings) plus a space-separated `*-rgb` triple that
    * Tailwind splices `<alpha-value>` into via rgb(). Pre-blended tints
-   * (charcoal-70 / amber-85 / …) stay full hex with baked alpha — used
+   * (amber-85 / amber-70 / …) stay full hex with baked alpha — used
    * without the `/N` modifier.
    * ─────────────────────────────────────────────────────────────── */
 
-  /* Soft Cream — the page; default canvas for most screens */
-  --cream: #faf5ec;
-  --cream-rgb: 250 245 236;
-  /* Warm Stone — elevated surface: cards, panels, sections */
-  --sand: #e7dac6;
-  --sand-rgb: 231 218 198;
-  /* Pale Sand — subtle grouped fills, filters, soft fields */
-  --linen: #f1e8d8;
-  --linen-rgb: 241 232 216;
-  /* Muted Clay — tags, soft emphasis, restrained support */
-  --clay: #c29b82;
-  --clay-rgb: 194 155 130;
-  /* Dusty Blush — atmospheric support, very light usage only */
-  --blush: #ead3c8;
-  --blush-rgb: 234 211 200;
+  /* Cream — the page background */
+  --cream: #E8E2D6;
+  --cream-rgb: 232 226 214;
+  /* Sand — elevated card/panel surface */
+  --sand: #EFE9DD;
+  --sand-rgb: 239 233 221;
+  /* Linen — subtle grouped fills */
+  --linen: #ECE6DA;
+  --linen-rgb: 236 230 218;
+  /* Clay — tags / soft emphasis / gradient stop */
+  --clay: #CBBBA6;
+  --clay-rgb: 203 187 166;
+  /* Blush — atmospheric support */
+  --blush: #E3D6C9;
+  --blush-rgb: 227 214 201;
 
-  /* Charcoal Brown — primary text, structure, primary CTA fills */
-  --charcoal: #2e2417;
-  --charcoal-rgb: 46 36 23;
-  --charcoal-70: #2e2417b3;
-  --charcoal-55: #2e24178c;
-  --charcoal-30: #2e24174d;
-  --charcoal-15: #2e241726;
-  --charcoal-08: #2e241714;
+  /* Charcoal — primary text + dark fills */
+  --charcoal: #1F1F1C;
+  --charcoal-rgb: 31 31 28;
+  --charcoal-70: #4B4A45; /* secondary text */
+  --charcoal-55: #5F5B53; /* secondary text 2 */
+  --charcoal-30: #8C857A; /* muted tertiary text/border */
+  --charcoal-15: #C8C1B5; /* dividers / borders / subtle UI */
+  --charcoal-08: #DAD4C9; /* hairline / very subtle fill */
 
-  /* Deep Umber — strong secondary dark: hover, anchors, strong actions */
-  --umber: #4a3422;
-  --umber-rgb: 74 52 34;
+  /* Umber — burnt-orange strong warm: hover/strong actions */
+  --umber: #8A3F08;
+  --umber-rgb: 138 63 8;
 
-  /* Amber Glass — premium / selected accent. Sparing. Never long copy. */
-  --amber: #c6803d;
-  --amber-rgb: 198 128 61;
-  --amber-85: #c6803dd9;
-  --amber-70: #c6803db3;
+  /* Amber — honey warm accent: focus rings, selected. Sparing. */
+  --amber: #B86613;
+  --amber-rgb: 184 102 19;
+  --amber-85: #B86613D9; /* honey @ ~85% */
+  --amber-70: #B86613B3; /* honey @ ~70% */
 
-  /* Cool functional accent — a muted sea/teal pop on the warm palette (DA v0.4) */
-  --sea: #3f6f66;
-  --sea-rgb: 63 111 102;
+  /* Olive — olive-green functional pop on the warm palette */
+  --olive: #566B2F;
+  --olive-rgb: 86 107 47;
 
-  /* device frame surface (page background when the iPhone frame is shown) */
-  --page-bg: var(--charcoal-15);
+  /* Ink — near-black detail */
+  --ink: #11110F;
+  --ink-rgb: 17 17 15;
+
+  /* page background — the warm cream canvas */
+  --page-bg: var(--cream);
 
   /* safe area helpers */
   --safe-top: env(safe-area-inset-top, 0px);
