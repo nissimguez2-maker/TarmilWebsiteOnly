@@ -150,6 +150,40 @@ Flights-vs-Tours debate look like a conflict. It isn't:
 **Takeaway:** the only gap worth real attention is **visa (iVisa)** — it's a new
 monetizable line, not just a fill. Restaurants stay a *trust/content* asset.
 
+### 4.2 Handpicked affiliates — fame × payout (the "connect these" list)
+
+Synthesis of two audits (brand fame/trust + cookie-adjusted *realized* payout).
+For most categories fame and pay **align**; two needed a judgment call.
+
+| Category | **Pick** | Also connect | Why |
+|---|---|---|---|
+| Accommodation — general | **Booking.com** | — | #1 brand in Israel + global; **~5% via Travelpayouts** (Bookinggeddon-safe). Fire the deeplink at the *last* tap to beat its session cookie. |
+| Accommodation — backpacker | **Hostelworld** | — | The hostel brand **and 18–22%** — fame + pay aligned for the audience. |
+| Accommodation — Asia | **Agoda** | Trip.com | High rate; **verify the TP cookie** (may be 1-day → use Trip.com's 7–30d). |
+| Flights | **Skyscanner** | WayAway (cashback alt) | #3 site in Israel — the trusted click. WayAway pays more but is unknown; flights are a T1 *trust-play*, so the trusted name is the hero. |
+| Tours | **GetYourGuide** | Klook (Asia), Viator | 8% + 30-day = cleanest payout + premium brand. Both axes agree. |
+| Attraction tickets | **Tiqets** | GetYourGuide | Weak-brand category → payout picks Tiqets (8%/30d). |
+| eSIM | **Airalo** | — | Leader + ~12% + TP-native (small $ — garnish). |
+| Insurance | **EKTA** | SafetyWing (global) | No household name for Israelis (they buy local) → payout decides → EKTA (20%/premium, paid at policy start). |
+| Visa | **iVisa** | — | Sole brand; **verify TP vs external network**. |
+| Transfers | **Kiwitaxi** | — | Weak brand → TP-native, up to ~$80/booking. |
+| Rail / bus | **12Go** (Asia) · **Omio** (EU) | — | Region-split; 12Go = the SE-Asia routes, on TP. |
+| Car rental | **DiscoverCars** | — | Best cookie in the stack (**365-day**) + award-winning brand. Both axes agree. |
+
+**Two judgment calls (fame vs pay):** **Flights → Skyscanner** (trusted click >
+WayAway's higher-but-unknown payout; flights are a T1 trust-play). **Insurance →
+EKTA** (weak-brand for Israelis → payout wins; SafetyWing carries the global segment).
+
+**Connect-in-dashboard order:** **T1 now** — Booking.com, Hostelworld, Skyscanner ·
+**T2** — GetYourGuide (+ Klook), Tiqets · **T3 later** — Airalo, iVisa, EKTA,
+Kiwitaxi, 12Go (+ Omio), DiscoverCars.
+
+**Don't / verify:** skip **Airbnb** (program closed 2021); don't hero
+**WayAway/Aviasales** (unknown to the audience). Verify: Booking/Agoda **cookie
+length**, **iVisa/Omio/Welcome-Pickups** TP availability, GYG 8%(TP)-vs-7%(Awin)
+route. Note: **"Bookinggeddon" (2025) cut Booking's *direct* affiliates but
+Travelpayouts is unaffected** — the marker route is the safe path.
+
 ---
 
 ## 5. Placement map (journey stage → offers)
