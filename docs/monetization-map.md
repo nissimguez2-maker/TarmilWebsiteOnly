@@ -97,9 +97,9 @@ Both live in Netlify env vars at build time (`VITE_TRAVELPAYOUTS_TOKEN`,
 | Tier | Domain | Program (geo-fit) | Commission* | Integration | Surfaces at |
 |---|---|---|---|---|---|
 | **1** | **Accommodation** | Booking.com · **Hostelworld** (backpacker) · Agoda/Trip.com (Asia) | ~4% (verify net-of-cancel) | Widget + deeplink, **pre-filled with stop dates** | Itinerary stop (`StayStrip`, primary) + Stay tab (soft) |
-| **1** | **Tours & activities** | GetYourGuide · Viator · **Klook (Asia)** · WeGoTrip (API) | ~7–10% | Deeplink/widgets; WeGoTrip API for native cards | City panel **See/Do** as curated cards |
-| 2 | **Flights** | **WayAway (50% rev-share ≈ $6/flight)** > Aviasales (~1.1–1.5%) | low % / flat-ish | Data API price hints + **deeplink** | Transport legs (esp. home→first intl leg), `TransportBody` |
-| 2 | Travel insurance | **EKTA** (20% of premium, ~$0.99/day) | ~20% | Deeplink/widget | "Before you fly" finalize checklist |
+| **2** | **Tours & activities** | GetYourGuide · Viator · **Klook (Asia)** · WeGoTrip (API) | ~7–10% | Deeplink/widgets; WeGoTrip API for native cards | City panel **See/Do** as curated cards |
+| **1** | **Flights** | **WayAway (50% rev-share ≈ $6/flight)** > Aviasales (~1.1–1.5%) | low % / flat-ish | Data API price hints + **deeplink** | Transport legs (esp. home→first intl leg), `TransportBody` |
+| 3 | Travel insurance | **EKTA** (20% of premium, ~$0.99/day) | ~20% | Deeplink/widget | "Before you fly" finalize checklist |
 | 2 | Attraction tickets | Tiqets (8%) · Go City (3.4–6%) | 3–8% | Deeplink/widgets | Folded into See/Do with tours |
 | 3 | eSIM | **Airalo** (~12%) | ~12% | Deeplink | "Before you fly" + cross-border moments |
 | 3 | Transfers | **Kiwitaxi (50% of TP comm, up to ~$80/booking)** | rev-share | WL/widget/deeplink | Arrival seam (post-flight, in `TransportBody`) |
@@ -107,8 +107,20 @@ Both live in Netlify env vars at build time (`VITE_TRAVELPAYOUTS_TOKEN`,
 | 3 | Car rental | DiscoverCars (up to 70%, **365-day cookie**) | high | Widget + deeplink | Where road trips apply (Georgia, parts of SA) |
 | **DROP v1** | Events/concerts | TicketNetwork | 6–12.5% | — | US-centric, low backpacker fit; revisit later |
 
-<sub>*Stated/directional — confirm in the dashboard. If accommodation's
-net-of-cancellation rate is ≤2.5%, Tours becomes #1.*</sub>
+<sub>*Stated/directional — confirm in the dashboard.*</sub>
+
+**Founder prioritization (overrides the §2 EV-ranking, by intent + ticket size):**
+- **Tier 1 — Accommodation + Flights.** The two certain, top-of-mind needs and the
+  biggest single tickets. Build + prime-placement first.
+- **Tier 2 — Tours + activities** (incl. attraction tickets).
+- **Tier 3 — eSIM + visa (iVisa, §4.1) + insurance + the long tail** (transfers,
+  rail/bus, car).
+
+This consciously weights **user intent + absolute $ per sale** over pure expected
+value (where §2 edges Tours above Flights on *attach-driven* EV — Tours stays a strong
+T2, not forgotten). **Build implication:** leading with Flights only pays if we beat
+their one weak spot — **attach-leakage** to Google Flights/Skyscanner — so the flight
+handoff must be **pre-filled, price-hinted (the validated Data API), and one-tap.**
 
 ### 4.1 Category gaps beyond Travelpayouts (we're open to other APIs)
 
