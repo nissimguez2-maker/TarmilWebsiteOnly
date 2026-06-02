@@ -1,0 +1,27 @@
+{
+  "name": "Tarmil — תרמיל",
+  "short_name": "Tarmil",
+  "description": "אפליקציית הטיולים בעברית של ישראלים בחו״ל",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/trip",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF5EC",
+  "theme_color": "#FAF5EC",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

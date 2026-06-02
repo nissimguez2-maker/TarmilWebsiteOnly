@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tarmil">
+  <rect width="512" height="512" rx="96" fill="#FAF5EC"/>
+  <text x="256" y="372" text-anchor="middle"
+        font-family="'Frank Ruhl Libre', 'Fraunces', 'Times New Roman', serif"
+        font-weight="700" font-size="360" fill="#2E2417">ט</text>
+  <rect x="64" y="416" width="32" height="2" fill="#C6803D"/>
+</svg>

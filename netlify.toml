@@ -1,0 +1,25 @@
+# Tarmil — Netlify deploy config
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA fallback — every path serves index.html so client-side routes work.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# PWA correctness: ensure the manifest is served with the right MIME type.
+# (Netlify infers this from the .webmanifest extension; making it explicit
+# guards against accidental rename to .json which silences install prompts.)
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=300"
+
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"

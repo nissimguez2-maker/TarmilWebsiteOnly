@@ -1,0 +1,84 @@
+/*
+ * Tarmil — Direction Artistique v0.3 (May 2026)
+ * Source of truth: Branding/TARMIL DA.md (Drive) — "quiet confidence".
+ * Warm cream + dark ink. Amber is a sparing premium/selected accent, never a CTA.
+ * Tailwind theme references these variables — never hex literals in source.
+ */
+
+:root {
+  /* ───────────────────────────────────────────────────────────────
+   * DA v0.3 palette — 8 named tokens.
+   * Each surface/text token ships a full hex (for direct `var(--x)` use
+   * in CSS / Leaflet strings) plus a space-separated `*-rgb` triple that
+   * Tailwind splices `<alpha-value>` into via rgb(). Pre-blended tints
+   * (charcoal-70 / amber-85 / …) stay full hex with baked alpha — used
+   * without the `/N` modifier.
+   * ─────────────────────────────────────────────────────────────── */
+
+  /* Soft Cream — the page; default canvas for most screens */
+  --cream: #faf5ec;
+  --cream-rgb: 250 245 236;
+  /* Warm Stone — elevated surface: cards, panels, sections */
+  --sand: #e7dac6;
+  --sand-rgb: 231 218 198;
+  /* Pale Sand — subtle grouped fills, filters, soft fields */
+  --linen: #f1e8d8;
+  --linen-rgb: 241 232 216;
+  /* Muted Clay — tags, soft emphasis, restrained support */
+  --clay: #c29b82;
+  --clay-rgb: 194 155 130;
+  /* Dusty Blush — atmospheric support, very light usage only */
+  --blush: #ead3c8;
+  --blush-rgb: 234 211 200;
+
+  /* Charcoal Brown — primary text, structure, primary CTA fills */
+  --charcoal: #2e2417;
+  --charcoal-rgb: 46 36 23;
+  --charcoal-70: #2e2417b3;
+  --charcoal-55: #2e24178c;
+  --charcoal-30: #2e24174d;
+  --charcoal-15: #2e241726;
+  --charcoal-08: #2e241714;
+
+  /* Deep Umber — strong secondary dark: hover, anchors, strong actions */
+  --umber: #4a3422;
+  --umber-rgb: 74 52 34;
+
+  /* Amber Glass — premium / selected accent. Sparing. Never long copy. */
+  --amber: #c6803d;
+  --amber-rgb: 198 128 61;
+  --amber-85: #c6803dd9;
+  --amber-70: #c6803db3;
+
+  /* Cool functional accent — a muted sea/teal pop on the warm palette (DA v0.4) */
+  --sea: #3f6f66;
+  --sea-rgb: 63 111 102;
+
+  /* device frame surface (page background when the iPhone frame is shown) */
+  --page-bg: var(--charcoal-15);
+
+  /* safe area helpers */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-start: env(safe-area-inset-left, 0px);
+  --safe-end: env(safe-area-inset-right, 0px);
+
+  /*
+   * Motion — editorial, restrained, warm.
+   *   instant    — taps, colour swaps, segmented control
+   *   considered — sheets, panels, tools tray
+   */
+  --motion-instant: 140ms;
+  --motion-considered: 280ms;
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /*
+   * Elevation — quiet, charcoal-tinted, never neutral grey and never a
+   * coloured glow. DA v0.3: depth comes from composition/tone/whitespace,
+   * not from exaggerated shadow. (The old copper FAB glow is gone.)
+   */
+  --shadow-card: 0 1px 2px rgba(46, 36, 23, 0.04), 0 4px 14px -6px rgba(46, 36, 23, 0.08);
+  --shadow-sheet: 0 -12px 36px -14px rgba(46, 36, 23, 0.2);
+  --shadow-fab: 0 6px 20px -8px rgba(46, 36, 23, 0.22), 0 2px 6px -3px rgba(46, 36, 23, 0.16);
+  --shadow-panel: 0 16px 40px -16px rgba(46, 36, 23, 0.26);
+}

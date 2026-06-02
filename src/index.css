@@ -1,0 +1,110 @@
+@import './brand/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    background: var(--page-bg);
+  }
+
+  /*
+   * Universal motion-reduce respect. Beats sprinkling
+   * `motion-reduce:transition-none` on every interactive element. Users
+   * with prefers-reduced-motion still get instant feedback (active:scale
+   * jumps without an interpolated curve), but no animations or smooth
+   * colour fades. Standard a11y pattern.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    color: var(--charcoal);
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    font-feature-settings: 'tnum' 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    /* app-like feel */
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
+
+  /* serif headlines default to Fraunces with the SOFT axis maxed */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--charcoal);
+  }
+}
+
+@layer utilities {
+  /* opt-in selection (e.g., for inputs and quoted reviews) */
+  .allow-select {
+    user-select: text;
+    -webkit-user-select: text;
+    -webkit-touch-callout: default;
+  }
+
+  /* mid-titles per DA: italic Fraunces 500 sentence case */
+  .mid-title {
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--charcoal);
+  }
+
+  /* metadata caps per DA: Heebo 500 uppercase 0.18em tracking copper or cocoa */
+  .meta-caps {
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  /* tabular numerals for ledger/data contexts */
+  .tnum {
+    font-feature-settings: 'tnum' 1;
+  }
+
+  /* mixed-direction inline override (Latin inside Hebrew) */
+  .ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  /* mobile vs desktop visibility helpers for the device frame */
+  .device-frame-only {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .device-frame-only {
+      display: block;
+    }
+  }
+}
