@@ -17,6 +17,7 @@ import { PlacementBadge } from '../../components/PlacementBadge';
 import { PlacementExplainer } from '../../components/PlacementExplainer';
 import { SourceCredit } from '../../components/SourceCredit';
 import { AiDisclosure } from '../../components/AiDisclosure';
+import { NlSearchField } from './NlSearchField';
 import type { PlannedStop } from '../../data/plannedStops';
 import type { Place, PlaceCategory } from '../../data/places';
 import { aggregateSourceLabel, placeRankScore } from '../../data/places';
@@ -130,14 +131,21 @@ function tabOsmCategory(
   return null;
 }
 
+/** Which browse tab owns a place category — lets NL search jump to the right tab. */
+function tabForCategory(cat: PlaceCategory): TabId | null {
+  return TABS.find((t) => t.categories.includes(cat))?.id ?? null;
+}
+
 export function WebCityPanel({ stop, places }: Props) {
   useWishlist();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [activeSub, setActiveSub] = useState<PlaceCategory | 'all'>('all');
+  const [kw, setKw] = useState<string[]>([]);
 
   useEffect(() => {
     setActiveTab('overview');
     setActiveSub('all');
+    setKw([]);
   }, [stop.id]);
 
   const activeTabDef = TABS.find((t) => t.id === activeTab)!;
@@ -157,6 +165,7 @@ export function WebCityPanel({ stop, places }: Props) {
               onClick={() => {
                 setActiveTab(tab.id);
                 setActiveSub('all');
+                setKw([]);
               }}
               className={clsx(
                 'shrink-0 font-sans text-small px-sm py-xs rounded-full border transition-[background-color,border-color,color] duration-instant ease-out-quart motion-reduce:transition-none',
@@ -192,6 +201,24 @@ export function WebCityPanel({ stop, places }: Props) {
         )}
       </nav>
 
+      <div className="shrink-0 px-md pt-sm">
+        <NlSearchField
+          onFilters={(f) => {
+            if (f.category) {
+              const t = tabForCategory(f.category);
+              if (t) {
+                setActiveTab(t);
+                setActiveSub('all');
+              }
+            }
+            setKw(f.keywords);
+          }}
+          onRaw={(q) =>
+            setKw(q.toLowerCase().split(/\s+/).filter((w) => w.length > 2))
+          }
+        />
+      </div>
+
       <div className="flex-1 overflow-y-auto p-md">
         {activeTab === 'overview' ? (
           <OverviewTab stop={stop} />
@@ -205,7 +232,7 @@ export function WebCityPanel({ stop, places }: Props) {
                 places,
                 activeTabDef.categories,
                 activeSub,
-              )}
+              ).filter((p) => matchesKeywords(p, kw))}
               emptyLabel={activeTabDef.label.toLowerCase()}
               osmCategory={tabOsmCategory(activeTab, activeSub)}
               stop={stop}
@@ -315,6 +342,13 @@ function filterAndSortPlaces(
   // Curated editorial rating drives order — no fabricated social signal, and
   // a third-party aggregate never outranks Tarmil's curation (placeRankScore).
   return [...filtered].sort((a, b) => placeRankScore(b) - placeRankScore(a));
+}
+
+/** ANY-keyword match over a place's name / description / category (NL search). */
+function matchesKeywords(p: Place, kw: string[]): boolean {
+  if (kw.length === 0) return true;
+  const hay = `${p.englishName} ${p.englishDescription} ${p.category}`.toLowerCase();
+  return kw.some((k) => hay.includes(k));
 }
 
 function OverviewTab({ stop }: { stop: PlannedStop }) {

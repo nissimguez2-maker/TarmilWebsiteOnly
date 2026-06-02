@@ -453,7 +453,11 @@ export function WebStopList({
         home={home}
       />
       {beforeOpen && (
-        <WebBeforeYouFly stops={stops} onClose={() => setBeforeOpen(false)} />
+        <WebBeforeYouFly
+          stops={stops}
+          homeCountryName="Israel"
+          onClose={() => setBeforeOpen(false)}
+        />
       )}
     </aside>
   );

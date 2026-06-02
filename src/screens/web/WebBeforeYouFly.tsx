@@ -2,11 +2,12 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { CalendarDays, Coins, ShieldAlert, X } from 'lucide-react';
 import { SourceCredit } from '../../components/SourceCredit';
 import type { PlannedStop } from '../../data/plannedStops';
-import { countryCodeFor } from './cityCountries';
+import { countryCodeFor, countryNameFor } from './cityCountries';
 import { fetchCountry } from './countryApi';
 import { fetchPublicHolidays, holidaysInRange } from './holidaysApi';
 import { fetchFxRate } from './fxApi';
 import { entryReminder } from './entryNote';
+import { visaFromIsrael } from './visaApi';
 import { ConciergeBox } from './ConciergeBox';
 
 type Props = {
@@ -40,6 +41,81 @@ function homeCurrencyFor(name?: string): string {
 }
 
 /**
+ * Gather real, free per-stop facts (currency + live FX, language, timezone,
+ * public holidays in range, entry reminder) into plain sentences the concierge
+ * is grounded on. The model answers ONLY from these — so "what currency / is
+ * anything closed / what's the timezone" become answerable, while visa/safety
+ * stay deferred until a real source is wired. All sources are cached + graceful.
+ */
+function useTripFacts(
+  stops: PlannedStop[],
+  homeCurrency: string,
+  homeCountryName?: string,
+): string[] {
+  const [facts, setFacts] = useState<string[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const out: string[] = [];
+      for (const stop of stops) {
+        out.push(
+          `${stop.nameEn}: staying ${stop.arrivalDate} to ${stop.departureDate} (${stop.nights} nights).`,
+        );
+        const code = countryCodeFor(stop.id);
+        if (!code) continue;
+        const info = await fetchCountry(code);
+        if (info?.currencyCode) {
+          if (info.currencyCode !== homeCurrency) {
+            const rate = await fetchFxRate(info.currencyCode, homeCurrency);
+            out.push(
+              rate != null
+                ? `${stop.nameEn} (${code}) uses ${info.currencyCode}${info.currencyName ? ` (${info.currencyName})` : ''}; 1 ${info.currencyCode} is about ${formatRate(rate)} ${homeCurrency}.`
+                : `${stop.nameEn} (${code}) uses ${info.currencyCode}.`,
+            );
+          } else {
+            out.push(`${stop.nameEn} uses ${info.currencyCode}, the same as home.`);
+          }
+        }
+        if (info?.language) {
+          out.push(`${stop.nameEn}: main language ${info.language}; local timezone UTC${info.timezone}.`);
+        }
+        const year = Number(stop.arrivalDate.slice(0, 4));
+        const inRange = holidaysInRange(
+          await fetchPublicHolidays(code, year),
+          stop.arrivalDate,
+          stop.departureDate,
+        );
+        if (inRange.length > 0) {
+          out.push(
+            `Public holidays in ${stop.nameEn} during the stay: ${inRange
+              .map((h) => `${h.name} on ${h.date}`)
+              .join('; ')} (some places may close).`,
+          );
+        }
+        if (homeCountryName?.trim().toLowerCase() === 'israel') {
+          const visa = visaFromIsrael(code);
+          if (visa)
+            out.push(
+              `Israeli passport entering ${countryNameFor(code) ?? code}: ${visa}. Guidance only — verify with the embassy.`,
+            );
+        }
+        if (homeCountryName) {
+          const note = entryReminder(homeCountryName, countryNameFor(code) ?? code);
+          if (note) out.push(note);
+        }
+      }
+      if (!cancelled) setFacts(out);
+    })().catch(() => {
+      if (!cancelled) setFacts([]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [stops, homeCurrency, homeCountryName]);
+  return facts;
+}
+
+/**
  * "Before you fly" — a calm, skimmable finalize overlay. For each stop it surfaces
  * only real, free data: public holidays falling inside the stay (Nager.Date),
  * a live currency line to the traveler's home currency (Frankfurter), and a
@@ -55,6 +131,7 @@ export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
   const homeCurrency = homeCurrencyFor(homeCountryName);
+  const facts = useTripFacts(stops, homeCurrency, homeCountryName);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -149,7 +226,7 @@ export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
             ))
           )}
 
-          <ConciergeBox stops={stops} />
+          <ConciergeBox stops={stops} facts={facts} />
         </div>
       </div>
     </div>
@@ -329,12 +406,14 @@ function EntryLine({
   // stop's ISO code. (REST Countries' "flag" field is an emoji, not a name, so
   // we don't have a name there — fall back to the code so the note still reads.)
   useEffect(() => {
-    setDestName(countryCode ?? null);
+    setDestName(countryNameFor(countryCode) ?? countryCode ?? null);
   }, [countryCode]);
 
   if (!homeCountryName || !destName) return null;
+  const isIsraeli = homeCountryName.trim().toLowerCase() === 'israel';
+  const visa = isIsraeli ? visaFromIsrael(countryCode) : null;
   const note = entryReminder(homeCountryName, destName);
-  if (!note) return null;
+  if (!note && !visa) return null;
 
   return (
     <div className="flex items-start gap-sm">
@@ -345,7 +424,15 @@ function EntryLine({
         aria-hidden="true"
       />
       <div className="flex min-w-0 flex-1 flex-col gap-xs">
-        <p className="text-small leading-relaxed text-charcoal">{note}</p>
+        {visa && (
+          <p className="text-small text-charcoal">
+            <span className="meta-caps text-charcoal-70">Israeli passport</span> ·{' '}
+            {visa}
+          </p>
+        )}
+        {note && (
+          <p className="text-small leading-relaxed text-charcoal">{note}</p>
+        )}
         <p className="text-meta text-charcoal-55">
           A general reminder, not legal advice — confirm with the country's
           official immigration site before you book.
