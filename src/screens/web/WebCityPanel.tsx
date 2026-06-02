@@ -17,6 +17,7 @@ import { PlacementBadge } from '../../components/PlacementBadge';
 import { PlacementExplainer } from '../../components/PlacementExplainer';
 import type { PlannedStop } from '../../data/plannedStops';
 import type { Place, PlaceCategory } from '../../data/places';
+import { aggregateSourceLabel, placeRankScore } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
 import { rewriteAsTravelIntro } from './groqApi';
 import { useCityPhotos } from './cityPhotos';
@@ -309,8 +310,9 @@ function filterAndSortPlaces(
   const inTab = places.filter((p) => tabCategories.includes(p.category));
   const filtered =
     subFilter === 'all' ? inTab : inTab.filter((p) => p.category === subFilter);
-  // Curated editorial rating drives order — no fabricated social signal.
-  return [...filtered].sort((a, b) => b.rating - a.rating);
+  // Curated editorial rating drives order — no fabricated social signal, and
+  // a third-party aggregate never outranks Tarmil's curation (placeRankScore).
+  return [...filtered].sort((a, b) => placeRankScore(b) - placeRankScore(a));
 }
 
 function OverviewTab({ stop }: { stop: PlannedStop }) {
@@ -750,10 +752,21 @@ function PlaceCard({
             {place.englishName}
           </h4>
           <div className="flex items-center gap-sm flex-wrap">
-            <span className="inline-flex items-center gap-xs text-small text-amber">
-              <Star size={12} strokeWidth={2} fill="currentColor" />
-              {place.rating.toFixed(1)}
-            </span>
+            {/* Honesty firewall: the gold star renders ONLY from Tarmil's
+                editorial `rating`. A third-party `aggregateRating` shows as a
+                quiet, attributed line — never as the gold star. Both may show. */}
+            {place.rating != null && (
+              <span className="inline-flex items-center gap-xs text-small text-amber">
+                <Star size={12} strokeWidth={2} fill="currentColor" />
+                {place.rating.toFixed(1)}
+              </span>
+            )}
+            {place.aggregateRating && (
+              <span className="inline-flex items-center gap-xs text-meta text-charcoal-55">
+                {place.aggregateRating.value.toFixed(1)} ·{' '}
+                {aggregateSourceLabel(place.aggregateRating.source)}
+              </span>
+            )}
             <span className="text-meta uppercase text-charcoal-70">
               {place.category}
             </span>

@@ -82,6 +82,19 @@ export type AggregateRating = {
   count?: number;
 };
 
+/** Human label for a third-party rating source — rendered quiet + attributed
+ *  (e.g. "4.4 · Google"), never as Tarmil's editorial gold star. */
+export function aggregateSourceLabel(source: AggregateRating['source']): string {
+  switch (source) {
+    case 'google':
+      return 'Google';
+    case 'foursquare':
+      return 'Foursquare';
+    case 'tripadvisor':
+      return 'Tripadvisor';
+  }
+}
+
 export type Place = {
   id: string;
   destinationId: string;
@@ -96,10 +109,12 @@ export type Place = {
   englishDescription: string;
   /**
    * Tarmil's editorial star rating, 1–5 — the honest curation score, and the
-   * ONLY rating that renders as the gold star. Third-party aggregate scores go
-   * in `aggregateRating`, never here (the honesty firewall, by construction).
+   * ONLY value that renders as the gold star. Optional: a non-curated global
+   * place (OSM / Foursquare / Google) has no Tarmil editorial score, so it
+   * leaves this absent and carries an `aggregateRating` instead. Third-party
+   * scores go in `aggregateRating`, NEVER here (the honesty firewall).
    */
-  rating: number;
+  rating?: number;
   /** Earned "Tarmil Selection" status (seed/DB: `tarmil_pick`). */
   tarmilPick?: boolean;
   /**
@@ -146,3 +161,15 @@ export type Place = {
   /** ISO timestamp this place was last seen in a source — freshness vs. closures. */
   verifiedAt?: string;
 };
+
+/**
+ * Sort key for the city list. Editorial-rated (curated) places rank by their
+ * gold-star score and always sit above places with only a third-party
+ * `aggregateRating` — aggregates inform ordering among non-curated places but
+ * never outrank Tarmil's curation, and never masquerade as the editorial star.
+ * Editorial 1–5 maps to 11–15; aggregate 1–5 stays 1–5; absent both ⇒ 0.
+ */
+export function placeRankScore(p: Place): number {
+  if (p.rating != null) return 10 + p.rating;
+  return p.aggregateRating?.value ?? 0;
+}
