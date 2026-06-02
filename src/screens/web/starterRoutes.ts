@@ -31,6 +31,27 @@ export const STARTER_ROUTES: StarterRoute[] = [
     heroCityId: 'buzios',
     cityIds: ['rio-de-janeiro', 'buzios', 'sao-paulo', 'foz-do-iguacu'],
   },
+  {
+    id: 'thailand-vietnam',
+    title: 'Thailand → Vietnam',
+    reason: 'The classic Southeast Asia opener — big city, island beaches, northern Vietnam.',
+    heroCityId: 'ko-pha-ngan',
+    cityIds: ['bangkok', 'ko-pha-ngan', 'hanoi'],
+  },
+  {
+    id: 'india-nepal',
+    title: 'India & Nepal',
+    reason: 'Beaches in the south, pine valleys up north, then over to the Himalaya.',
+    heroCityId: 'kasol',
+    cityIds: ['goa', 'kasol', 'kathmandu'],
+  },
+  {
+    id: 'andes-altiplano',
+    title: 'Andes & Altiplano',
+    reason: 'Down the spine of South America — eternal spring to the high altiplano.',
+    heroCityId: 'cusco',
+    cityIds: ['medellin', 'cusco', 'la-paz'],
+  },
 ];
 
 /** Resolve a route's city ids to AddableCity objects (skips any unknown id). */
