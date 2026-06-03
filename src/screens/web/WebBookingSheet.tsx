@@ -17,6 +17,8 @@ import {
   useWishlist,
 } from './wishlist';
 import { showToast } from './WebToast';
+import { buildStayLink, buildTransportLink } from './bookingLink';
+import { track } from './track';
 
 /**
  * Two-step booking sheet. The browsing card shows the option; this sheet —
@@ -154,6 +156,10 @@ export function WebBookingSheet() {
 }
 
 function StayBody({ stop }: { stop: PlannedStop }) {
+  // Funnel: the sheet reaching open is real accommodation intent.
+  useEffect(() => {
+    track('booking_sheet_open', { kind: 'stay', stopId: stop.id, nights: stop.nights });
+  }, [stop.id, stop.nights]);
   return (
     <div className="flex flex-col min-h-0">
       <header className="shrink-0 px-md pt-md pb-sm flex flex-col gap-xs pe-12">
@@ -173,7 +179,12 @@ function StayBody({ stop }: { stop: PlannedStop }) {
           Find a place to stay for your dates.
         </p>
         {STAY_PARTNERS.map((p) => (
-          <PartnerRow key={p.id} partner={p} />
+          <PartnerRow
+            key={p.id}
+            partner={p}
+            href={buildStayLink(p, stop)}
+            eventProps={{ partnerId: p.id, slot: 'stay-strip', kind: 'stay', stopId: stop.id, nights: stop.nights }}
+          />
         ))}
         <Disclosure />
       </div>
@@ -193,6 +204,9 @@ function TransportBody({
   useWishlist();
   const added = !!findTransit(fromStop.id, toStop.id, offer.id);
   const isDrive = offer.mode === 'drive';
+  useEffect(() => {
+    track('booking_sheet_open', { kind: 'transport', fromStopId: fromStop.id, toStopId: toStop.id });
+  }, [fromStop.id, toStop.id]);
 
   const onToggle = () => {
     if (added) {
@@ -273,7 +287,12 @@ function TransportBody({
             />
           )}
           {TRANSPORT_PARTNERS.map((p) => (
-            <PartnerRow key={p.id} partner={p} />
+            <PartnerRow
+              key={p.id}
+              partner={p}
+              href={buildTransportLink(p, fromStop, toStop, fromStop.departureDate)}
+              eventProps={{ partnerId: p.id, slot: 'transport', kind: 'transport', fromStopId: fromStop.id, toStopId: toStop.id }}
+            />
           ))}
         </div>
         <Disclosure />
@@ -283,20 +302,31 @@ function TransportBody({
 }
 
 /**
- * A calm full-width partner row — logo, name, chevron. Cosmetic for now: a tap
- * toasts the launch note instead of navigating.
+ * A calm full-width partner row — logo, name, chevron. A tap fires the
+ * `book_handoff` event and opens the real marked, pre-filled deeplink in a new
+ * tab. Partners with no template ("book direct") fall back to a calm toast.
  */
 function PartnerRow({
   partner,
+  href,
+  eventProps,
   operatorProvider,
   operatorMode,
 }: {
   partner: BookingPartner;
+  href?: string | null;
+  eventProps?: Record<string, unknown>;
   operatorProvider?: string;
   operatorMode?: TransportOffer['mode'];
 }) {
   const onClick = () => {
-    showToast(`${partner.name} — partner links activate at launch`);
+    if (href) {
+      // The conversion event — fired before navigating away.
+      track('book_handoff', eventProps);
+      window.open(href, '_blank', 'noopener');
+    } else {
+      showToast(`Booking ${partner.name} opens at launch`);
+    }
   };
   return (
     <button

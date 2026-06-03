@@ -14,10 +14,10 @@ import {
  * keeps the commerce calm and disclosed, matching the Sponsored / Tarmil
  * Selection merchant model.
  *
- * Links are COSMETIC today: `deeplinkTemplate` is a launch-ready placeholder
- * (swap the affiliate id, wire `window.open`) — nothing navigates yet. Brand
- * hexes are data, only ever fed to an inline `<svg fill>` or a wordmark
- * colour, never a Tailwind class.
+ * `deeplinkTemplate` is filled + marked by `bookingLink.ts` (real city + dates +
+ * pax, plus the Travelpayouts marker + sub_id) and opened on tap. Tokens:
+ * {city} {checkIn} {checkOut} {from} {to} {date} {pax}. Brand hexes are data,
+ * only ever fed to an inline `<svg fill>` or a wordmark colour, never a class.
  */
 
 export type BookingPartner = {
@@ -26,7 +26,7 @@ export type BookingPartner = {
   hex: string;
   /** simple-icons path `d`, or null → render a branded text wordmark. */
   logoPath: string | null;
-  /** Cosmetic, launch-ready deeplink. Tokens: {city} {checkIn} {checkOut} {from} {to} {date}. */
+  /** Deeplink template; marker + sub_id are appended by bookingLink.ts. Empty = "book direct" (no link). */
   deeplinkTemplate: string;
 };
 
@@ -37,7 +37,7 @@ export const STAY_PARTNERS: BookingPartner[] = [
     hex: `#${siBookingdotcom.hex}`,
     logoPath: siBookingdotcom.path,
     deeplinkTemplate:
-      'https://www.booking.com/searchresults.html?ss={city}&checkin={checkIn}&checkout={checkOut}&aid=PLACEHOLDER',
+      'https://www.booking.com/searchresults.html?ss={city}&checkin={checkIn}&checkout={checkOut}&group_adults={pax}',
   },
   {
     id: 'airbnb',
@@ -45,7 +45,7 @@ export const STAY_PARTNERS: BookingPartner[] = [
     hex: `#${siAirbnb.hex}`,
     logoPath: siAirbnb.path,
     deeplinkTemplate:
-      'https://www.airbnb.com/s/{city}/homes?checkin={checkIn}&checkout={checkOut}',
+      'https://www.airbnb.com/s/{city}/homes?checkin={checkIn}&checkout={checkOut}&adults={pax}',
   },
   {
     // No simple-icon for Hostelworld — rendered as a branded wordmark.
@@ -70,7 +70,7 @@ export const TRANSPORT_PARTNERS: BookingPartner[] = [
     hex: `#${siExpedia.hex}`,
     logoPath: siExpedia.path,
     deeplinkTemplate:
-      'https://www.expedia.com/Flights-Search?leg1=from:{from},to:{to},departure:{date}&aid=PLACEHOLDER',
+      'https://www.expedia.com/Flights-Search?leg1=from:{from},to:{to},departure:{date}',
   },
   {
     id: 'tripcom',
@@ -78,6 +78,6 @@ export const TRANSPORT_PARTNERS: BookingPartner[] = [
     hex: `#${siTripdotcom.hex}`,
     logoPath: siTripdotcom.path,
     deeplinkTemplate:
-      'https://www.trip.com/flights/{from}-to-{to}/?ddate={date}&allianceid=PLACEHOLDER',
+      'https://www.trip.com/flights/{from}-to-{to}/?ddate={date}',
   },
 ];
