@@ -1,6 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { CalendarDays, Coins, ShieldAlert, X } from 'lucide-react';
 import { SourceCredit } from '../../components/SourceCredit';
+import { FactTile } from '../../components/FactTile';
+import { IconChip } from '../../components/IconChip';
+import { useCityPhotos } from './cityPhotos';
 import type { PlannedStop } from '../../data/plannedStops';
 import { countryCodeFor, countryNameFor } from './cityCountries';
 import { fetchCountry } from './countryApi';
@@ -275,15 +278,26 @@ function StopCard({
   homeName?: string;
 }) {
   const code = countryCodeFor(stop.id);
+  const meta = [countryNameFor(code), `${stop.nights} ${stop.nights === 1 ? 'night' : 'nights'}`]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
-    <article className="flex flex-col gap-sm rounded-2xl bg-paper p-md shadow-card ring-1 ring-charcoal-15">
-      <h3 className="font-serif text-lede leading-tight text-charcoal">
-        {stop.nameEn}
-      </h3>
-      <HolidayLines stop={stop} countryCode={code} />
-      <CurrencyLine countryCode={code} homeCurrency={homeCurrency} />
-      <EntryLine countryCode={code} homePassport={homePassport} homeName={homeName} />
+    <article className="flex flex-col gap-md rounded-2xl bg-paper p-md shadow-card ring-1 ring-charcoal-15">
+      <header className="flex items-center gap-sm">
+        <CardThumb id={stop.id} name={stop.nameEn} />
+        <div className="flex min-w-0 flex-col">
+          <h3 className="font-serif text-sub leading-none text-charcoal">
+            {stop.nameEn}
+          </h3>
+          <p className="meta-caps text-charcoal-55">{meta}</p>
+        </div>
+      </header>
+      <div className="grid grid-cols-1 gap-sm sm:grid-cols-2">
+        <EntryTile countryCode={code} homePassport={homePassport} homeName={homeName} />
+        <CurrencyTile countryCode={code} homeCurrency={homeCurrency} />
+        <HolidayTile stop={stop} countryCode={code} />
+      </div>
       <LocalConditions
         lat={stop.lat}
         lng={stop.lng}
@@ -294,9 +308,21 @@ function StopCard({
   );
 }
 
+/** Small city photo in the card header — the "graphics" the founder asked for. */
+function CardThumb({ id, name }: { id: string; name: string }) {
+  const photo = useCityPhotos(id, name)[0];
+  return (
+    <span className="block h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-shell ring-1 ring-charcoal-15">
+      {photo && (
+        <img src={photo} alt="" loading="lazy" className="h-full w-full object-cover" />
+      )}
+    </span>
+  );
+}
+
 type Holiday = { date: string; localName: string; name: string };
 
-function HolidayLines({
+function HolidayTile({
   stop,
   countryCode,
 }: {
@@ -330,43 +356,32 @@ function HolidayLines({
     };
   }, [countryCode, stop.arrivalDate, stop.departureDate]);
 
-  // Hide the line entirely when there's nothing real to show — never an empty state.
+  // Hide the tile entirely when there's nothing real to show — never an empty state.
   if (!holidays || holidays.length === 0) return null;
 
   return (
-    <div className="flex items-start gap-sm">
-      <CalendarDays
-        size={14}
-        strokeWidth={2}
-        className="mt-px shrink-0 text-charcoal-70"
-        aria-hidden="true"
-      />
-      <div className="flex min-w-0 flex-1 flex-col gap-xs">
-        <p className="meta-caps text-charcoal-70">
-          Public holidays during your stay
-        </p>
-        <ul className="flex flex-col gap-px">
-          {holidays.map((h) => (
-            <li key={`${h.date}-${h.name}`} className="text-small text-charcoal">
-              <span className="tnum text-charcoal-70">
-                {formatHolidayDate(h.date)}
-              </span>{' '}
-              · {h.name}
-              {h.localName && h.localName !== h.name && (
-                <span className="text-charcoal-70"> ({h.localName})</span>
-              )}
-            </li>
-          ))}
-        </ul>
-        <SourceCredit href="https://date.nager.at">
-          Holiday dates · Nager.Date
-        </SourceCredit>
-      </div>
-    </div>
+    <FactTile
+      icon={
+        <IconChip tone="amber">
+          <CalendarDays size={14} strokeWidth={1.75} />
+        </IconChip>
+      }
+      label="Holidays in your stay"
+    >
+      <ul className="flex flex-col gap-px">
+        {holidays.map((h) => (
+          <li key={`${h.date}-${h.name}`} className="text-small text-charcoal">
+            <span className="tnum text-charcoal-55">{formatHolidayDate(h.date)}</span>{' '}
+            · {h.name}
+          </li>
+        ))}
+      </ul>
+      <SourceCredit href="https://date.nager.at">Nager.Date</SourceCredit>
+    </FactTile>
   );
 }
 
-function CurrencyLine({
+function CurrencyTile({
   countryCode,
   homeCurrency,
 }: {
@@ -409,35 +424,30 @@ function CurrencyLine({
   if (!money) return null;
 
   return (
-    <div className="flex items-start gap-sm">
-      <Coins
-        size={14}
-        strokeWidth={2}
-        className="mt-px shrink-0 text-charcoal-70"
-        aria-hidden="true"
-      />
-      <div className="flex min-w-0 flex-1 flex-col gap-xs">
-        <p className="text-small text-charcoal">
-          {money.name ? `${money.name} (${money.code})` : money.code}
-          {money.rate != null && (
-            <>
-              {' · '}
-              <span className="tnum">1 {homeCurrency}</span> ≈{' '}
-              <span className="tnum">{formatRate(money.rate)}</span> {money.code}
-            </>
-          )}
+    <FactTile
+      icon={
+        <IconChip tone="olive">
+          <Coins size={14} strokeWidth={1.75} />
+        </IconChip>
+      }
+      label={money.name ? `${money.name} (${money.code})` : money.code}
+    >
+      {money.rate != null ? (
+        <p>
+          <span className="tnum">1 {homeCurrency}</span> ≈{' '}
+          <span className="tnum font-medium">{formatRate(money.rate)}</span> {money.code}
         </p>
-        {money.rate != null && (
-          <SourceCredit href="https://www.frankfurter.app">
-            Exchange rate · Frankfurter
-          </SourceCredit>
-        )}
-      </div>
-    </div>
+      ) : (
+        <p className="text-small text-charcoal-55">Used at this stop</p>
+      )}
+      {money.rate != null && (
+        <SourceCredit href="https://www.frankfurter.app">Frankfurter</SourceCredit>
+      )}
+    </FactTile>
   );
 }
 
-function EntryLine({
+function EntryTile({
   countryCode,
   homePassport,
   homeName,
@@ -461,30 +471,25 @@ function EntryLine({
   if (!note && !visa) return null;
 
   return (
-    <div className="flex items-start gap-sm">
-      <ShieldAlert
-        size={14}
-        strokeWidth={2}
-        className="mt-px shrink-0 text-charcoal-70"
-        aria-hidden="true"
-      />
-      <div className="flex min-w-0 flex-1 flex-col gap-xs">
-        {visa ? (
-          <>
-            <p className="text-small text-charcoal">
-              <span className="meta-caps text-charcoal-70">{homeName} passport</span> ·{' '}
-              {visa}
-            </p>
-            <p className="text-meta text-charcoal-55">
-              Guidance only · verify with {destName}'s official immigration site
-              before booking.
-            </p>
-          </>
-        ) : (
-          note && <p className="text-small leading-relaxed text-charcoal">{note}</p>
-        )}
-      </div>
-    </div>
+    <FactTile
+      icon={
+        <IconChip tone="umber">
+          <ShieldAlert size={14} strokeWidth={1.75} />
+        </IconChip>
+      }
+      label={`${homeName} passport`}
+    >
+      {visa ? (
+        <>
+          <p className="font-medium">{visa}</p>
+          <p className="text-meta text-charcoal-55">
+            Guidance only · verify with {destName}'s official immigration site.
+          </p>
+        </>
+      ) : (
+        note && <p className="text-small leading-relaxed text-charcoal-70">{note}</p>
+      )}
+    </FactTile>
   );
 }
 
