@@ -7,7 +7,13 @@ import { fetchCountry } from './countryApi';
 import { fetchPublicHolidays, holidaysInRange } from './holidaysApi';
 import { fetchFxRate } from './fxApi';
 import { entryReminder } from './entryNote';
-import { visaFromIsrael } from './visaApi';
+import { visaFor } from './visaApi';
+import {
+  HOME_COUNTRIES,
+  loadHomeCountry,
+  saveHomeCountry,
+  homeCountryByCode,
+} from './homeCountry';
 import { ConciergeBox } from './ConciergeBox';
 import { LocalConditions } from './LocalConditions';
 import { fetchLocalTime } from './timeApi';
@@ -16,55 +22,8 @@ import { fetchAirQuality, aqiLabel } from './airQualityApi';
 
 type Props = {
   stops: PlannedStop[];
-  /** Display name of the traveler's home country — drives entry notes + FX quote. */
-  homeCountryName?: string;
   onClose: () => void;
 };
-
-/**
- * Map a home-country display name to its ISO-4217 quote currency. The website is
- * Israel-first, so an unknown / absent home resolves to ILS — matching the
- * "≈ X ILS" framing of the currency line. (Free data, no hardcoded rates.)
- */
-const HOME_CURRENCY: Record<string, string> = {
-  israel: 'ILS',
-  'united states': 'USD',
-  'united kingdom': 'GBP',
-  france: 'EUR',
-  germany: 'EUR',
-  spain: 'EUR',
-  italy: 'EUR',
-  netherlands: 'EUR',
-  canada: 'CAD',
-  australia: 'AUD',
-};
-
-function homeCurrencyFor(name?: string): string {
-  if (!name) return 'ILS';
-  return HOME_CURRENCY[name.trim().toLowerCase()] ?? 'ILS';
-}
-
-// The traveler's home currency defaults to ILS (the core audience) but is
-// changeable — a global visitor may be based elsewhere — and persists locally.
-const HOME_CURRENCY_KEY = 'tarmil:home-currency';
-const CURRENCY_OPTIONS = [
-  'ILS', 'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'JPY', 'CNY', 'INR',
-  'THB', 'BRL', 'ARS', 'MXN', 'ZAR', 'SGD', 'AED', 'TRY', 'NZD', 'KRW',
-];
-function loadHomeCurrency(): string | null {
-  try {
-    return localStorage.getItem(HOME_CURRENCY_KEY);
-  } catch {
-    return null;
-  }
-}
-function saveHomeCurrency(c: string): void {
-  try {
-    localStorage.setItem(HOME_CURRENCY_KEY, c);
-  } catch {
-    // ignore quota errors
-  }
-}
 
 /**
  * Gather real, free per-stop facts (currency + live FX, language, timezone,
@@ -76,7 +35,8 @@ function saveHomeCurrency(c: string): void {
 function useTripFacts(
   stops: PlannedStop[],
   homeCurrency: string,
-  homeCountryName?: string,
+  homePassport?: string,
+  homeName?: string,
 ): string[] {
   const [facts, setFacts] = useState<string[]>([]);
   useEffect(() => {
@@ -138,15 +98,13 @@ function useTripFacts(
               .join('; ')} (some places may close).`,
           );
         }
-        if (homeCountryName?.trim().toLowerCase() === 'israel') {
-          const visa = visaFromIsrael(code);
-          if (visa)
-            out.push(
-              `Israeli passport entering ${countryNameFor(code) ?? code}: ${visa}. Guidance only — verify with the embassy.`,
-            );
-        }
-        if (homeCountryName) {
-          const note = entryReminder(homeCountryName, countryNameFor(code) ?? code);
+        const visa = visaFor(homePassport, code);
+        if (visa)
+          out.push(
+            `${homeName ?? 'Your'} passport entering ${countryNameFor(code) ?? code}: ${visa}. Guidance only — verify with the embassy.`,
+          );
+        if (homeName) {
+          const note = entryReminder(homeName, countryNameFor(code) ?? code);
           if (note) out.push(note);
         }
       }
@@ -157,7 +115,7 @@ function useTripFacts(
     return () => {
       cancelled = true;
     };
-  }, [stops, homeCurrency, homeCountryName]);
+  }, [stops, homeCurrency, homePassport, homeName]);
   return facts;
 }
 
@@ -172,14 +130,17 @@ function useTripFacts(
  * stopPropagation so the planner's global handler doesn't also fire), a focus
  * trap, and focus restored to the opener on close.
  */
-export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
+export function WebBeforeYouFly({ stops, onClose }: Props) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
-  const [homeCurrency, setHomeCurrency] = useState<string>(
-    () => loadHomeCurrency() ?? homeCurrencyFor(homeCountryName),
-  );
-  const facts = useTripFacts(stops, homeCurrency, homeCountryName);
+  // One "traveling from" choice drives both the FX quote currency and the visa
+  // passport. Defaults to Israel (the core audience), changeable, persisted.
+  const [homeCountry, setHomeCountry] = useState<string>(() => loadHomeCountry());
+  const hc = homeCountryByCode(homeCountry);
+  const homeCurrency = hc?.currency ?? 'ILS';
+  const homeName = hc?.name ?? 'Israel';
+  const facts = useTripFacts(stops, homeCurrency, homeCountry, homeName);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -247,18 +208,18 @@ export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
               A few things worth knowing
             </h2>
             <label className="mt-xs inline-flex items-center gap-xs text-meta text-charcoal-55">
-              Your currency
+              Traveling from
               <select
-                value={homeCurrency}
+                value={homeCountry}
                 onChange={(e) => {
-                  setHomeCurrency(e.target.value);
-                  saveHomeCurrency(e.target.value);
+                  setHomeCountry(e.target.value);
+                  saveHomeCountry(e.target.value);
                 }}
                 className="rounded-md border border-charcoal-15 bg-cream px-xs py-px text-small text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
               >
-                {CURRENCY_OPTIONS.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                {HOME_COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
                   </option>
                 ))}
               </select>
@@ -286,7 +247,8 @@ export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
                 key={stop.id}
                 stop={stop}
                 homeCurrency={homeCurrency}
-                homeCountryName={homeCountryName}
+                homePassport={homeCountry}
+                homeName={homeName}
               />
             ))
           )}
@@ -301,11 +263,13 @@ export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
 function StopCard({
   stop,
   homeCurrency,
-  homeCountryName,
+  homePassport,
+  homeName,
 }: {
   stop: PlannedStop;
   homeCurrency: string;
-  homeCountryName?: string;
+  homePassport?: string;
+  homeName?: string;
 }) {
   const code = countryCodeFor(stop.id);
 
@@ -316,7 +280,7 @@ function StopCard({
       </h3>
       <HolidayLines stop={stop} countryCode={code} />
       <CurrencyLine countryCode={code} homeCurrency={homeCurrency} />
-      <EntryLine countryCode={code} homeCountryName={homeCountryName} />
+      <EntryLine countryCode={code} homePassport={homePassport} homeName={homeName} />
       <LocalConditions
         lat={stop.lat}
         lng={stop.lng}
@@ -472,10 +436,12 @@ function CurrencyLine({
 
 function EntryLine({
   countryCode,
-  homeCountryName,
+  homePassport,
+  homeName,
 }: {
   countryCode?: string;
-  homeCountryName?: string;
+  homePassport?: string;
+  homeName?: string;
 }) {
   const [destName, setDestName] = useState<string | null>(null);
 
@@ -486,10 +452,9 @@ function EntryLine({
     setDestName(countryNameFor(countryCode) ?? countryCode ?? null);
   }, [countryCode]);
 
-  if (!homeCountryName || !destName) return null;
-  const isIsraeli = homeCountryName.trim().toLowerCase() === 'israel';
-  const visa = isIsraeli ? visaFromIsrael(countryCode) : null;
-  const note = entryReminder(homeCountryName, destName);
+  if (!homeName || !destName) return null;
+  const visa = visaFor(homePassport, countryCode);
+  const note = entryReminder(homeName, destName);
   if (!note && !visa) return null;
 
   return (
@@ -504,7 +469,7 @@ function EntryLine({
         {visa ? (
           <>
             <p className="text-small text-charcoal">
-              <span className="meta-caps text-charcoal-70">Israeli passport</span> ·{' '}
+              <span className="meta-caps text-charcoal-70">{homeName} passport</span> ·{' '}
               {visa}
             </p>
             <p className="text-meta text-charcoal-55">

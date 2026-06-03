@@ -1,15 +1,15 @@
-import { VISA_FROM_ISRAEL } from '../../data/visaFromIsrael';
+import { VISA_MATRIX } from '../../data/visaMatrix';
 
 /**
- * Human visa/entry status for an ISRAELI passport entering `destCode` (ISO-2),
- * from the bundled open passport-index snapshot (MIT). Guidance-grade ONLY:
- * always shown with a "verify with the official source" disclaimer, and the
- * concierge may relay it but never as authoritative (Moffatt v. Air Canada).
- * Returns null when the destination isn't in the dataset.
+ * Human visa/entry status for a `passport` (ISO-2 home country) entering `dest`
+ * (ISO-2), from the bundled open passport-index snapshot (MIT). Guidance-grade
+ * ONLY: always shown with a "verify with the official source" disclaimer, and
+ * the concierge may relay it but never as authoritative (Moffatt v. Air Canada).
+ * Returns null when the passport or destination isn't in the dataset.
  */
-export function visaFromIsrael(destCode?: string): string | null {
-  if (!destCode) return null;
-  const cell = VISA_FROM_ISRAEL[destCode.toUpperCase()];
+export function visaFor(passport?: string, dest?: string): string | null {
+  if (!passport || !dest) return null;
+  const cell = VISA_MATRIX[passport.toUpperCase()]?.[dest.toUpperCase()];
   if (!cell || !cell.status) return null;
   return visaLabel(cell.status, cell.days);
 }
