@@ -64,6 +64,7 @@ import {
 } from './wishlist';
 import { showToast } from './WebToast';
 import { openBookingSheet } from './WebBookingSheet';
+import { loadTripIntent } from './tripIntent';
 import { WebRemoveStopConfirm } from './WebRemoveStopConfirm';
 import { WebItineraryOverlay } from './WebItineraryOverlay';
 import { WebBeforeYouFly } from './WebBeforeYouFly';
@@ -305,8 +306,10 @@ export function WebStopList({
       <TripOverviewCard stops={stops} home={home} onSelect={onSelect} />
       {stops.length > 0 && (
         <div className="px-md">
+          {/* who-fork: families & older travellers want the reassurance up front,
+              so the finalize step is promoted from a quiet ghost to a primary CTA. */}
           <Button
-            variant="ghost"
+            variant={loadTripIntent()?.who === 'family' ? 'primary' : 'ghost'}
             size="sm"
             fullWidth
             onClick={() => setBeforeOpen(true)}
