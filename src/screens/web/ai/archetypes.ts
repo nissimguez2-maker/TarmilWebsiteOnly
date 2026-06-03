@@ -157,11 +157,28 @@ function effectiveMin(vibe: TripVibe, poolSize: number): number {
 }
 
 /**
- * Roughly how many stops a route of `weeks` should hold at a given vibe pace,
- * clamped to that vibe's [min, max]. ~one stop per 4–5 nights, scaled by pace.
- * Used only to SIZE routes — never to invent cities.
+ * Group composition nudges trip DENSITY, not just which cities. Families go
+ * slower (fewer, longer stops — you plan for the weakest link, and packing/
+ * unpacking with kids is brutal); friends pack more in. Solo/pair stay neutral.
+ * This is the "who" finally doing something the traveler can feel.
  */
-function targetCount(weeks: number, vibe: TripVibe, poolSize: number): number {
+function whoPace(who: TripIntent['who']): number {
+  switch (who) {
+    case 'family':
+      return 0.78;
+    case 'friends':
+      return 1.15;
+    default:
+      return 1;
+  }
+}
+
+/**
+ * Roughly how many stops a route of `weeks` should hold at a given vibe pace,
+ * clamped to that vibe's [min, max]. ~one stop per 4–5 nights, scaled by the
+ * vibe's pace AND who's going. Used only to SIZE routes — never to invent cities.
+ */
+function targetCount(weeks: number, vibe: TripVibe, poolSize: number, who: TripIntent['who']): number {
   const shape = VIBE_SHAPE[vibe];
   const min = effectiveMin(vibe, poolSize);
   // Tight pool: there's no room to express pace via stop COUNT, so pin chill to
@@ -169,8 +186,8 @@ function targetCount(weeks: number, vibe: TripVibe, poolSize: number): number {
   // still separate (chill smaller than the other two) instead of collapsing.
   if (vibe === 'chill' && poolSize <= VIBE_SHAPE.classic.minCities) return min;
   const nights = weeks * 7;
-  // Baseline ~4.5 nights per stop, then bend by the vibe's pace.
-  const raw = Math.round((nights / 4.5) * shape.pace);
+  // Baseline ~4.5 nights per stop, bent by the vibe's pace and the group's pace.
+  const raw = Math.round((nights / 4.5) * shape.pace * whoPace(who));
   const bounded = Math.min(shape.maxCities, Math.max(min, raw));
   // Can never ask for more cities than the pool actually holds.
   return Math.min(bounded, poolSize);
@@ -426,7 +443,7 @@ function assemble(
   const out: TripArchetype[] = [];
 
   for (const vibe of VIBE_ORDER) {
-    const count = targetCount(weeks, vibe, pool.length);
+    const count = targetCount(weeks, vibe, pool.length, intent.who);
     const archetype = reconcile(byVibe.get(vibe), pool, vibe, intent, count);
     if (!archetype) return null;
     out.push(archetype);

@@ -23,6 +23,7 @@ import { aggregateSourceLabel, placeRankScore } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
 import { rewriteAsTravelIntro, rewritePlaceBlurb } from './groqApi';
 import { useCityPhotos } from './cityPhotos';
+import { loadTripIntent } from './tripIntent';
 import type { WeatherCondition, WeatherDay } from './cityWeather';
 import { fetchWeather, type WeatherSource } from './weatherApi';
 import { formatStopRange } from './dateUtils';
@@ -79,6 +80,14 @@ const TABS: { id: TabId; label: string; categories: PlaceCategory[] }[] = [
     categories: ['chabad', 'synagogue', 'mikveh', 'kosher'],
   },
 ];
+
+/** For families, push the nightlife (Drink) tab after See — day/kid content leads.
+ *  Honest reorder; nothing is hidden. Everyone else keeps the canonical order. */
+function orderTabsFor(who: string | undefined): typeof TABS {
+  if (who !== 'family') return TABS;
+  const order: TabId[] = ['overview', 'stay', 'eat', 'see', 'drink', 'religious'];
+  return [...TABS].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+}
 
 const SUB_FILTERS: Record<TabId, SubFilter[]> = {
   overview: [],
@@ -149,6 +158,9 @@ export function WebCityPanel({ stop, places }: Props) {
 
   const activeTabDef = TABS.find((t) => t.id === activeTab)!;
   const subFilters = SUB_FILTERS[activeTab];
+  // who-fork: families get day/kid content first — push the nightlife (Drink)
+  // tab after See. Honest reorder, never hides content.
+  const tabs = orderTabsFor(loadTripIntent()?.who);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -158,7 +170,7 @@ export function WebCityPanel({ stop, places }: Props) {
 
       <nav className="shrink-0 px-md pt-sm border-b border-charcoal-15 flex flex-col gap-sm">
         <div className="flex gap-xs overflow-x-auto -mx-md px-md pb-xs">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"

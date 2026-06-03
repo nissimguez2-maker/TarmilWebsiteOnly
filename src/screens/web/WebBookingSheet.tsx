@@ -22,6 +22,22 @@ import {
 import { showToast } from './WebToast';
 import { buildStayLink, buildTourLink, buildTransportLink } from './bookingLink';
 import { track } from './track';
+import { loadTripIntent } from './tripIntent';
+
+/**
+ * who-fork: order the stay partners by genuine fit — solo travellers and
+ * shoestring budgets see Hostelworld first; couples/families and comfort budgets
+ * see Booking/Airbnb first. Editorial fit, not paid queue-jumping (a paid slot
+ * would still carry its Sponsored badge); all partners always shown.
+ */
+function orderedStayPartners(): BookingPartner[] {
+  const intent = loadTripIntent();
+  const hostelFirst = intent?.who === 'solo' || intent?.budget === 'shoestring';
+  if (!hostelFirst) return STAY_PARTNERS;
+  return [...STAY_PARTNERS].sort((a, b) =>
+    a.id === 'hostelworld' ? -1 : b.id === 'hostelworld' ? 1 : 0,
+  );
+}
 
 /**
  * Two-step booking sheet. The browsing card shows the option; this sheet —
@@ -193,7 +209,7 @@ function StayBody({ stop }: { stop: PlannedStop }) {
         <p className="text-small text-charcoal-70">
           Find a place to stay for your dates.
         </p>
-        {STAY_PARTNERS.map((p) => (
+        {orderedStayPartners().map((p) => (
           <PartnerRow
             key={p.id}
             partner={p}
