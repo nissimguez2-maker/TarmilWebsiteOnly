@@ -19,9 +19,19 @@
   /* Cream — the page background */
   --cream: #E8E2D6;
   --cream-rgb: 232 226 214;
-  /* Sand — elevated card/panel surface */
+  /* Sand — elevated card/panel surface (legacy; superseded by paper for cards) */
   --sand: #EFE9DD;
   --sand-rgb: 239 233 221;
+  /* Paper — primary CARD surface. Brighter than cream so a card lifts OFF the
+   * page (~1.15:1) instead of vanishing into it (sand-on-cream was 1.07:1). An
+   * inset inside a paper card can simply reuse `cream`, giving a free ~1.15:1
+   * sub-box step — the depth ladder the warm palette was missing. */
+  --paper: #F6F1E7;
+  --paper-rgb: 246 241 231;
+  /* Shell — recessed "well" surface for insets/metric strips inside a card
+   * (~1.25:1 below paper). The other half of the ladder: page → card → well. */
+  --shell: #E0D9CB;
+  --shell-rgb: 224 217 203;
   /* Linen — subtle grouped fills */
   --linen: #ECE6DA;
   --linen-rgb: 236 230 218;
@@ -37,7 +47,7 @@
   --charcoal-rgb: 31 31 28;
   --charcoal-70: #4B4A45; /* secondary text */
   --charcoal-55: #5F5B53; /* secondary text 2 */
-  --charcoal-30: #8C857A; /* decorative borders/dividers only — fails text contrast, never use for text/icons */
+  --charcoal-30: #80796D; /* decorative borders/dividers only — darkened to clear 3:1 vs cream for hover affordances; never use for text/icons */
   --charcoal-15: #C8C1B5; /* dividers / borders / subtle UI */
   --charcoal-08: #DAD4C9; /* hairline / very subtle fill */
 
@@ -71,13 +81,23 @@
   --safe-end: env(safe-area-inset-right, 0px);
 
   /*
-   * Motion — editorial, restrained, warm.
-   *   instant    — taps, colour swaps, segmented control
-   *   considered — sheets, panels, tools tray
+   * Motion — ONE coherent scale (replaces the 6 ad-hoc durations that crept in).
+   *   fast      — taps, colour/border swaps, hover, focus, segmented control
+   *   base      — panel/bubble enter+exit, badge bump, line highlight
+   *   emphasis  — map camera moves (flyTo/fitBounds), large overlays  (cap here — never 1400ms)
+   *   draw      — the one expressive motion: the route line drawing / retracting
+   * `instant`/`considered` are kept as aliases so existing classes keep working
+   * during the migration. Easing: `out-quart` is the spine; `entrance` is a
+   * softer decelerate for enters (bubble, line draw).
    */
-  --motion-instant: 140ms;
-  --motion-considered: 280ms;
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-emphasis: 320ms;
+  --motion-draw: 420ms;
+  --motion-instant: 140ms; /* alias → fast */
+  --motion-considered: 280ms; /* alias → base/emphasis */
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
 
   /*
    * Elevation — quiet, charcoal-tinted, never neutral grey and never a

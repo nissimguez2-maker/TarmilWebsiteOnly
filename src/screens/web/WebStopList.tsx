@@ -148,7 +148,7 @@ function RouteCard({
     <button
       type="button"
       onClick={() => onAddRoute(route)}
-      className="w-full overflow-hidden rounded-2xl border border-charcoal-15 bg-sand text-start hover:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+      className="w-full overflow-hidden rounded-2xl border border-charcoal-15 bg-paper shadow-card text-start hover:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
     >
       {photo && (
         <span className="block h-24 w-full overflow-hidden bg-charcoal-08">
@@ -190,7 +190,10 @@ export function WebStopList({
   onEditHome,
   onAddRoute,
 }: Props) {
-  useWishlist();
+  // Capture the wishlist snapshot ref (wishlist.ts replaces it via `state = {...state}`
+  // on every change) so the auto-expand effect below can depend on it instead of
+  // running on every render.
+  const wishlist = useWishlist();
   const [detailOpen, setDetailOpen] = useState(false);
   const [beforeOpen, setBeforeOpen] = useState(false);
 
@@ -227,7 +230,7 @@ export function WebStopList({
       }
       return changed ? next : prev;
     });
-  });
+  }, [stops, wishlist]);
 
   const toggleExpand = (id: string) => {
     setExpandedStops((prev) => {
@@ -554,7 +557,7 @@ function TripOverviewCard({
   }
 
   return (
-    <article className="mx-md bg-sand border border-charcoal-15 rounded-2xl p-md flex flex-col gap-xs">
+    <article className="mx-md bg-paper shadow-card border border-charcoal-15 rounded-2xl p-md flex flex-col gap-xs">
       <p className="meta-caps text-charcoal-70">Trip overview</p>
       <h2 className="font-serif text-lede text-charcoal">
         {dateSpan ? (
@@ -717,8 +720,8 @@ function StopRow({
         className={clsx(
           'flex-1 min-w-0 rounded-2xl border px-md py-sm transition-[background-color,border-color] duration-instant ease-out-quart motion-reduce:transition-none',
           selected
-            ? 'border-amber bg-sand'
-            : 'border-charcoal-15 bg-sand/70 group-hover:border-charcoal-30 group-hover:bg-sand',
+            ? 'border-amber bg-shell'
+            : 'border-charcoal-15 bg-paper group-hover:border-charcoal-30',
         )}
       >
         <div className="flex items-start gap-sm">
@@ -742,10 +745,7 @@ function StopRow({
                 {savedCount > 0 && (
                   <span
                     key={savedCount}
-                    className="inline-flex items-center text-meta uppercase font-medium px-sm py-px rounded-full bg-charcoal-8 text-charcoal-70 animate-[bump_300ms_ease-out-quart_1]"
-                    style={{
-                      animation: 'tarmil-bump 300ms cubic-bezier(0.25,1,0.5,1)',
-                    }}
+                    className="inline-flex items-center text-meta uppercase font-medium px-sm py-px rounded-full bg-charcoal-8 text-charcoal-70 animate-bump motion-reduce:animate-none"
                   >
                     {savedCount} saved
                   </span>

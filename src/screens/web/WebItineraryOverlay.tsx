@@ -68,7 +68,7 @@ export function WebItineraryOverlay({ open, onClose, stops, home }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[3000] flex items-start justify-center overflow-y-auto bg-charcoal/50 p-lg backdrop-blur-sm"
+      className="fixed inset-0 z-[3000] flex items-start justify-center overflow-y-auto bg-charcoal/50 p-lg"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -78,7 +78,8 @@ export function WebItineraryOverlay({ open, onClose, stops, home }: Props) {
         className="my-auto w-full max-w-3xl rounded-2xl bg-cream shadow-fab"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="sticky top-0 z-10 flex items-center justify-between gap-md rounded-t-2xl border-b border-charcoal-15 bg-cream/95 px-lg py-md backdrop-blur">
+        {/* Opaque, blur-free sticky header (see WebBeforeYouFly — same glitch fix). */}
+        <header className="sticky top-0 z-10 flex items-center justify-between gap-md rounded-t-2xl border-b border-charcoal-15 bg-cream px-lg py-md">
           <div className="flex flex-col gap-px">
             <span className="meta-caps text-charcoal-70">Full itinerary</span>
             <h2 className="font-serif text-sub leading-tight text-charcoal">

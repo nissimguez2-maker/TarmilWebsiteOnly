@@ -209,7 +209,7 @@ export function LocalConditions({
   if (!settled && !anyData) {
     return (
       <div
-        className="bg-sand border border-charcoal-15 rounded-2xl p-md animate-pulse"
+        className="bg-shell border border-charcoal-15 rounded-2xl p-md animate-pulse"
         aria-hidden="true"
       >
         <div className="h-3 w-24 rounded-full bg-charcoal-08" />
@@ -223,7 +223,7 @@ export function LocalConditions({
   return (
     <section
       aria-label="Local conditions"
-      className="bg-sand border border-charcoal-15 rounded-2xl p-md flex flex-col gap-sm"
+      className="bg-shell border border-charcoal-15 rounded-2xl p-md flex flex-col gap-sm"
     >
       <p className="meta-caps text-charcoal-70">Local conditions</p>
 

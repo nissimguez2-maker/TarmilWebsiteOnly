@@ -13,6 +13,17 @@ import { MapTokenNotice } from '../../components/tripMap/ui/MapTokenNotice';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
+// One coherent camera duration (--motion-emphasis = 320ms), down from the old
+// ad-hoc 1400ms that read as "slow/laggy". Mapbox's JS-driven camera can't see
+// the CSS prefers-reduced-motion reset, so jump instantly when that's set.
+const CAMERA_MS = 320;
+function cameraMs(): number {
+  const reduce =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+  return reduce ? 0 : CAMERA_MS;
+}
+
 type Props = {
   stops: PlannedStop[];
   home: HomeCity;
@@ -251,7 +262,7 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
 
     if (selection.type === 'stop') {
       const s = stops.find((x) => x.id === selection.stopId);
-      if (s) map.flyTo({ center: [s.lng, s.lat], zoom: 9, duration: 1400 });
+      if (s) map.flyTo({ center: [s.lng, s.lat], zoom: 9, duration: cameraMs() });
     } else if (selection.type === 'leg') {
       const from =
         selection.fromStopId === 'home'
@@ -265,7 +276,7 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
         const b = new mapboxgl.LngLatBounds();
         b.extend([from.lng, from.lat]);
         b.extend([to.lng, to.lat]);
-        map.fitBounds(b, { padding: 80, duration: 1400 });
+        map.fitBounds(b, { padding: 80, duration: cameraMs() });
       }
     }
   }, [selection, legs, stops, home, styleLoaded]);
@@ -277,7 +288,7 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
     const b = new mapboxgl.LngLatBounds();
     b.extend([home.lng, home.lat]);
     stops.forEach((s) => b.extend([s.lng, s.lat]));
-    map.fitBounds(b, { padding: 60, duration: 0 });
+    map.fitBounds(b, { padding: 60, duration: cameraMs() });
   }, [stops, home, styleLoaded]);
 
   // Markers (HTML overlays — don't require the style to be loaded).

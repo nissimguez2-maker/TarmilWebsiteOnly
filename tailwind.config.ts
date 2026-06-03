@@ -12,6 +12,8 @@ export default {
       // DA v0.3 palette
       cream: 'rgb(var(--cream-rgb) / <alpha-value>)',
       sand: 'rgb(var(--sand-rgb) / <alpha-value>)',
+      paper: 'rgb(var(--paper-rgb) / <alpha-value>)',
+      shell: 'rgb(var(--shell-rgb) / <alpha-value>)',
       linen: 'rgb(var(--linen-rgb) / <alpha-value>)',
       clay: 'rgb(var(--clay-rgb) / <alpha-value>)',
       blush: 'rgb(var(--blush-rgb) / <alpha-value>)',
@@ -87,10 +89,29 @@ export default {
       },
       transitionTimingFunction: {
         'out-quart': 'var(--ease-out-quart)',
+        entrance: 'var(--ease-entrance)',
       },
       transitionDuration: {
+        // one coherent scale
+        fast: '120ms',
+        base: '200ms',
+        emphasis: '320ms',
+        draw: '420ms',
+        // aliases (kept so existing classes keep working during migration)
         instant: '140ms',
         considered: '280ms',
+      },
+      keyframes: {
+        // the "X saved" badge pop — previously referenced ('bump'/'tarmil-bump')
+        // but never defined anywhere, so it silently no-op'd. Defined here now.
+        bump: {
+          '0%': { transform: 'scale(0.8)', opacity: '0' },
+          '60%': { transform: 'scale(1.06)' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+      },
+      animation: {
+        bump: 'bump 200ms var(--ease-entrance)',
       },
       screens: {
         // default tailwind breakpoints (sm 640, md 768, lg 1024, xl 1280, 2xl 1536) preserved

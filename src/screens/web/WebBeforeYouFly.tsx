@@ -186,7 +186,7 @@ export function WebBeforeYouFly({ stops, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[3000] flex items-start justify-center overflow-y-auto bg-charcoal/50 p-lg backdrop-blur-sm"
+      className="fixed inset-0 z-[3000] flex items-start justify-center overflow-y-auto bg-charcoal/50 p-lg"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -198,7 +198,10 @@ export function WebBeforeYouFly({ stops, onClose }: Props) {
         style={{ width: 'min(560px, 100%)' }}
         className="my-auto flex flex-col rounded-2xl bg-cream shadow-fab"
       >
-        <header className="sticky top-0 z-10 flex items-start justify-between gap-md rounded-t-2xl border-b border-charcoal-15 bg-cream/95 px-lg py-md backdrop-blur">
+        {/* Opaque, blur-free sticky header — backdrop-blur on a sticky element
+            inside a scroll container was the cause of the title "glitch".
+            Cream (panel base) so the paper cards below lift off it. */}
+        <header className="sticky top-0 z-10 flex items-start justify-between gap-md rounded-t-2xl border-b border-charcoal-15 bg-cream px-lg py-md">
           <div className="flex flex-col gap-px">
             <span className="meta-caps text-charcoal-70">Before you fly</span>
             <h2
@@ -274,7 +277,7 @@ function StopCard({
   const code = countryCodeFor(stop.id);
 
   return (
-    <article className="flex flex-col gap-sm rounded-2xl bg-sand p-md ring-1 ring-charcoal-15">
+    <article className="flex flex-col gap-sm rounded-2xl bg-paper p-md shadow-card ring-1 ring-charcoal-15">
       <h3 className="font-serif text-lede leading-tight text-charcoal">
         {stop.nameEn}
       </h3>

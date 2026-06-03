@@ -52,7 +52,7 @@ export function ConciergeBox({ stops, facts = [] }: Props) {
   return (
     <section
       aria-labelledby={`${fieldId}-label`}
-      className="flex flex-col gap-sm rounded-2xl border border-charcoal-15 bg-sand p-md"
+      className="flex flex-col gap-sm rounded-2xl border border-charcoal-15 bg-paper p-md shadow-card"
     >
       <div className="flex items-center gap-xs">
         <MessageCircleQuestion
