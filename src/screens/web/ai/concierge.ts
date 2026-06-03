@@ -28,13 +28,14 @@ export type ConciergeSource = { label: string; url: string };
 export type ConciergeAnswer = { answer: string; sources: ConciergeSource[] };
 
 const SYSTEM =
-  'You are a careful trip concierge. Answer ONLY from the provided facts and city list. ' +
-  'If the answer is not present in the facts, say you do not know and tell the traveler to check official sources. Do not guess. ' +
-  'For visa, entry, border, safety, health, vaccination, or customs questions, never be authoritative: give a brief careful summary and route the traveler to official sources. ' +
-  'Never invent or restate ratings, review counts, prices, or superlatives like "best" or "top". Prose only. ' +
-  'Warm, active voice. Keep sentences to about 20 words or fewer. Do not use em dashes. ' +
+  'You are a warm, knowledgeable trip concierge. Use the facts provided to answer the traveler directly and usefully. ' +
+  'When a fact answers the question (a visa status, a public holiday, an exchange rate, the local time, weather, the language), STATE IT plainly and helpfully. Do not dodge a question you have a fact for. ' +
+  'For visa, entry, safety, or health topics: give the answer from the facts, then add ONE short sentence to confirm with the official source. Never refuse outright when a relevant fact is provided. ' +
+  'Only when no provided fact is relevant: say briefly what you do not have, and suggest the official source to check. ' +
+  'Never invent specifics that are not in the facts, and never invent or restate ratings, review counts, prices, or superlatives like "best" or "top". Prose only. ' +
+  'Warm, active voice. Keep sentences to about 20 words or fewer, a few sentences at most. Do not use em dashes. ' +
   'Reply with ONE JSON object and nothing else: {"answer": string, "sources": [{"label": string, "url": string}]}. ' +
-  'Use "sources" for official links you mention; use an empty array when you cite none. No commentary or code fences outside the JSON.';
+  'Use "sources" for any official links you point to; use an empty array when you cite none. No commentary or code fences outside the JSON.';
 
 /** Topics that must never get an authoritative answer (defense in depth). */
 const SENSITIVE_PATTERN =
@@ -123,7 +124,10 @@ export async function askConcierge(
   const trimmed = question.trim();
   if (trimmed.length === 0) return null;
 
-  const raw = await aiText(`concierge:${slug(trimmed)}`, SYSTEM, buildUser(trimmed, ctx), 320);
+  // Scope the cache to the trip's cities so the same question on a different
+  // trip can't serve a stale, mis-grounded answer.
+  const scope = slug(ctx.cityNames.join(',')) || 'trip';
+  const raw = await aiText(`concierge:${scope}:${slug(trimmed)}`, SYSTEM, buildUser(trimmed, ctx), 320);
   if (!raw) return null;
 
   const obj = parseJsonObject(raw);

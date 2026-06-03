@@ -9,6 +9,10 @@ import { fetchFxRate } from './fxApi';
 import { entryReminder } from './entryNote';
 import { visaFromIsrael } from './visaApi';
 import { ConciergeBox } from './ConciergeBox';
+import { LocalConditions } from './LocalConditions';
+import { fetchLocalTime } from './timeApi';
+import { fetchSun } from './sunApi';
+import { fetchAirQuality, aqiLabel } from './airQualityApi';
 
 type Props = {
   stops: PlannedStop[];
@@ -61,6 +65,20 @@ function useTripFacts(
         out.push(
           `${stop.nameEn}: staying ${stop.arrivalDate} to ${stop.departureDate} (${stop.nights} nights).`,
         );
+        const [lt, sun, air] = await Promise.all([
+          fetchLocalTime(stop.lat, stop.lng),
+          fetchSun(stop.lat, stop.lng, stop.arrivalDate),
+          fetchAirQuality(stop.lat, stop.lng),
+        ]);
+        if (lt) out.push(`Local time in ${stop.nameEn}: ${lt.time} (${lt.timeZone}).`);
+        if (sun)
+          out.push(
+            `${stop.nameEn} has about ${Math.round(sun.dayLengthSec / 3600)} hours of daylight around your dates.`,
+          );
+        if (air && air.euAqi != null)
+          out.push(
+            `Air quality in ${stop.nameEn}: ${aqiLabel(air.euAqi) ?? 'unknown'} (EU AQI ${air.euAqi}).`,
+          );
         const code = countryCodeFor(stop.id);
         if (!code) continue;
         const info = await fetchCountry(code);
@@ -78,6 +96,12 @@ function useTripFacts(
         }
         if (info?.language) {
           out.push(`${stop.nameEn}: main language ${info.language}; local timezone UTC${info.timezone}.`);
+        }
+        if (info?.callingCode || info?.drivingSide) {
+          const bits: string[] = [];
+          if (info.callingCode) bits.push(`calling code ${info.callingCode}`);
+          if (info.drivingSide) bits.push(`they drive on the ${info.drivingSide}`);
+          out.push(`${stop.nameEn}: ${bits.join('; ')}.`);
         }
         const year = Number(stop.arrivalDate.slice(0, 4));
         const inRange = holidaysInRange(
@@ -252,6 +276,12 @@ function StopCard({
       <HolidayLines stop={stop} countryCode={code} />
       <CurrencyLine countryCode={code} homeCurrency={homeCurrency} />
       <EntryLine countryCode={code} homeCountryName={homeCountryName} />
+      <LocalConditions
+        lat={stop.lat}
+        lng={stop.lng}
+        arrivalDate={stop.arrivalDate}
+        departureDate={stop.departureDate}
+      />
     </article>
   );
 }
@@ -335,42 +365,40 @@ function CurrencyLine({
   countryCode?: string;
   homeCurrency: string;
 }) {
-  const [quote, setQuote] = useState<{ code: string; rate: number } | null>(
-    null,
-  );
+  const [money, setMoney] = useState<{
+    code: string;
+    name: string;
+    rate: number | null;
+  } | null>(null);
 
   useEffect(() => {
     if (!countryCode) {
-      setQuote(null);
+      setMoney(null);
       return;
     }
     let cancelled = false;
     fetchCountry(countryCode)
-      .then((info) => {
-        const destCode = info?.currencyCode;
-        if (!destCode) {
-          if (!cancelled) setQuote(null);
-          return null;
+      .then(async (info) => {
+        const code = info?.currencyCode;
+        // Skip only when unknown or identical to the home currency.
+        if (!code || code === homeCurrency) {
+          if (!cancelled) setMoney(null);
+          return;
         }
-        // No conversion needed when the destination shares the home currency.
-        if (destCode === homeCurrency) {
-          if (!cancelled) setQuote(null);
-          return null;
+        const rate = await fetchFxRate(code, homeCurrency);
+        if (!cancelled) {
+          setMoney({ code, name: info?.currencyName ?? '', rate: rate ?? null });
         }
-        return fetchFxRate(destCode, homeCurrency).then((rate) => {
-          if (cancelled || rate == null) return;
-          setQuote({ code: destCode, rate });
-        });
       })
       .catch(() => {
-        if (!cancelled) setQuote(null);
+        if (!cancelled) setMoney(null);
       });
     return () => {
       cancelled = true;
     };
   }, [countryCode, homeCurrency]);
 
-  if (!quote) return null;
+  if (!money) return null;
 
   return (
     <div className="flex items-start gap-sm">
@@ -382,12 +410,20 @@ function CurrencyLine({
       />
       <div className="flex min-w-0 flex-1 flex-col gap-xs">
         <p className="text-small text-charcoal">
-          <span className="tnum">1 {quote.code}</span> ≈{' '}
-          <span className="tnum">{formatRate(quote.rate)}</span> {homeCurrency}
+          {money.name ? `${money.name} (${money.code})` : money.code}
+          {money.rate != null && (
+            <>
+              {' · '}
+              <span className="tnum">1 {money.code}</span> ≈{' '}
+              <span className="tnum">{formatRate(money.rate)}</span> {homeCurrency}
+            </>
+          )}
         </p>
-        <SourceCredit href="https://www.frankfurter.app">
-          Exchange rate · Frankfurter
-        </SourceCredit>
+        {money.rate != null && (
+          <SourceCredit href="https://www.frankfurter.app">
+            Exchange rate · Frankfurter
+          </SourceCredit>
+        )}
       </div>
     </div>
   );
@@ -424,19 +460,20 @@ function EntryLine({
         aria-hidden="true"
       />
       <div className="flex min-w-0 flex-1 flex-col gap-xs">
-        {visa && (
-          <p className="text-small text-charcoal">
-            <span className="meta-caps text-charcoal-70">Israeli passport</span> ·{' '}
-            {visa}
-          </p>
+        {visa ? (
+          <>
+            <p className="text-small text-charcoal">
+              <span className="meta-caps text-charcoal-70">Israeli passport</span> ·{' '}
+              {visa}
+            </p>
+            <p className="text-meta text-charcoal-55">
+              Guidance only · verify with {destName}'s official immigration site
+              before booking.
+            </p>
+          </>
+        ) : (
+          note && <p className="text-small leading-relaxed text-charcoal">{note}</p>
         )}
-        {note && (
-          <p className="text-small leading-relaxed text-charcoal">{note}</p>
-        )}
-        <p className="text-meta text-charcoal-55">
-          A general reminder, not legal advice — confirm with the country's
-          official immigration site before you book.
-        </p>
       </div>
     </div>
   );

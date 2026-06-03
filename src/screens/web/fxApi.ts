@@ -52,7 +52,32 @@ async function doFetch(from: string, to: string): Promise<number | null> {
   if (direct !== null) return direct;
 
   // 2) Fallback through the server-side proxy if the direct call failed.
-  return fetchViaProxy(url, to);
+  const proxied = await fetchViaProxy(url, to);
+  if (proxied !== null) return proxied;
+
+  // 3) Broader-coverage fallback (open.er-api.com — 160+ currencies, keyless,
+  //    CORS-open). Frankfurter only carries ~30 majors, so exotic quotes
+  //    (NPR, etc.) resolve here instead of showing no rate.
+  return fetchViaErApi(from, to);
+}
+
+async function fetchViaErApi(from: string, to: string): Promise<number | null> {
+  try {
+    const res = await fetch(
+      `https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`,
+      { headers: { Accept: 'application/json' } },
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const rates = (data as { rates?: unknown })?.rates;
+    if (!rates || typeof rates !== 'object') return null;
+    const rate = (rates as Record<string, unknown>)[to];
+    return typeof rate === 'number' && Number.isFinite(rate) && rate > 0
+      ? rate
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 async function fetchDirect(url: string, to: string): Promise<number | null> {

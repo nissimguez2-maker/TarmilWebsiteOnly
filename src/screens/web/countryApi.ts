@@ -4,6 +4,10 @@ export type CountryInfo = {
   currencyName: string;
   language: string;
   timezone: string;
+  /** International dialing code, e.g. "+66". Empty when unknown. */
+  callingCode: string;
+  /** Driving side: "left" | "right" (empty when unknown). */
+  drivingSide: string;
 };
 
 const cache = new Map<string, Promise<CountryInfo | null>>();
@@ -23,7 +27,7 @@ export function fetchCountry(code2: string): Promise<CountryInfo | null> {
 
 async function doFetch(code2: string): Promise<CountryInfo | null> {
   try {
-    const url = `https://restcountries.com/v3.1/alpha/${encodeURIComponent(code2)}?fields=flag,currencies,languages,timezones`;
+    const url = `https://restcountries.com/v3.1/alpha/${encodeURIComponent(code2)}?fields=flag,currencies,languages,timezones,idd,car`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
@@ -36,12 +40,21 @@ async function doFetch(code2: string): Promise<CountryInfo | null> {
     const language = (Object.values(languages)[0] as string) ?? '';
     const timezones = row.timezones ?? [];
     const timezone = (timezones[0] ?? '').replace('UTC', '').trim() || 'UTC';
+    const idd = row.idd ?? {};
+    const suffixes = Array.isArray(idd.suffixes) ? idd.suffixes : [];
+    const callingCode =
+      idd.root && suffixes.length === 1
+        ? `${idd.root}${suffixes[0]}`
+        : (idd.root ?? '');
+    const drivingSide = row.car?.side ?? '';
     return {
       flag: row.flag ?? '',
       currencyCode,
       currencyName,
       language,
       timezone,
+      callingCode,
+      drivingSide,
     };
   } catch {
     return null;

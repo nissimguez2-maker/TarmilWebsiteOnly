@@ -1,3 +1,5 @@
+import { fetchGeoapifyRoute } from './geoapifyRouting';
+
 export type DrivingRoute = {
   minutes: number;
   km: number;
@@ -36,6 +38,10 @@ async function doFetch(
   toLat: number,
   toLng: number,
 ): Promise<DrivingRoute | null> {
+  // Real road routing when a Geoapify key is configured (origin-locked, free
+  // tier); otherwise the public OSRM attempt, then a straight-line estimate.
+  const geo = await fetchGeoapifyRoute(fromLat, fromLng, toLat, toLng);
+  if (geo) return geo;
   const live = await fetchOsrm(fromLat, fromLng, toLat, toLng);
   if (live) return live;
   // OSRM's public demo server is CORS-blocked from the browser AND ToS-restricted
