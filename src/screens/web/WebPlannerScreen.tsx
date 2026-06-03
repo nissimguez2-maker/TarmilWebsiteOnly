@@ -28,6 +28,9 @@ import {
   reorderStops as reorderStopsMut,
 } from './tripMutations';
 import type { Selection } from './types';
+import { TripDoorway } from './TripDoorway';
+import { saveTripIntent } from './tripIntent';
+import { track } from './track';
 
 export function WebPlannerScreen() {
   const { data, loading, error } = useSupabaseData();
@@ -42,6 +45,7 @@ export function WebPlannerScreen() {
   const [selection, setSelection] = useState<Selection>({ type: 'none' });
   const [addStopOpen, setAddStopOpen] = useState(false);
   const [homeEditorOpen, setHomeEditorOpen] = useState(false);
+  const [doorwaySkipped, setDoorwaySkipped] = useState(false);
 
   // Latest values for the async server sync (avoids stale closures).
   const localStopsRef = useRef(localStops);
@@ -120,6 +124,22 @@ export function WebPlannerScreen() {
     setLocalStops((prev) => addRouteMut(prev, routeCities(route)));
   };
 
+  // A chosen doorway trip drops into the editable planner via the same
+  // route-add path the curated starter routes use — manual planner stays canonical.
+  const handleDoorwayPick = (
+    cityIds: string[],
+    meta: { vibe: string; title: string },
+  ) => {
+    handleAddRoute({
+      id: 'ai-doorway',
+      title: meta.title,
+      reason: 'A starting point. Edit it freely.',
+      heroCityId: cityIds[0],
+      cityIds,
+    });
+    track('option_picked', { vibe: meta.vibe });
+  };
+
   const handleReorder = (fromIdx: number, toIdx: number) => {
     setLocalStops((prev) =>
       reorderStopsMut(prev ?? stops, fromIdx, toIdx),
@@ -151,38 +171,54 @@ export function WebPlannerScreen() {
     <>
       <div className="flex h-dvh flex-col bg-cream">
         <WebHeader stops={stops} />
-        {/* Phone: stacked itinerary + map (view+book floor). md+ : 3-column desktop. */}
-        <div className="flex-1 flex min-h-0 flex-col md:flex-row">
-          <WebStopList
-            stops={stops}
-            home={home}
-            selection={selection}
-            onSelect={setSelection}
-            onAddStop={() => setAddStopOpen(true)}
-            onReorder={handleReorder}
-            onRemoveStop={handleRemove}
-            onEditDates={handleEditDates}
-            onEditHome={() => setHomeEditorOpen(true)}
-            onAddRoute={handleAddRoute}
-          />
-          <div className="flex-1 relative min-h-0">
-            <Suspense fallback={<div className="absolute inset-0 bg-sand" />}>
-              <WebMapCanvas
-                stops={stops}
-                home={home}
-                selection={selection}
-                onSelect={setSelection}
-              />
-            </Suspense>
-            <WebBubble
-              selection={selection}
-              stops={stops}
-              home={home}
-              places={places}
-              onClose={() => setSelection({ type: 'none' })}
+        {stops.length === 0 && !doorwaySkipped ? (
+          /* Front door: a "choose your trip" doorway fills the empty planner.
+             Picking drops a trip in; Skip falls back to the manual planner. */
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <TripDoorway
+              onPick={handleDoorwayPick}
+              onIntentChange={saveTripIntent}
+              onSkip={() => {
+                setDoorwaySkipped(true);
+                track('doorway_skipped');
+              }}
+              onEvent={track}
             />
           </div>
-        </div>
+        ) : (
+          /* Phone: stacked itinerary + map (view+book floor). md+ : 3-column desktop. */
+          <div className="flex-1 flex min-h-0 flex-col md:flex-row">
+            <WebStopList
+              stops={stops}
+              home={home}
+              selection={selection}
+              onSelect={setSelection}
+              onAddStop={() => setAddStopOpen(true)}
+              onReorder={handleReorder}
+              onRemoveStop={handleRemove}
+              onEditDates={handleEditDates}
+              onEditHome={() => setHomeEditorOpen(true)}
+              onAddRoute={handleAddRoute}
+            />
+            <div className="flex-1 relative min-h-0">
+              <Suspense fallback={<div className="absolute inset-0 bg-sand" />}>
+                <WebMapCanvas
+                  stops={stops}
+                  home={home}
+                  selection={selection}
+                  onSelect={setSelection}
+                />
+              </Suspense>
+              <WebBubble
+                selection={selection}
+                stops={stops}
+                home={home}
+                places={places}
+                onClose={() => setSelection({ type: 'none' })}
+              />
+            </div>
+          </div>
+        )}
       </div>
       <WebAddStopModal
         open={addStopOpen}
