@@ -63,6 +63,7 @@ import {
   type TransitItem,
 } from './wishlist';
 import { showToast } from './WebToast';
+import { openBookingSheet } from './WebBookingSheet';
 import { WebRemoveStopConfirm } from './WebRemoveStopConfirm';
 import { WebItineraryOverlay } from './WebItineraryOverlay';
 import { WebBeforeYouFly } from './WebBeforeYouFly';
@@ -301,7 +302,7 @@ export function WebStopList({
 
   return (
     <aside className="w-full md:w-96 md:shrink-0 max-h-[45dvh] md:max-h-none border-b md:border-b-0 md:border-e border-charcoal-15 bg-cream overflow-y-auto min-h-0 py-md flex flex-col gap-md">
-      <TripOverviewCard stops={stops} home={home} />
+      <TripOverviewCard stops={stops} home={home} onSelect={onSelect} />
       {stops.length > 0 && (
         <div className="px-md">
           <Button
@@ -530,9 +531,11 @@ function HomeRow({
 function TripOverviewCard({
   stops,
   home,
+  onSelect,
 }: {
   stops: PlannedStop[];
   home: HomeCity;
+  onSelect: (s: Selection) => void;
 }) {
   useWishlist(); // re-render the readiness line as stays / transport are saved
   const nights = stops.reduce((sum, s) => sum + s.nights, 0);
@@ -546,19 +549,26 @@ function TripOverviewCard({
     ? new Date(last.departureDate + 'T12:00:00').getFullYear()
     : '';
 
-  // Readiness, not vanity: each gap below is an honest, well-timed booking moment.
-  // A stop "has a stay" when the traveler marked it sorted (any lodging, via the
-  // booking sheet) or saved a hostel — so couples/families count too, not just
-  // backpackers saving a hostel.
-  const staysCount = stops.filter(
-    (s) => isStaySorted(s.id) || placesForStop(s.id).some((p) => p.category === 'hostel'),
-  ).length;
+  // Readiness, not vanity: each gap below is an honest, well-timed booking moment,
+  // and now a one-tap jump to fix it. A stop "has a stay" when the traveler marked
+  // it sorted (any lodging, via the booking sheet) or saved a hostel — so couples/
+  // families count too, not just backpackers saving a hostel.
+  const hasStay = (s: PlannedStop) =>
+    isStaySorted(s.id) || placesForStop(s.id).some((p) => p.category === 'hostel');
+  const staysCount = stops.filter(hasStay).length;
+  const staysGap = stops.length - staysCount;
+  const firstStayLess = stops.find((s) => !hasStay(s));
   let legsNeedTransport = 0;
+  let firstLegGapVal: { from: string; to: string } | null = null;
   for (let i = 0; i < stops.length - 1; i++) {
     if (transitForLeg(stops[i].id, stops[i + 1].id).length === 0) {
       legsNeedTransport++;
+      if (!firstLegGapVal) firstLegGapVal = { from: stops[i].id, to: stops[i + 1].id };
     }
   }
+  const legGap = firstLegGapVal;
+  const gapBtnClass =
+    'rounded text-charcoal underline decoration-charcoal-15 underline-offset-2 transition-colors duration-fast ease-out-quart motion-reduce:transition-none hover:text-amber hover:decoration-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream';
 
   return (
     <article className="mx-md bg-paper shadow-card border border-charcoal-15 rounded-2xl p-md flex flex-col gap-xs">
@@ -577,25 +587,44 @@ function TripOverviewCard({
         From {home.nameEn} → back to {home.nameEn}
       </p>
       {stops.length > 0 && (
-        <p className="flex flex-wrap items-center gap-x-sm gap-y-xs pt-sm border-t border-charcoal-15 text-small text-charcoal-70">
+        <div className="flex flex-wrap items-center gap-x-sm gap-y-xs pt-sm border-t border-charcoal-15 text-small text-charcoal-70">
           <span className="text-charcoal">
             <span className="tnum">{nights}</span> nights
           </span>
           <span aria-hidden>·</span>
-          <span>
-            <span className="tnum">{staysCount}</span>/
-            <span className="tnum">{stops.length}</span> stops have a stay
-          </span>
-          {legsNeedTransport > 0 && (
+          {staysGap > 0 && firstStayLess ? (
+            <button
+              type="button"
+              onClick={() => {
+                if (firstStayLess) openBookingSheet({ kind: 'stay', stop: firstStayLess });
+              }}
+              className={gapBtnClass}
+            >
+              <span className="tnum">{staysGap}</span>{' '}
+              {staysGap === 1 ? 'stop needs' : 'stops need'} a stay{' '}
+              <span aria-hidden>→</span>
+            </button>
+          ) : (
+            <span className="text-charcoal">All stays sorted</span>
+          )}
+          {legsNeedTransport > 0 && legGap && (
             <>
               <span aria-hidden>·</span>
-              <span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (legGap)
+                    onSelect({ type: 'leg', fromStopId: legGap.from, toStopId: legGap.to });
+                }}
+                className={gapBtnClass}
+              >
                 <span className="tnum">{legsNeedTransport}</span>{' '}
-                {legsNeedTransport === 1 ? 'leg needs' : 'legs need'} transport
-              </span>
+                {legsNeedTransport === 1 ? 'leg needs' : 'legs need'} transport{' '}
+                <span aria-hidden>→</span>
+              </button>
             </>
           )}
-        </p>
+        </div>
       )}
     </article>
   );
