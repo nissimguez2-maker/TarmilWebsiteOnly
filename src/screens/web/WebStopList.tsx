@@ -53,6 +53,7 @@ import { formatShortDate, formatStopRange } from './dateUtils';
 import { useCityPhotos } from './cityPhotos';
 import { ADDABLE_CITIES } from './addableCities';
 import {
+  isStaySorted,
   placesForStop,
   removePlace,
   removeTransit,
@@ -546,8 +547,11 @@ function TripOverviewCard({
     : '';
 
   // Readiness, not vanity: each gap below is an honest, well-timed booking moment.
-  const staysCount = stops.filter((s) =>
-    placesForStop(s.id).some((p) => p.category === 'hostel'),
+  // A stop "has a stay" when the traveler marked it sorted (any lodging, via the
+  // booking sheet) or saved a hostel — so couples/families count too, not just
+  // backpackers saving a hostel.
+  const staysCount = stops.filter(
+    (s) => isStaySorted(s.id) || placesForStop(s.id).some((p) => p.category === 'hostel'),
   ).length;
   let legsNeedTransport = 0;
   for (let i = 0; i < stops.length - 1; i++) {

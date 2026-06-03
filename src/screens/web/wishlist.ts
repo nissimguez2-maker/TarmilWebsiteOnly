@@ -22,7 +22,21 @@ export type TransitItem = {
   addedAt: number;
 };
 
-export type WishItem = PlaceItem | TransitItem;
+/**
+ * A user-asserted "this stay is sorted" marker for a stop. Set when the traveler
+ * confirms they've handled the bed (booked via a partner or already arranged), so
+ * the readiness ledger can truthfully tick — the symmetric counterpart to a
+ * transit "added to my trip". Honest by construction: the user asserts it, we
+ * never infer "booked" from a click.
+ */
+export type StayItem = {
+  kind: 'stay';
+  id: string;
+  stopId: string;
+  addedAt: number;
+};
+
+export type WishItem = PlaceItem | TransitItem | StayItem;
 
 type State = { items: WishItem[] };
 
@@ -108,6 +122,29 @@ export function findTransit(
   return state.items.find(
     (i): i is TransitItem => i.kind === 'transit' && i.id === id,
   );
+}
+
+function stayId(stopId: string): string {
+  return `stay::${stopId}`;
+}
+
+/** Whether the traveler has marked this stop's stay as sorted. */
+export function isStaySorted(stopId: string): boolean {
+  const id = stayId(stopId);
+  return state.items.some((i) => i.kind === 'stay' && i.id === id);
+}
+
+/** Mark / unmark a stop's stay as sorted (user-asserted; mirrors addTransit). */
+export function setStaySorted(stopId: string, sorted: boolean): void {
+  const id = stayId(stopId);
+  const has = state.items.some((i) => i.kind === 'stay' && i.id === id);
+  if (sorted && !has) {
+    state.items.push({ kind: 'stay', id, stopId, addedAt: Date.now() });
+    emit();
+  } else if (!sorted && has) {
+    state.items = state.items.filter((i) => i.id !== id);
+    emit();
+  }
 }
 
 export function placesForStop(stopId: string): PlaceItem[] {
@@ -223,6 +260,10 @@ export function removeForStop(stopId: string): {
       (i.fromStopId === stopId || i.toStopId === stopId)
     ) {
       transit++;
+      return false;
+    }
+    // Drop the stay marker too (not counted in the returned tally).
+    if (i.kind === 'stay' && i.stopId === stopId) {
       return false;
     }
     return true;

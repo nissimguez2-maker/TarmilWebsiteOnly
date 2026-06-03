@@ -13,7 +13,9 @@ import { formatStopRange } from './dateUtils';
 import {
   addTransit,
   findTransit,
+  isStaySorted,
   removeTransit,
+  setStaySorted,
   useWishlist,
 } from './wishlist';
 import { showToast } from './WebToast';
@@ -156,10 +158,19 @@ export function WebBookingSheet() {
 }
 
 function StayBody({ stop }: { stop: PlannedStop }) {
+  useWishlist();
+  const sorted = isStaySorted(stop.id);
   // Funnel: the sheet reaching open is real accommodation intent.
   useEffect(() => {
     track('booking_sheet_open', { kind: 'stay', stopId: stop.id, nights: stop.nights });
   }, [stop.id, stop.nights]);
+  const onToggleSorted = () => {
+    const next = !sorted;
+    setStaySorted(stop.id, next);
+    showToast(
+      next ? `${stop.nameEn} stay marked sorted` : `${stop.nameEn} stay unmarked`,
+    );
+  };
   return (
     <div className="flex flex-col min-h-0">
       <header className="shrink-0 px-md pt-md pb-sm flex flex-col gap-xs pe-12">
@@ -186,6 +197,22 @@ function StayBody({ stop }: { stop: PlannedStop }) {
             eventProps={{ partnerId: p.id, slot: 'stay-strip', kind: 'stay', stopId: stop.id, nights: stop.nights }}
           />
         ))}
+        {/* User-asserted "sorted" — so the readiness ledger ticks honestly whether
+            they booked here or already had it. Mirrors transport's "add to trip". */}
+        <Button
+          variant={sorted ? 'primary' : 'ghost'}
+          fullWidth
+          onClick={onToggleSorted}
+        >
+          {sorted ? (
+            <>
+              <Check size={14} strokeWidth={2} />
+              Stay sorted for {stop.nameEn}
+            </>
+          ) : (
+            'I’ve sorted this stay'
+          )}
+        </Button>
         <Disclosure />
       </div>
     </div>
