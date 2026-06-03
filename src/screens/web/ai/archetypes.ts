@@ -32,13 +32,17 @@
 
 import { aiText } from '../groqApi';
 import { ADDABLE_CITIES, type AddableCity } from '../addableCities';
-import { countryCodeFor } from '../cityCountries';
+import { GLOBAL_CITIES, type CityRegion } from '../globalCities';
 
 /** The mood of a trip. Order is fixed: chill, classic, adventure. */
 export type TripVibe = 'chill' | 'classic' | 'adventure';
 
-/** Which curated cluster to draw from. 'any' uses the richest available pool. */
-export type TripRegion = 'south-america' | 'southeast-asia' | 'india' | 'any';
+/**
+ * Which continent to draw a trip from. 'any' = "surprise me": at draft time it
+ * resolves to one real continent, so a single route never sprawls across the
+ * globe (Lisbon → Tokyo → Cape Town) and stays a coherent, editable trip.
+ */
+export type TripRegion = CityRegion | 'any';
 
 /** A short, structured trip brief the doorway collects from the traveler. */
 export type TripIntent = {
@@ -64,12 +68,30 @@ export type TripArchetype = {
 /** The legal city ids, as a fast lookup set, computed once at module load. */
 const CITY_ID_SET = new Set<string>(ADDABLE_CITIES.map((c) => c.id));
 
-/** ISO alpha-2 country codes that belong to each region bucket. */
-const REGION_COUNTRIES: Record<Exclude<TripRegion, 'any'>, ReadonlySet<string>> = {
-  'south-america': new Set(['BR', 'AR', 'UY', 'CO', 'PE', 'BO']),
-  'southeast-asia': new Set(['TH', 'VN']),
-  india: new Set(['IN', 'NP']),
-};
+/** City id -> its continent, from the global catalog (computed once at load). */
+const CITY_REGION = new Map<string, CityRegion>(
+  GLOBAL_CITIES.map((c) => [c.id, c.region]),
+);
+
+/** Every concrete continent, used to resolve 'any' (surprise me). */
+const ALL_REGIONS: readonly CityRegion[] = [
+  'europe',
+  'americas',
+  'asia',
+  'middle-east',
+  'africa',
+  'oceania',
+];
+
+/**
+ * Resolve a requested region to a CONCRETE continent. 'any' picks one at random
+ * so "surprise me" stays a single-continent (coherent) route and varies between
+ * drafts; a concrete region passes through unchanged.
+ */
+function resolveRegion(region: TripRegion): CityRegion {
+  if (region !== 'any') return region;
+  return ALL_REGIONS[Math.floor(Math.random() * ALL_REGIONS.length)];
+}
 
 /**
  * Cities whose default pace leans calm / coastal — biased UP for 'chill' and
@@ -154,20 +176,17 @@ function targetCount(weeks: number, vibe: TripVibe, poolSize: number): number {
   return Math.min(bounded, poolSize);
 }
 
-/** True when a city belongs to the requested region (or always, for 'any'). */
-function inRegion(city: AddableCity, region: TripRegion): boolean {
-  if (region === 'any') return true;
-  const code = countryCodeFor(city.id);
-  if (!code) return false;
-  return REGION_COUNTRIES[region].has(code);
+/** True when a city belongs to the given continent. */
+function inRegion(city: AddableCity, region: CityRegion): boolean {
+  return CITY_REGION.get(city.id) === region;
 }
 
 /**
- * The candidate pool for an intent: catalog cities filtered to the region. For
- * 'any' we hand over the whole catalog (the richest possible pool). Order here
- * is catalog order, which the rule-based fallback then refines per vibe.
+ * The candidate pool for a (resolved, concrete) continent: catalog cities on
+ * that continent. Order here is catalog order, which the rule-based fallback
+ * then refines per vibe.
  */
-function poolFor(region: TripRegion): AddableCity[] {
+function poolFor(region: CityRegion): AddableCity[] {
   return ADDABLE_CITIES.filter((c) => inRegion(c, region));
 }
 
@@ -491,13 +510,21 @@ function sameRoute(a: TripArchetype, b: TripArchetype): boolean {
  * Never throws.
  */
 export async function draftArchetypes(intent: TripIntent): Promise<TripArchetype[] | null> {
-  const pool = poolFor(intent.region);
+  // 'any' (surprise me) resolves to one real continent so the route stays
+  // coherent; the rest of the function works off this concrete region.
+  const region = resolveRegion(intent.region);
+  const effective: TripIntent = {
+    ...intent,
+    region,
+    weeks: clampWeeks(intent.weeks),
+  };
+  const pool = poolFor(region);
   // Too thin to offer a meaningful "choose your trip" — bail cleanly.
   if (pool.length < 2) return null;
 
   const poolIds = new Set<string>(pool.map((c) => c.id));
-  const weeks = clampWeeks(intent.weeks);
-  const key = intentKey({ ...intent, weeks });
+  const weeks = effective.weeks;
+  const key = intentKey(effective);
 
   let byVibe = new Map<TripVibe, RawArchetype>();
   try {
@@ -505,7 +532,7 @@ export async function draftArchetypes(intent: TripIntent): Promise<TripArchetype
       `arch:${key}`,
       SYSTEM,
       `Available cities: ${poolCatalog(pool)}\n\n` +
-        `Trip: region=${intent.region}, who=${intent.who}, budget=${intent.budget}, weeks=${weeks}.\n` +
+        `Trip: region=${region}, who=${effective.who}, budget=${effective.budget}, weeks=${weeks}.\n` +
         'Design the three options now.',
       460,
     );
@@ -520,5 +547,5 @@ export async function draftArchetypes(intent: TripIntent): Promise<TripArchetype
 
   // assemble() works whether byVibe is full, partial, or empty — the rule-based
   // picker tops up every vibe to its shape target from the region pool.
-  return assemble(byVibe, pool, intent);
+  return assemble(byVibe, pool, effective);
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Loader2, MapPin, Search, X } from 'lucide-react';
 import clsx from 'clsx';
 import {
-  ADDABLE_CITIES,
+  SUGGESTED_CITIES,
   slugifyId,
   type AddableCity,
 } from './addableCities';
@@ -102,7 +102,7 @@ export function WebAddStopModal({ open, onClose, onAdd, existingStopIds }: Props
           {!showResults && (
             <>
               <p className="meta-caps text-charcoal-70">Suggested</p>
-              {ADDABLE_CITIES.map((city) => (
+              {SUGGESTED_CITIES.map((city) => (
                 <SuggestedRow
                   key={city.id}
                   city={city}

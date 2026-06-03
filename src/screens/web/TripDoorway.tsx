@@ -52,12 +52,17 @@ type Option<T> = { value: T; label: string };
 type WhoValue = TripIntent['who'];
 type BudgetValue = TripIntent['budget'];
 
-// "Surprise me" maps to the contract's 'any' region (the richest pool), not a
-// literal "surprise" — the reader-facing label stays warm, the value stays legal.
+// Continents now, not the original backpacker trail — the catalog spans the
+// globe. "Surprise me" maps to the contract's 'any' region, which the drafter
+// resolves to one real continent so the trip stays coherent; the reader-facing
+// label stays warm, the value stays a legal TripRegion.
 const REGIONS: ReadonlyArray<Option<TripRegion>> = [
-  { value: 'south-america', label: 'South America' },
-  { value: 'southeast-asia', label: 'Southeast Asia' },
-  { value: 'india', label: 'India' },
+  { value: 'europe', label: 'Europe' },
+  { value: 'americas', label: 'Americas' },
+  { value: 'asia', label: 'Asia' },
+  { value: 'middle-east', label: 'Middle East' },
+  { value: 'africa', label: 'Africa' },
+  { value: 'oceania', label: 'Oceania' },
   { value: 'any', label: 'Surprise me' },
 ];
 
@@ -77,7 +82,7 @@ const BUDGET: ReadonlyArray<Option<BudgetValue>> = [
 const WEEKS: readonly number[] = [1, 2, 3, 4];
 
 /** Sensible defaults — the door opens with a complete, editable intent. */
-const DEFAULT_REGION: TripRegion = 'south-america';
+const DEFAULT_REGION: TripRegion = 'europe';
 const DEFAULT_WHO: WhoValue = 'pair';
 const DEFAULT_BUDGET: BudgetValue = 'mid';
 const DEFAULT_WEEKS = 3;
