@@ -58,6 +58,11 @@ export function buildStayLink(partner: BookingPartner, stop: PlannedStop): strin
   return withMarker(url, `stay-${stop.id}-${partner.id}`);
 }
 
+/** A marked link for a finalize-stage offer (eSIM / insurance), tagged by slot. */
+export function buildOfferLink(baseUrl: string, slot: string): string {
+  return withMarker(baseUrl, slot);
+}
+
 /** A real, marked, city-prefilled tours link — the traveler browses real experiences. */
 export function buildTourLink(partner: BookingPartner, stop: PlannedStop): string | null {
   if (!partner.deeplinkTemplate) return null;

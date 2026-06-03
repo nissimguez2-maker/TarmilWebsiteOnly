@@ -1,7 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { CalendarDays, Coins, ShieldAlert, X } from 'lucide-react';
+import { CalendarDays, Coins, ShieldAlert, ShieldCheck, Wifi, X } from 'lucide-react';
 import { FactTile } from '../../components/FactTile';
 import { IconChip } from '../../components/IconChip';
+import { buildOfferLink } from './bookingLink';
+import { track } from './track';
 import { useCityPhotos } from './cityPhotos';
 import type { PlannedStop } from '../../data/plannedStops';
 import { countryCodeFor, countryNameFor } from './cityCountries';
@@ -258,10 +260,116 @@ export function WebBeforeYouFly({ stops, onClose }: Props) {
             ))
           )}
 
+          {stops.length > 0 && <FinalizeOffers stops={stops} />}
+
           <ConciergeBox stops={stops} facts={facts} />
         </div>
       </div>
     </div>
+  );
+}
+
+const OFFERS_DISMISSED_KEY = 'tarmil:offers-dismissed';
+
+function loadDismissed(): string[] {
+  try {
+    const raw = localStorage.getItem(OFFERS_DISMISSED_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveDismissed(ids: string[]): void {
+  try {
+    localStorage.setItem(OFFERS_DISMISSED_KEY, JSON.stringify(ids));
+  } catch {
+    // ignore quota errors
+  }
+}
+
+/**
+ * Finalize-stage T3 offers (eSIM + insurance) at the highest-intent moment — but
+ * earned by the free facts above, gain-framed, single, and DISMISSIBLE. A "no"
+ * is remembered (localStorage) and never re-surfaced. No fabricated urgency.
+ */
+function FinalizeOffers({ stops }: { stops: PlannedStop[] }) {
+  const [dismissed, setDismissed] = useState<string[]>(() => loadDismissed());
+
+  const nights = stops.reduce((sum, s) => sum + s.nights, 0);
+  const countries = new Set(
+    stops.map((s) => countryCodeFor(s.id)).filter(Boolean),
+  ).size;
+
+  const offers = [
+    {
+      id: 'esim',
+      tone: 'olive' as const,
+      icon: <Wifi size={14} strokeWidth={1.75} />,
+      title: 'Stay connected',
+      line: 'An eSIM works the moment you land — skip the roaming bills.',
+      cta: 'Get an eSIM',
+      url: 'https://www.airalo.com/',
+    },
+    {
+      id: 'insurance',
+      tone: 'umber' as const,
+      icon: <ShieldCheck size={14} strokeWidth={1.75} />,
+      title: 'Travel covered',
+      line:
+        countries > 1
+          ? `Cover for your ${nights} nights across ${countries} countries.`
+          : `Cover for your ${nights} nights away.`,
+      cta: 'See cover',
+      url: 'https://ekta.io/',
+    },
+  ].filter((o) => !dismissed.includes(o.id));
+
+  if (offers.length === 0) return null;
+
+  const dismiss = (id: string) => {
+    const next = [...dismissed, id];
+    setDismissed(next);
+    saveDismissed(next);
+    track('offer_dismissed', { offer: id });
+  };
+
+  const open = (o: (typeof offers)[number]) => {
+    track('finalize_offer_click', { offer: o.id });
+    window.open(buildOfferLink(o.url, `finalize-${o.id}`), '_blank', 'noopener');
+  };
+
+  return (
+    <section className="flex flex-col gap-sm" aria-label="Worth sorting before you go">
+      <p className="meta-caps text-charcoal-55">Worth sorting before you go</p>
+      {offers.map((o) => (
+        <div
+          key={o.id}
+          className="flex items-center gap-sm rounded-2xl bg-paper p-sm shadow-card ring-1 ring-charcoal-15"
+        >
+          <IconChip tone={o.tone}>{o.icon}</IconChip>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <p className="text-body font-medium text-charcoal">{o.title}</p>
+            <p className="text-small text-charcoal-70">{o.line}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => open(o)}
+            className="shrink-0 rounded-full bg-charcoal px-sm py-xs text-small text-cream transition-colors duration-fast ease-out-quart motion-reduce:transition-none hover:bg-charcoal-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+          >
+            {o.cta}
+          </button>
+          <button
+            type="button"
+            onClick={() => dismiss(o.id)}
+            aria-label={`Dismiss ${o.title}`}
+            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full text-charcoal-55 transition-colors duration-fast ease-out-quart motion-reduce:transition-none hover:bg-charcoal-8 hover:text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+          >
+            <X size={14} strokeWidth={2} />
+          </button>
+        </div>
+      ))}
+    </section>
   );
 }
 
