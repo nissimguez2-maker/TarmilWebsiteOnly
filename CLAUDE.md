@@ -27,6 +27,19 @@ disclosure** (Sponsored / Tarmil Selection, no fabricated social proof, third-pa
 aggregate ratings never shown as Tarmil's editorial star), logical-CSS, focus rings,
 no-`100vh`, the warm-minimal brand, English-only this phase.
 
+**Audience (2026-06): every traveler, every continent — not just backpackers.**
+The product serves **solo travelers, couples, friends, and families, ages ~18–88**,
+across **~400 balanced global destinations** (every continent), not the original
+18-city South-America / SE-Asia / India backpacker trail. The young independent
+traveler stays the *core seed* audience (and the highest-converting), but layout,
+copy, the front-door doorway, and the trip drafter must read as **for anyone**. The
+**home-country setting** (default Israel, changeable across 44 countries) drives the
+visa lookup *and* the FX currency. Two caveats: the curated place blurbs for the
+original trail towns keep their authentic young-traveler voice (real content for real
+cities — don't sanitize them), and disclosed Hostelworld-style accommodation stays a
+legitimate tier of the model. Audience breadth is a *positioning + global-coverage*
+job, not a reason to rewrite honest curated content.
+
 ## What this is (and isn't)
 
 - **In scope:** the planner experience — cities, map, city/transit bubbles,
