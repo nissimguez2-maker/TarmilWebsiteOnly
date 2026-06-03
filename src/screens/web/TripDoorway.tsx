@@ -1,7 +1,6 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { Button } from '../../components/Button';
-import { AiDisclosure } from '../../components/AiDisclosure';
 import { ADDABLE_CITIES } from './addableCities';
 import { useCityPhotos } from './cityPhotos';
 import {
@@ -417,13 +416,12 @@ function Gallery({
         <h2 className="font-serif text-sub text-charcoal leading-tight">
           Three trips to start from
         </h2>
+        {/* "AI-drafted" woven into the copy keeps EU-AI-Act transparency without a
+            separate disclaimer line; the full AI notice lives on the /info page. */}
         <p className="text-small text-charcoal-70">
-          Pick one and shape it your way — every stop, date, and order stays
-          yours to edit.
+          AI-drafted starting points. Pick one and shape every stop, date, and
+          order yourself.
         </p>
-        {/* One honest disclosure above the row: these are AI drafts, fully
-            editable. AiDisclosure is the codebase's canonical, EU-AI-Act line. */}
-        <AiDisclosure />
       </header>
 
       <ul className="grid grid-cols-1 gap-md md:grid-cols-3">

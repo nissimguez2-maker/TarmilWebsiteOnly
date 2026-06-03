@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { WebPlannerScreen } from './screens/web/WebPlannerScreen';
+import { InfoPage } from './screens/web/InfoPage';
 
 /**
  * Web-only route table.
@@ -12,6 +13,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<WebPlannerScreen />} />
+      <Route path="/info" element={<InfoPage />} />
       <Route path="/web" element={<Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

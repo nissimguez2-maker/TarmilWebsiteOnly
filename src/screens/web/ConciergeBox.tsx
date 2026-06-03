@@ -2,7 +2,6 @@ import { useId, useState } from 'react';
 import { MessageCircleQuestion, Send } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { AiDisclosure } from '../../components/AiDisclosure';
-import { SourceCredit } from '../../components/SourceCredit';
 import type { PlannedStop } from '../../data/plannedStops';
 import { askConcierge } from './ai/concierge';
 
@@ -109,17 +108,8 @@ export function ConciergeBox({ stops, facts = [] }: Props) {
           <p className="whitespace-pre-line font-sans text-body leading-relaxed text-charcoal">
             {phase.answer}
           </p>
-          {phase.sources.length > 0 && (
-            <div className="flex flex-col gap-xs border-t border-charcoal-8 pt-sm">
-              <p className="meta-caps text-charcoal-70">Sources</p>
-              {phase.sources.map((s) => (
-                <SourceCredit key={`${s.url}-${s.label}`} href={s.url}>
-                  {s.label}
-                </SourceCredit>
-              ))}
-            </div>
-          )}
-          {/* Non-dismissible: concierge answers can touch visa / entry / safety. */}
+          {/* Kept inline: concierge answers can touch visa / entry / safety
+              (Moffatt). Source credits now live on the /info page. */}
           <AiDisclosure tone="official" />
         </div>
       )}

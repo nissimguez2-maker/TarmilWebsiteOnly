@@ -15,15 +15,13 @@ import {
 import { Button } from '../../components/Button';
 import { PlacementBadge } from '../../components/PlacementBadge';
 import { PlacementExplainer } from '../../components/PlacementExplainer';
-import { SourceCredit } from '../../components/SourceCredit';
-import { AiDisclosure } from '../../components/AiDisclosure';
 import { NlSearchField } from './NlSearchField';
 import type { PlannedStop } from '../../data/plannedStops';
 import type { Place, PlaceCategory } from '../../data/places';
 import { aggregateSourceLabel, placeRankScore } from '../../data/places';
 import { cityDescription, CITY_DESCRIPTIONS } from './cityCopy';
 import { rewriteAsTravelIntro, rewritePlaceBlurb } from './groqApi';
-import { CITY_PHOTOS, useCityPhotos } from './cityPhotos';
+import { useCityPhotos } from './cityPhotos';
 import type { WeatherCondition, WeatherDay } from './cityWeather';
 import { fetchWeather, type WeatherSource } from './weatherApi';
 import { formatStopRange } from './dateUtils';
@@ -388,17 +386,6 @@ function OverviewTab({ stop }: { stop: PlannedStop }) {
     ? hardcodedText
     : (polished ?? wiki?.extract ?? stop.note ?? '');
 
-  // Attribution (CC BY-SA): credit Wikipedia whenever the intro text or the hero
-  // photo came from it. Curated cities use Tarmil copy + Unsplash, so no credit;
-  // the AI rewrite is still a CC BY-SA derivative, so it is credited too.
-  const textFromWiki = !hasHardcoded && (polished != null || wiki?.extract != null);
-  const photosFromWiki = photos.length > 0 && !(stop.id in CITY_PHOTOS);
-  // The intro is AI-generated only when the Wikipedia extract was rewritten.
-  const aiRewritten = polished != null;
-  const wikiHref = wiki?.title
-    ? `https://en.wikipedia.org/wiki/${encodeURIComponent(wiki.title.replace(/ /g, '_'))}`
-    : undefined;
-
   return (
     <div className="flex flex-col gap-md">
       {photos.length > 0 && (
@@ -412,12 +399,6 @@ function OverviewTab({ stop }: { stop: PlannedStop }) {
           <p className="font-sans text-body text-charcoal leading-relaxed">
             {description}
           </p>
-        </div>
-      )}
-      {(textFromWiki || photosFromWiki) && (
-        <div className="flex flex-wrap items-center gap-x-sm gap-y-xs">
-          {aiRewritten && <AiDisclosure />}
-          <SourceCredit href={wikiHref}>From Wikipedia · CC BY-SA</SourceCredit>
         </div>
       )}
       <WeatherStrip stop={stop} />
@@ -535,19 +516,6 @@ function WeatherStrip({ stop }: { stop: PlannedStop }) {
       </div>
       <p className="text-meta italic text-charcoal-70 text-center">
         {sourceLabel(source)}
-        {source != null && source !== 'fallback' && (
-          <>
-            {' · '}
-            <a
-              href="https://open-meteo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="not-italic underline underline-offset-2 hover:text-charcoal rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
-            >
-              Open-Meteo
-            </a>
-          </>
-        )}
       </p>
     </div>
   );
@@ -713,9 +681,6 @@ function NearbyOsmList({
       {items.map((item) => (
         <NearbyOsmRow key={item.id} item={item} />
       ))}
-      <SourceCredit href="https://www.openstreetmap.org/copyright">
-        © OpenStreetMap contributors
-      </SourceCredit>
     </div>
   );
 }
@@ -762,8 +727,8 @@ function PlaceCard({
 
   // Per-place blurb: generate warm copy ONLY for thin / non-curated places
   // (global / OSM). Curated places keep their own editorial voice. Prose-only,
-  // cached forever via the ai-proxy; falls back to the base description, and the
-  // AiDisclosure label shows only when an AI blurb is actually used.
+  // cached forever via the ai-proxy; falls back to the base description. AI use is
+  // disclosed once on the /info page, not per blurb.
   const baseDescription = place.englishDescription ?? '';
   const wantBlurb =
     (place.source != null && place.source !== 'curated') ||
@@ -870,7 +835,6 @@ function PlaceCard({
         </div>
       </div>
       {description && <DescriptionWithMore text={description} />}
-      {blurb && <AiDisclosure />}
       <div className="flex justify-end gap-sm">
         <Button variant="ghost" size="sm" onClick={onSave}>
           {status === 'saved' ? (

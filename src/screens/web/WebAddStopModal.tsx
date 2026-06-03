@@ -8,7 +8,6 @@ import {
 } from './addableCities';
 import { useCityPhotos } from './cityPhotos';
 import { searchNominatim, type NominatimResult } from './nominatimApi';
-import { SourceCredit } from '../../components/SourceCredit';
 
 type Props = {
   open: boolean;
@@ -77,7 +76,7 @@ export function WebAddStopModal({ open, onClose, onAdd, existingStopIds }: Props
             Search any city
           </h2>
           <p className="text-small text-charcoal-70">
-            Type a city name. We resolve it via OpenStreetMap.
+            Type a city name.
           </p>
         </div>
         <label className="flex items-center gap-sm rounded-full bg-sand border border-charcoal-15 px-sm h-10 focus-within:border-amber transition-[border-color] duration-instant ease-out-quart motion-reduce:transition-none">
@@ -144,9 +143,6 @@ export function WebAddStopModal({ open, onClose, onAdd, existingStopIds }: Props
                   />
                 );
               })}
-              <SourceCredit href="https://www.openstreetmap.org/copyright">
-                © OpenStreetMap contributors
-              </SourceCredit>
             </>
           )}
         </div>

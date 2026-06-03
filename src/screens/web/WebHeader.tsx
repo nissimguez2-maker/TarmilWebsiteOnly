@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { PlannedStop } from '../../data/plannedStops';
 import { formatTripMonthRange } from './dateUtils';
 
@@ -40,7 +41,14 @@ export function WebHeader({ stops }: Props) {
           <span className="meta-caps text-charcoal-70">Trip planner</span>
         )}
       </div>
-      <span className="flex-1" aria-hidden="true" />
+      <div className="flex flex-1 justify-end">
+        <Link
+          to="/info"
+          className="rounded-full px-sm py-xs text-meta uppercase tracking-wide text-charcoal-55 transition-colors duration-fast ease-out-quart motion-reduce:transition-none hover:text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+        >
+          Sources &amp; terms
+        </Link>
+      </div>
     </header>
   );
 }

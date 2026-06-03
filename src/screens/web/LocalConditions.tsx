@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Clock, Sun, Sunrise, Sunset, Wind } from 'lucide-react';
-import { SourceCredit } from '../../components/SourceCredit';
 import { fetchWeather, type WeatherSource } from './weatherApi';
 import type { WeatherDay } from './cityWeather';
 import { fetchSun, type SunTimes } from './sunApi';
@@ -274,8 +273,6 @@ export function LocalConditions({
           </ConditionLine>
         )}
       </div>
-
-      <SourceCredit>Conditions · Open-Meteo, sunrise-sunset, timeapi</SourceCredit>
     </section>
   );
 }

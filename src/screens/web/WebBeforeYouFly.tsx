@@ -1,6 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { CalendarDays, Coins, ShieldAlert, X } from 'lucide-react';
-import { SourceCredit } from '../../components/SourceCredit';
 import { FactTile } from '../../components/FactTile';
 import { IconChip } from '../../components/IconChip';
 import { useCityPhotos } from './cityPhotos';
@@ -376,7 +375,6 @@ function HolidayTile({
           </li>
         ))}
       </ul>
-      <SourceCredit href="https://date.nager.at">Nager.Date</SourceCredit>
     </FactTile>
   );
 }
@@ -439,9 +437,6 @@ function CurrencyTile({
         </p>
       ) : (
         <p className="text-small text-charcoal-55">Used at this stop</p>
-      )}
-      {money.rate != null && (
-        <SourceCredit href="https://www.frankfurter.app">Frankfurter</SourceCredit>
       )}
     </FactTile>
   );
