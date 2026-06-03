@@ -81,3 +81,27 @@ export const TRANSPORT_PARTNERS: BookingPartner[] = [
       'https://www.trip.com/flights/{from}-to-{to}/?ddate={date}',
   },
 ];
+
+/**
+ * Tours & activities partners — the #2 franchise line (~27% of modeled revenue).
+ * Surfaced via the city panel's "Things to do" strip → the booking sheet. The
+ * deeplink is a CITY SEARCH: the traveler browses REAL experiences on the
+ * marketplace. Tarmil never invents a specific tour / price / rating — the
+ * honesty firewall (and the category's hallucination trap) forbids it.
+ */
+export const TOUR_PARTNERS: BookingPartner[] = [
+  {
+    id: 'getyourguide',
+    name: 'GetYourGuide',
+    hex: '#FF5533',
+    logoPath: null,
+    deeplinkTemplate: 'https://www.getyourguide.com/s/?q={city}',
+  },
+  {
+    id: 'viator',
+    name: 'Viator',
+    hex: '#328E7E',
+    logoPath: null,
+    deeplinkTemplate: 'https://www.viator.com/searchResults/all?text={city}',
+  },
+];

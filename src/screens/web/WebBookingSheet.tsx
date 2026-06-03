@@ -4,6 +4,7 @@ import { Button } from '../../components/Button';
 import { OperatorMark } from '../../components/OperatorMark';
 import {
   STAY_PARTNERS,
+  TOUR_PARTNERS,
   TRANSPORT_PARTNERS,
   type BookingPartner,
 } from '../../data/bookingPartners';
@@ -19,7 +20,7 @@ import {
   useWishlist,
 } from './wishlist';
 import { showToast } from './WebToast';
-import { buildStayLink, buildTransportLink } from './bookingLink';
+import { buildStayLink, buildTourLink, buildTransportLink } from './bookingLink';
 import { track } from './track';
 
 /**
@@ -34,6 +35,7 @@ import { track } from './track';
 
 export type BookingTarget =
   | { kind: 'stay'; stop: PlannedStop }
+  | { kind: 'tour'; stop: PlannedStop }
   | {
       kind: 'transport';
       offer: TransportOffer;
@@ -145,6 +147,8 @@ export function WebBookingSheet() {
         </button>
         {current.kind === 'stay' ? (
           <StayBody stop={current.stop} />
+        ) : current.kind === 'tour' ? (
+          <TourBody stop={current.stop} />
         ) : (
           <TransportBody
             offer={current.offer}
@@ -213,6 +217,41 @@ function StayBody({ stop }: { stop: PlannedStop }) {
             'I’ve sorted this stay'
           )}
         </Button>
+        <Disclosure />
+      </div>
+    </div>
+  );
+}
+
+function TourBody({ stop }: { stop: PlannedStop }) {
+  useEffect(() => {
+    track('booking_sheet_open', { kind: 'tour', stopId: stop.id });
+  }, [stop.id]);
+  return (
+    <div className="flex flex-col min-h-0">
+      <header className="shrink-0 px-md pt-md pb-sm flex flex-col gap-xs pe-12">
+        <p id="booking-sheet-title" className="meta-caps text-charcoal-70">
+          Things to do
+        </p>
+        <h2 className="font-serif text-sub text-charcoal leading-tight">
+          {stop.nameEn}
+        </h2>
+        <p className="text-small text-charcoal-70">
+          Tours, day trips, and experiences.
+        </p>
+      </header>
+      <div className="flex-1 overflow-y-auto px-md pb-md flex flex-col gap-sm">
+        <p className="text-small text-charcoal-70">
+          Browse real experiences and book for your dates.
+        </p>
+        {TOUR_PARTNERS.map((p) => (
+          <PartnerRow
+            key={p.id}
+            partner={p}
+            href={buildTourLink(p, stop)}
+            eventProps={{ partnerId: p.id, slot: 'tours-strip', kind: 'tour', stopId: stop.id }}
+          />
+        ))}
         <Disclosure />
       </div>
     </div>

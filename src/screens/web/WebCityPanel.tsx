@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Star,
   Sun,
+  Ticket,
 } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { PlacementBadge } from '../../components/PlacementBadge';
@@ -153,6 +154,7 @@ export function WebCityPanel({ stop, places }: Props) {
     <div className="flex flex-col h-full min-h-0">
       <CityHeader stop={stop} />
       <StayStrip stop={stop} />
+      <ToursStrip stop={stop} />
 
       <nav className="shrink-0 px-md pt-sm border-b border-charcoal-15 flex flex-col gap-sm">
         <div className="flex gap-xs overflow-x-auto -mx-md px-md pb-xs">
@@ -322,6 +324,39 @@ function StayStrip({ stop }: { stop: PlannedStop }) {
         </span>
         <span className="shrink-0 inline-flex items-center gap-xs rounded-full bg-charcoal text-cream text-small px-sm py-xs group-hover:bg-charcoal-70 transition-colors duration-instant ease-out-quart motion-reduce:transition-none">
           Find a stay
+          <ChevronRight size={14} strokeWidth={2} />
+        </span>
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Per-stop "things to do" — the tours/activities peer to StayStrip (the #2
+ * franchise line). Opens the booking sheet onto the real GetYourGuide / Viator
+ * marketplace for this city; Tarmil never fabricates a specific tour.
+ */
+function ToursStrip({ stop }: { stop: PlannedStop }) {
+  return (
+    <div className="shrink-0 px-md pt-sm">
+      <button
+        type="button"
+        onClick={() => openBookingSheet({ kind: 'tour', stop })}
+        className="group w-full text-start flex items-center gap-sm rounded-2xl border border-charcoal-15 bg-sand ps-sm pe-sm py-sm shadow-card transition-[border-color,box-shadow,transform] duration-instant ease-out-quart motion-reduce:transition-none hover:-translate-y-px hover:shadow-panel hover:border-charcoal-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+      >
+        <span className="shrink-0 h-10 w-10 rounded-xl bg-cream border border-charcoal-15 flex items-center justify-center text-charcoal">
+          <Ticket size={18} strokeWidth={1.75} />
+        </span>
+        <span className="flex-1 min-w-0">
+          <span className="block font-serif text-lede text-charcoal leading-tight">
+            Things to do
+          </span>
+          <span className="block text-small text-charcoal-70">
+            Tours, day trips &amp; experiences
+          </span>
+        </span>
+        <span className="shrink-0 inline-flex items-center gap-xs rounded-full bg-charcoal text-cream text-small px-sm py-xs group-hover:bg-charcoal-70 transition-colors duration-instant ease-out-quart motion-reduce:transition-none">
+          Browse
           <ChevronRight size={14} strokeWidth={2} />
         </span>
       </button>

@@ -58,6 +58,13 @@ export function buildStayLink(partner: BookingPartner, stop: PlannedStop): strin
   return withMarker(url, `stay-${stop.id}-${partner.id}`);
 }
 
+/** A real, marked, city-prefilled tours link — the traveler browses real experiences. */
+export function buildTourLink(partner: BookingPartner, stop: PlannedStop): string | null {
+  if (!partner.deeplinkTemplate) return null;
+  const url = fill(partner.deeplinkTemplate, { city: encodeURIComponent(stop.nameEn) });
+  return withMarker(url, `tour-${stop.id}-${partner.id}`);
+}
+
 /** A real, marked, date+pax-prefilled transport link — or null when the partner has no template. */
 export function buildTransportLink(
   partner: BookingPartner,
