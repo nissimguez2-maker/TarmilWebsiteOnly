@@ -10,6 +10,7 @@ import {
   type TripRegion,
   type TripVibe,
 } from './ai/archetypes';
+import { inferIntentFromBrief } from './ai/inferIntent';
 
 /**
  * TripDoorway — the warm front door of the planner.
@@ -143,6 +144,21 @@ export function TripDoorway({
     }
   };
 
+  // The cold-start "describe your trip" lane: free text → inferred intent → the
+  // SAME 3-archetype drafter the chips use. AI only fills the four intent fields.
+  const beginFromBrief = async (brief: string) => {
+    onEvent?.('doorway_describe', {});
+    setPhase('loading');
+    let inferred: TripIntent = intent;
+    try {
+      inferred = await inferIntentFromBrief(brief);
+    } catch {
+      inferred = intent;
+    }
+    setIntent(inferred);
+    await beginDrafting(inferred);
+  };
+
   const advance = () => {
     if (step < TOTAL_STEPS - 1) {
       setStep((s) => s + 1);
@@ -167,6 +183,7 @@ export function TripDoorway({
           onNext={advance}
           onBack={back}
           onSkip={onSkip}
+          onDescribe={beginFromBrief}
         />
       )}
 
@@ -196,6 +213,7 @@ function IntentStep({
   onNext,
   onBack,
   onSkip,
+  onDescribe,
 }: {
   step: number;
   totalSteps: number;
@@ -204,6 +222,7 @@ function IntentStep({
   onNext: () => void;
   onBack: () => void;
   onSkip: () => void;
+  onDescribe: (brief: string) => void;
 }) {
   const groupLabelId = useId();
   const isLast = step === totalSteps - 1;
@@ -228,6 +247,17 @@ function IntentStep({
           Skip
         </button>
       </header>
+
+      {step === 0 && (
+        <>
+          <DescribeField onDescribe={onDescribe} />
+          <div className="flex items-center gap-sm">
+            <span className="h-px flex-1 bg-charcoal-15" />
+            <span className="meta-caps text-charcoal-55">or tap it out</span>
+            <span className="h-px flex-1 bg-charcoal-15" />
+          </div>
+        </>
+      )}
 
       <fieldset className="flex flex-col gap-sm border-0 p-0 m-0">
         <legend id={groupLabelId} className="meta-caps text-charcoal-70">
@@ -275,6 +305,47 @@ function IntentStep({
         )}
         <Button variant="olive" size="sm" onClick={onNext}>
           {isLast ? 'Show me trips' : 'Next'}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The cold-start free-text lane — "describe your trip" → 3 options, routed through
+ * the SAME chip drafter (inferIntentFromBrief → draftArchetypes). The warm,
+ * Layla-style entry above the structured chips; AI only fills the four intent
+ * fields, never voices a booking.
+ */
+function DescribeField({ onDescribe }: { onDescribe: (brief: string) => void }) {
+  const id = useId();
+  const [text, setText] = useState('');
+  const submit = () => {
+    const t = text.trim();
+    if (t) onDescribe(t);
+  };
+  return (
+    <div className="flex flex-col gap-xs">
+      <label htmlFor={id} className="meta-caps text-charcoal-70">
+        Tell me about your trip
+      </label>
+      <div className="flex items-center gap-xs rounded-2xl border border-charcoal-15 bg-paper shadow-card ps-md pe-xs py-xs transition-[border-color] duration-fast ease-out-quart motion-reduce:transition-none focus-within:border-amber">
+        <input
+          id={id}
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              submit();
+            }
+          }}
+          placeholder="e.g. two relaxed weeks in Italy with the kids"
+          className="min-w-0 flex-1 bg-transparent text-body text-charcoal outline-none placeholder:text-charcoal-55"
+        />
+        <Button variant="olive" size="sm" onClick={submit} disabled={!text.trim()}>
+          Plan it
         </Button>
       </div>
     </div>
