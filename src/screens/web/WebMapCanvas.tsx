@@ -13,15 +13,19 @@ import { MapTokenNotice } from '../../components/tripMap/ui/MapTokenNotice';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
+// Mapbox's JS-driven motion can't see the CSS prefers-reduced-motion reset, so
+// gate camera + line-draw on this explicitly.
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
+  );
+}
 // One coherent camera duration (--motion-emphasis = 320ms), down from the old
-// ad-hoc 1400ms that read as "slow/laggy". Mapbox's JS-driven camera can't see
-// the CSS prefers-reduced-motion reset, so jump instantly when that's set.
+// ad-hoc 1400ms that read as "slow/laggy".
 const CAMERA_MS = 320;
 function cameraMs(): number {
-  const reduce =
-    typeof window !== 'undefined' &&
-    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
-  return reduce ? 0 : CAMERA_MS;
+  return prefersReducedMotion() ? 0 : CAMERA_MS;
 }
 
 type Props = {
@@ -87,12 +91,17 @@ function cssVar(name: string): string {
     .trim();
 }
 
+// The two pin ring states, hoisted so the selection effect can toggle a pin's
+// box-shadow on the existing element (no marker rebuild). The box-shadow
+// transition tweens the highlight; the global reduced-motion reset neutralizes it.
+const MARKER_IDLE_RING = '0 2px 6px rgba(0,0,0,0.18)';
+const MARKER_SELECTED_RING =
+  '0 0 0 2px var(--cream), 0 0 0 5px var(--amber), 0 2px 6px rgba(0,0,0,0.18)';
+
 function makeStopEl(index: number, selected: boolean, label?: string): HTMLDivElement {
   const el = document.createElement('div');
-  const ring = selected
-    ? '0 0 0 2px var(--cream), 0 0 0 5px var(--amber), 0 2px 6px rgba(0,0,0,0.18)'
-    : '0 2px 6px rgba(0,0,0,0.18)';
-  el.style.cssText = `position:relative;width:32px;height:32px;border-radius:9999px;background-color:var(--amber);display:flex;align-items:center;justify-content:center;color:white;font-family:'Inter Variable','Inter',system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;box-shadow:${ring};`;
+  const ring = selected ? MARKER_SELECTED_RING : MARKER_IDLE_RING;
+  el.style.cssText = `position:relative;width:32px;height:32px;border-radius:9999px;background-color:var(--amber);display:flex;align-items:center;justify-content:center;color:white;font-family:'Inter Variable','Inter',system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;box-shadow:${ring};transition:box-shadow 200ms cubic-bezier(0.25,1,0.5,1);`;
   el.textContent = String(index + 1);
   if (label) {
     const l = document.createElement('div');
@@ -126,6 +135,8 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
   });
 
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  // stopId -> pin element, so selection can re-style the existing pin in place.
+  const stopElsRef = useRef<Map<string, HTMLDivElement>>(new Map());
   const hoveredRef = useRef<number | null>(null);
 
   const legs = useMemo(() => buildLegs(stops, home), [stops, home]);
@@ -217,6 +228,8 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
             amber,
             idle,
           ],
+          // Tween the highlight (was an instant snap → "abrupt").
+          'line-color-transition': { duration: 200 },
           'line-width': [
             'case',
             ['boolean', ['feature-state', 'selected'], false],
@@ -225,6 +238,9 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
             3,
             2,
           ],
+          'line-width-transition': { duration: 200 },
+          'line-opacity': 1,
+          'line-opacity-transition': { duration: 420 },
           'line-dasharray': [2, 1.6],
         },
       } as mapboxgl.LayerSpecification);
@@ -240,12 +256,22 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Keep the leg geometry in sync.
+  // Keep the leg geometry in sync, and give the route a calm "draw" on change:
+  // drop opacity to 0 then ramp to 1 so the line fades in over --motion-draw
+  // instead of popping. Reduced-motion (and empty routes) just snap to full.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !styleLoaded) return;
     const src = map.getSource('legs') as mapboxgl.GeoJSONSource | undefined;
     src?.setData(legsToGeoJSON(legs));
+    if (legs.length > 0 && !prefersReducedMotion()) {
+      map.setPaintProperty('legs-line', 'line-opacity', 0);
+      requestAnimationFrame(() => {
+        mapRef.current?.setPaintProperty('legs-line', 'line-opacity', 1);
+      });
+    } else {
+      map.setPaintProperty('legs-line', 'line-opacity', 1);
+    }
   }, [legs, styleLoaded]);
 
   // Selection → leg highlight (feature-state) + camera move.
@@ -291,12 +317,15 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
     map.fitBounds(b, { padding: 60, duration: cameraMs() });
   }, [stops, home, styleLoaded]);
 
-  // Markers (HTML overlays — don't require the style to be loaded).
+  // Markers (HTML overlays). Built from stops/home/labels ONLY — selection is
+  // applied in the next effect by re-styling the existing pin, so tapping a pin
+  // no longer tears down and rebuilds every marker (the old "laggy pin").
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
+    stopElsRef.current.clear();
 
     const homeEl = makeHomeEl();
     homeEl.title = `Home · ${home.nameEn}`;
@@ -307,13 +336,13 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
     );
 
     stops.forEach((s, i) => {
-      const selected = selection.type === 'stop' && selection.stopId === s.id;
-      const el = makeStopEl(i, selected, showLabels ? s.nameEn : undefined);
+      const el = makeStopEl(i, false, showLabels ? s.nameEn : undefined);
       el.title = s.nameEn;
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         onSelectRef.current({ type: 'stop', stopId: s.id });
       });
+      stopElsRef.current.set(s.id, el);
       markersRef.current.push(
         new mapboxgl.Marker({ element: el, anchor: 'center' })
           .setLngLat([s.lng, s.lat])
@@ -324,8 +353,19 @@ export function WebMapCanvas({ stops, home, selection, onSelect }: Props) {
     return () => {
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
+      stopElsRef.current.clear();
     };
-  }, [stops, home, selection, showLabels]);
+  }, [stops, home, showLabels]);
+
+  // Apply selection by flipping the chosen pin's ring on the existing element —
+  // a one-node style change, not a marker rebuild. Re-runs after a rebuild too
+  // (stops in deps) so a fresh marker set picks the selection back up.
+  useEffect(() => {
+    stopElsRef.current.forEach((el, id) => {
+      const selected = selection.type === 'stop' && selection.stopId === id;
+      el.style.boxShadow = selected ? MARKER_SELECTED_RING : MARKER_IDLE_RING;
+    });
+  }, [selection, stops]);
 
   if (!hasMapboxToken) {
     return (

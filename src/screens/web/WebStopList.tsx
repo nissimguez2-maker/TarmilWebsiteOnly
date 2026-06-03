@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import {
   DndContext,
@@ -646,7 +646,15 @@ function SortableStopRow(props: SortableStopRowProps) {
 
 /** City photo thumbnail for a timeline stop. Real photo in prod; warm
     gradient fallback when the image is unavailable. */
-function StopThumb({ stopId, cityName }: { stopId: string; cityName: string }) {
+// Memoized: the photo hook shouldn't re-run when a parent row re-renders for an
+// unrelated reason (e.g. a wishlist tick) — props here are stable strings.
+const StopThumb = memo(function StopThumb({
+  stopId,
+  cityName,
+}: {
+  stopId: string;
+  cityName: string;
+}) {
   const [ok, setOk] = useState(true);
   const photo = useCityPhotos(stopId, cityName)[0];
   return (
@@ -662,7 +670,7 @@ function StopThumb({ stopId, cityName }: { stopId: string; cityName: string }) {
       )}
     </span>
   );
-}
+});
 
 type StopRowProps = SortableStopRowProps & {
   dragAttributes: React.HTMLAttributes<HTMLButtonElement>;
@@ -976,7 +984,12 @@ type LegRowProps = {
 };
 
 function LegRow({ from, to, selected, onClick }: LegRowProps) {
-  const leg = generateLeg(from, to, from.departureDate);
+  // generateLeg does haversine + seeded RNG + offer sort — deterministic on the
+  // endpoints + date, so memoize it instead of recomputing on every render.
+  const leg = useMemo(
+    () => generateLeg(from, to, from.departureDate),
+    [from.id, to.id, from.departureDate],
+  );
   const dominantMode = leg.offers.find((o) => o.badge === 'recommended')?.mode
     ?? leg.offers[0]?.mode
     ?? 'bus';

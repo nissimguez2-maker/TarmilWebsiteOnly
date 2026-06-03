@@ -574,7 +574,7 @@ function WeatherDayCard({
   return (
     <div
       className={clsx(
-        'shrink-0 w-14 flex flex-col items-center gap-xs rounded-xl py-sm border transition-colors',
+        'shrink-0 w-14 flex flex-col items-center gap-xs rounded-xl py-sm border transition-colors duration-fast ease-out-quart motion-reduce:transition-none',
         highlighted
           ? 'bg-cream border-amber shadow-card'
           : 'bg-linen/60 border-transparent',
