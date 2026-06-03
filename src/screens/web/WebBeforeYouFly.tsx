@@ -44,6 +44,28 @@ function homeCurrencyFor(name?: string): string {
   return HOME_CURRENCY[name.trim().toLowerCase()] ?? 'ILS';
 }
 
+// The traveler's home currency defaults to ILS (the core audience) but is
+// changeable — a global visitor may be based elsewhere — and persists locally.
+const HOME_CURRENCY_KEY = 'tarmil:home-currency';
+const CURRENCY_OPTIONS = [
+  'ILS', 'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'JPY', 'CNY', 'INR',
+  'THB', 'BRL', 'ARS', 'MXN', 'ZAR', 'SGD', 'AED', 'TRY', 'NZD', 'KRW',
+];
+function loadHomeCurrency(): string | null {
+  try {
+    return localStorage.getItem(HOME_CURRENCY_KEY);
+  } catch {
+    return null;
+  }
+}
+function saveHomeCurrency(c: string): void {
+  try {
+    localStorage.setItem(HOME_CURRENCY_KEY, c);
+  } catch {
+    // ignore quota errors
+  }
+}
+
 /**
  * Gather real, free per-stop facts (currency + live FX, language, timezone,
  * public holidays in range, entry reminder) into plain sentences the concierge
@@ -84,10 +106,10 @@ function useTripFacts(
         const info = await fetchCountry(code);
         if (info?.currencyCode) {
           if (info.currencyCode !== homeCurrency) {
-            const rate = await fetchFxRate(info.currencyCode, homeCurrency);
+            const rate = await fetchFxRate(homeCurrency, info.currencyCode);
             out.push(
               rate != null
-                ? `${stop.nameEn} (${code}) uses ${info.currencyCode}${info.currencyName ? ` (${info.currencyName})` : ''}; 1 ${info.currencyCode} is about ${formatRate(rate)} ${homeCurrency}.`
+                ? `${stop.nameEn} (${code}) uses ${info.currencyCode}${info.currencyName ? ` (${info.currencyName})` : ''}; 1 ${homeCurrency} is about ${formatRate(rate)} ${info.currencyCode}.`
                 : `${stop.nameEn} (${code}) uses ${info.currencyCode}.`,
             );
           } else {
@@ -154,7 +176,9 @@ export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
-  const homeCurrency = homeCurrencyFor(homeCountryName);
+  const [homeCurrency, setHomeCurrency] = useState<string>(
+    () => loadHomeCurrency() ?? homeCurrencyFor(homeCountryName),
+  );
   const facts = useTripFacts(stops, homeCurrency, homeCountryName);
 
   useEffect(() => {
@@ -222,6 +246,23 @@ export function WebBeforeYouFly({ stops, homeCountryName, onClose }: Props) {
             >
               A few things worth knowing
             </h2>
+            <label className="mt-xs inline-flex items-center gap-xs text-meta text-charcoal-55">
+              Your currency
+              <select
+                value={homeCurrency}
+                onChange={(e) => {
+                  setHomeCurrency(e.target.value);
+                  saveHomeCurrency(e.target.value);
+                }}
+                className="rounded-md border border-charcoal-15 bg-cream px-xs py-px text-small text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+              >
+                {CURRENCY_OPTIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
           <button
             type="button"
@@ -385,7 +426,7 @@ function CurrencyLine({
           if (!cancelled) setMoney(null);
           return;
         }
-        const rate = await fetchFxRate(code, homeCurrency);
+        const rate = await fetchFxRate(homeCurrency, code);
         if (!cancelled) {
           setMoney({ code, name: info?.currencyName ?? '', rate: rate ?? null });
         }
@@ -414,8 +455,8 @@ function CurrencyLine({
           {money.rate != null && (
             <>
               {' · '}
-              <span className="tnum">1 {money.code}</span> ≈{' '}
-              <span className="tnum">{formatRate(money.rate)}</span> {homeCurrency}
+              <span className="tnum">1 {homeCurrency}</span> ≈{' '}
+              <span className="tnum">{formatRate(money.rate)}</span> {money.code}
             </>
           )}
         </p>
@@ -486,8 +527,5 @@ function formatHolidayDate(iso: string): string {
 }
 
 function formatRate(rate: number): string {
-  // Small rates (e.g. 0.27) want more precision than large ones (e.g. 1280).
-  if (rate >= 100) return rate.toFixed(0);
-  if (rate >= 1) return rate.toFixed(2);
-  return rate.toFixed(3);
+  return rate.toFixed(2);
 }

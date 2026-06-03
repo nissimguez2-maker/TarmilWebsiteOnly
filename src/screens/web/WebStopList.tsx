@@ -301,7 +301,7 @@ export function WebStopList({
       {stops.length > 0 && (
         <div className="px-md">
           <Button
-            variant="olive"
+            variant="ghost"
             size="sm"
             fullWidth
             onClick={() => setBeforeOpen(true)}
@@ -534,7 +534,7 @@ function TripOverviewCard({
   stops: PlannedStop[];
   home: HomeCity;
 }) {
-  const legs = stops.length > 0 ? stops.length - 1 : 0;
+  useWishlist(); // re-render the readiness line as stays / transport are saved
   const nights = stops.reduce((sum, s) => sum + s.nights, 0);
   const first = stops[0];
   const last = stops[stops.length - 1];
@@ -546,33 +546,55 @@ function TripOverviewCard({
     ? new Date(last.departureDate + 'T12:00:00').getFullYear()
     : '';
 
+  // Readiness, not vanity: each gap below is an honest, well-timed booking moment.
+  const staysCount = stops.filter((s) =>
+    placesForStop(s.id).some((p) => p.category === 'hostel'),
+  ).length;
+  let legsNeedTransport = 0;
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (transitForLeg(stops[i].id, stops[i + 1].id).length === 0) {
+      legsNeedTransport++;
+    }
+  }
+
   return (
-    <article className="mx-md bg-sand border border-charcoal-15 rounded-2xl p-md flex flex-col gap-sm">
+    <article className="mx-md bg-sand border border-charcoal-15 rounded-2xl p-md flex flex-col gap-xs">
       <p className="meta-caps text-charcoal-70">Trip overview</p>
       <h2 className="font-serif text-lede text-charcoal">
-        {dateSpan}
-        {year && <span className="text-charcoal-70">, {year}</span>}
+        {dateSpan ? (
+          <>
+            {dateSpan}
+            {year && <span className="text-charcoal-70">, {year}</span>}
+          </>
+        ) : (
+          'Your trip starts here'
+        )}
       </h2>
       <p className="text-small text-charcoal-70">
         From {home.nameEn} → back to {home.nameEn}
       </p>
-      <dl className="grid grid-cols-3 gap-sm pt-sm border-t border-charcoal-15">
-        <Stat label="Stops" value={stops.length} />
-        <Stat label="Legs" value={legs} />
-        <Stat label="Nights" value={nights} />
-      </dl>
+      {stops.length > 0 && (
+        <p className="flex flex-wrap items-center gap-x-sm gap-y-xs pt-sm border-t border-charcoal-15 text-small text-charcoal-70">
+          <span className="text-charcoal">
+            <span className="tnum">{nights}</span> nights
+          </span>
+          <span aria-hidden>·</span>
+          <span>
+            <span className="tnum">{staysCount}</span>/
+            <span className="tnum">{stops.length}</span> stops have a stay
+          </span>
+          {legsNeedTransport > 0 && (
+            <>
+              <span aria-hidden>·</span>
+              <span>
+                <span className="tnum">{legsNeedTransport}</span>{' '}
+                {legsNeedTransport === 1 ? 'leg needs' : 'legs need'} transport
+              </span>
+            </>
+          )}
+        </p>
+      )}
     </article>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex flex-col gap-xs">
-      <dd className="font-serif text-sub text-charcoal tnum leading-none">
-        {value}
-      </dd>
-      <dt className="text-small text-charcoal-70">{label}</dt>
-    </div>
   );
 }
 
