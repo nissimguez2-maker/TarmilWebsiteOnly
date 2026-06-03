@@ -29,6 +29,7 @@ import {
 } from './tripMutations';
 import type { Selection } from './types';
 import { TripDoorway } from './TripDoorway';
+import { WebAskTarmil } from './WebAskTarmil';
 import { saveTripIntent } from './tripIntent';
 import { track } from './track';
 
@@ -234,6 +235,9 @@ export function WebPlannerScreen() {
       />
       <WebPhotoLightbox />
       <WebBookingSheet />
+      {/* In-planner assistant — only once past the doorway (which has its own
+          free-text). Answers + grounds; never voices the booking pick. */}
+      {(stops.length > 0 || doorwaySkipped) && <WebAskTarmil stops={stops} />}
       <WebToastLayer />
     </>
   );

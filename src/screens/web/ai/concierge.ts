@@ -1,15 +1,16 @@
 /**
- * concierge — a grounded trip-question answerer.
+ * concierge — Tarmil's general travel assistant (open-world).
  *
- * Answers a traveler question STRICTLY from facts the caller supplies in
- * `ctx.facts` and the planned `ctx.cityNames`. It is a summarizer over given
- * context, not a knowledge base: if the answer is not in the provided facts, it
- * says so and points the traveler to official sources. It never invents places,
- * ratings, review counts, prices, or superlatives like "best" or "top".
+ * Answers a traveler question from general travel knowledge, PREFERRING the live
+ * trip facts in `ctx.facts` when they're relevant (currency/FX, weather, local
+ * time, holidays, language, a visa status). It is a companion, not a closed
+ * summarizer: it answers even when no fact was pre-loaded, and never invents
+ * places, ratings, review counts, prices, or superlatives like "best" or "top".
  *
  * Sensitive topics (visa, entry, border, safety, health, vaccination, customs)
- * are NEVER answered authoritatively. For those it gives a short, careful
- * summary and routes to official sources, returned in `sources` for the UI.
+ * are answered as helpful ORIENTATION, never as an authoritative verdict: a
+ * balanced picture plus a one-line "confirm with the official source", with the
+ * official link returned in `sources` for the UI (Moffatt v. Air Canada).
  *
  * Every path is graceful. If the proxy is unavailable, or the reply is not
  * valid JSON in the expected shape, this resolves to `null`.
@@ -28,12 +29,11 @@ export type ConciergeSource = { label: string; url: string };
 export type ConciergeAnswer = { answer: string; sources: ConciergeSource[] };
 
 const SYSTEM =
-  'You are a warm, knowledgeable trip concierge. Use the facts provided to answer the traveler directly and usefully. ' +
-  'When a fact answers the question (a visa status, a public holiday, an exchange rate, the local time, weather, the language), STATE IT plainly and helpfully. Do not dodge a question you have a fact for. ' +
-  'For visa, entry, safety, or health topics: give the answer from the facts, then add ONE short sentence to confirm with the official source. Never refuse outright when a relevant fact is provided. ' +
-  'Only when no provided fact is relevant: say briefly what you do not have, and suggest the official source to check. ' +
-  'Never invent specifics that are not in the facts, and never invent or restate ratings, review counts, prices, or superlatives like "best" or "top". Prose only. ' +
-  'Warm, active voice. Keep sentences to about 20 words or fewer, a few sentences at most. Do not use em dashes. ' +
+  'You are Tarmil, a warm, knowledgeable travel companion. Answer the traveler directly and usefully from your general travel knowledge: where to go, when to go, what to eat, neighborhoods, getting around, rough costs, culture, packing, itineraries. Be specific and genuinely helpful. NEVER refuse a question just because no fact was pre-loaded. ' +
+  'When trip facts are provided below (currency and exchange rate, weather, local time, daylight, public holidays, language, a visa status), build on them and prefer them over a general guess. ' +
+  'For SAFETY, VISA, ENTRY, or HEALTH questions: give a balanced, useful picture as orientation, and add ONE short sentence to confirm with the official government source. Speak as a helpful companion, NOT an official authority. Do not declare a definitive "it is safe" / "it is unsafe" verdict, and do not invent specific entry rules, fees, or vaccine mandates beyond what the provided facts support. ' +
+  'Never invent or restate ratings, review counts, prices, or superlatives like "best", "top", or "#1". Prose only. ' +
+  'Warm, active voice. Keep sentences to about 20 words or fewer, at most a few short paragraphs. Do not use em dashes. ' +
   'Reply with ONE JSON object and nothing else: {"answer": string, "sources": [{"label": string, "url": string}]}. ' +
   'Use "sources" for any official links you point to; use an empty array when you cite none. No commentary or code fences outside the JSON.';
 
@@ -104,8 +104,8 @@ function buildUser(question: string, ctx: { cityNames: string[]; facts: string[]
   const facts = ctx.facts.filter((f) => typeof f === 'string' && f.trim().length > 0);
   const cityLine = cities.length > 0 ? cities.join(', ') : '(none)';
   const factBlock =
-    facts.length > 0 ? facts.map((f) => `- ${f.trim()}`).join('\n') : '(no facts provided)';
-  return `Trip cities: ${cityLine}\n\nFacts you may use (and nothing else):\n${factBlock}\n\nQuestion: ${question.trim()}`;
+    facts.length > 0 ? facts.map((f) => `- ${f.trim()}`).join('\n') : '(none yet)';
+  return `Trip cities: ${cityLine}\n\nTrip facts you can rely on (prefer these over a guess):\n${factBlock}\n\nQuestion: ${question.trim()}`;
 }
 
 /**
